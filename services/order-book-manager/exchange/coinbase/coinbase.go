@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/order-book-manager/exchange"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
 	"github.com/gorilla/websocket"
 	coinbasepro "github.com/preichenberger/go-coinbasepro/v2"
 )
@@ -13,6 +15,8 @@ import (
 const (
 	FEED_URL = "wss://ws-feed.pro.coinbase.com"
 )
+
+var _ exchange.Exchange = &Exchange{}
 
 type Exchange struct {
 }
@@ -30,26 +34,21 @@ func (x *Exchange) dial(ctx context.Context) (*websocket.Conn, error) {
 	return conn, nil
 }
 
-func (x *Exchange) Subscribe(ctx context.Context, cb exchange.Callbacks, sym *exchange.Symbol, syms ...*exchange.Symbol) error {
+func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...string) error {
 	ws, err := x.dial(ctx)
 	if err != nil {
 		return err
 	}
 
-	// Build the ProductIDs based on the symbols
-	ids := []string{sym.String()}
-	for _, s := range syms {
-		ids = append(ids, s.String())
-	}
-
 	req := coinbasepro.Message{
 		Type: "subscribe",
 		Channels: []coinbasepro.MessageChannel{
-			coinbasepro.MessageChannel{Name: "level2", ProductIds: ids},
+			coinbasepro.MessageChannel{Name: "level2", ProductIds: syms},
 		},
 	}
 
-	log.Printf("-> %v", req)
+	log.Printf("Coinbase querying: %q", syms)
+
 	if err := ws.WriteJSON(req); err != nil {
 		return err
 	}
@@ -60,12 +59,12 @@ func (x *Exchange) Subscribe(ctx context.Context, cb exchange.Callbacks, sym *ex
 			return err
 		}
 
-		var fn func(*exchange.Update) error
+		var fn func(string, *obm.Update) error
 		switch msg.Type {
 		case "snapshot":
-			fn = cb.OnSnapshot
+			fn = store.OnSnapshot
 		case "l2update":
-			fn = cb.OnChange
+			fn = store.OnUpdate
 		}
 
 		if fn != nil {
@@ -74,26 +73,21 @@ func (x *Exchange) Subscribe(ctx context.Context, cb exchange.Callbacks, sym *ex
 				return err
 			}
 
-			if err := fn(updates); err != nil {
+			if err := fn("coinbase", updates); err != nil {
 				return err
 			}
 		}
 	}
 }
 
-// NewUpdate returns a new exchange.Update given a coinbasepro.Message
-func newUpdates(msg *coinbasepro.Message) (*exchange.Update, error) {
-	sym, err := exchange.NewSymbolFromString(msg.ProductID, "-")
-	if err != nil {
-		return nil, err
-	}
-
-	var updates = exchange.Update{
-		Symbol: *sym,
+// NewUpdate returns a new obm.Update given a coinbasepro.Message
+func newUpdates(msg *coinbasepro.Message) (*obm.Update, error) {
+	var updates = obm.Update{
+		Symbol: msg.ProductID,
 	}
 
 	for _, bid := range msg.Bids {
-		entry, err := exchange.NewEntryFromStrings(bid.Price, bid.Size)
+		entry, err := obm.NewEntryFromStrings(bid.Price, bid.Size)
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +95,7 @@ func newUpdates(msg *coinbasepro.Message) (*exchange.Update, error) {
 	}
 
 	for _, ask := range msg.Asks {
-		entry, err := exchange.NewEntryFromStrings(ask.Price, ask.Size)
+		entry, err := obm.NewEntryFromStrings(ask.Price, ask.Size)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +104,7 @@ func newUpdates(msg *coinbasepro.Message) (*exchange.Update, error) {
 	}
 
 	for _, change := range msg.Changes {
-		entry, err := exchange.NewEntryFromStrings(change.Price, change.Size)
+		entry, err := obm.NewEntryFromStrings(change.Price, change.Size)
 		if err != nil {
 			return nil, err
 		}
