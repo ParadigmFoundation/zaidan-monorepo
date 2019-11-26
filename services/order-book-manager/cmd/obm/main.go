@@ -33,12 +33,12 @@ func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sym := strings.Join(split[2:4], "/")
-	mkt, err := srv.store.Market(split[1], sym)
+	ob, err := srv.store.OrderBook(split[1], sym)
 	if err != nil {
 		http.Error(w, err.Error(), 404)
 	}
 
-	json.NewEncoder(w).Encode(mkt)
+	json.NewEncoder(w).Encode(ob)
 }
 
 type xchange struct {

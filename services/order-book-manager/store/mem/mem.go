@@ -3,13 +3,15 @@ package mem
 import (
 	"sort"
 	"sync"
+	"time"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 )
 
 type market struct {
-	bids map[float64]float64
-	asks map[float64]float64
+	lastUpdate time.Time
+	bids       map[float64]float64
+	asks       map[float64]float64
 }
 
 // these operates as db indexes
@@ -75,31 +77,36 @@ func (s *Store) doUpdate(name string, update *obm.Update) error {
 			mkt.asks[p] = q
 		}
 	}
+	mkt.lastUpdate = time.Now()
 
 	return nil
 }
 
-func (s *Store) Market(exchange, symbol string) (*obm.Market, error) {
-	found := s.findOrCreateMarket(exchange, symbol)
+func (s *Store) OrderBook(exchange, symbol string) (*obm.OrderBook, error) {
+	s.m.RLock()
+	defer s.m.RUnlock()
+
+	mkt := s.findOrCreateMarket(exchange, symbol)
 
 	var asks obm.EntriesByPriceAsc
-	for p, q := range found.asks {
+	for p, q := range mkt.asks {
 		asks = append(asks, &obm.Entry{Price: p, Quantity: q})
 	}
 	sort.Sort(asks)
 
 	var bids obm.EntriesByPriceDesc
-	for p, q := range found.bids {
+	for p, q := range mkt.bids {
 		bids = append(bids, &obm.Entry{Price: p, Quantity: q})
 	}
 	sort.Sort(bids)
 
-	mkt := &obm.Market{
-		Exchange: exchange,
-		Symbol:   symbol,
-		Asks:     asks,
-		Bids:     bids,
+	ob := &obm.OrderBook{
+		LastUpdate: obm.Time{mkt.lastUpdate},
+		Exchange:   exchange,
+		Symbol:     symbol,
+		Asks:       asks,
+		Bids:       bids,
 	}
 
-	return mkt, nil
+	return ob, nil
 }

@@ -45,15 +45,15 @@ func ValidMarket(t *testing.T, store store.Store) {
 		},
 	})
 
-	mkt, err := store.Market("test", sym)
+	ob, err := store.OrderBook("test", sym)
 	require.NoError(t, err)
-	require.NotNil(t, mkt)
+	require.NotNil(t, ob)
 
-	assert.Equal(t, "test", mkt.Exchange)
-	assert.Equal(t, sym, mkt.Symbol)
+	assert.Equal(t, "test", ob.Exchange)
+	assert.Equal(t, sym, ob.Symbol)
 
 	t.Run("Bids", func(t *testing.T) {
-		bids := mkt.Bids
+		bids := ob.Bids
 		require.Len(t, bids, 3)
 		assert.Equal(t, &obm.Entry{Price: 3, Quantity: 1}, bids[0])
 		assert.Equal(t, &obm.Entry{Price: 2, Quantity: 1}, bids[1])
@@ -61,8 +61,8 @@ func ValidMarket(t *testing.T, store store.Store) {
 	})
 
 	t.Run("Asks", func(t *testing.T) {
-		asks := mkt.Asks
-		require.Len(t, mkt.Bids, 3)
+		asks := ob.Asks
+		require.Len(t, ob.Bids, 3)
 		assert.Equal(t, &obm.Entry{Price: 1, Quantity: 1}, asks[0])
 		assert.Equal(t, &obm.Entry{Price: 2, Quantity: 1}, asks[1])
 		assert.Equal(t, &obm.Entry{Price: 3, Quantity: 1}, asks[2])

@@ -44,9 +44,9 @@ func BenchmarkMem(b *testing.B) {
 		benchMem(b, s, sym)
 	}
 
-	mkt, err := s.Market("mem1", sym)
+	ob, err := s.OrderBook("mem1", sym)
 	require.NoError(b, err)
-	b.Logf("mem -> Asks: %d, Bids: %d", len(mkt.Asks), len(mkt.Bids))
+	b.Logf("mem -> Asks: %d, Bids: %d", len(ob.Asks), len(ob.Bids))
 
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)

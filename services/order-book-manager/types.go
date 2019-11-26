@@ -1,7 +1,9 @@
 package obm
 
 import (
+	"fmt"
 	"strconv"
+	"time"
 )
 
 type Entry struct {
@@ -45,9 +47,21 @@ type Update struct {
 	Asks   Entries
 }
 
-type Market struct {
-	Exchange string             `json:"exchange"`
-	Symbol   string             `json:"symbol"`
-	Asks     EntriesByPriceAsc  `json:"asks"`
-	Bids     EntriesByPriceDesc `json:"bids"`
+type Time struct {
+	time.Time
+}
+
+func (t Time) MarshalJSON() ([]byte, error) {
+	if t.IsZero() {
+		return []byte("0"), nil
+	}
+	return []byte(fmt.Sprintf("%d", t.Unix())), nil
+}
+
+type OrderBook struct {
+	LastUpdate Time               `json:"last_update"`
+	Exchange   string             `json:"exchange"`
+	Symbol     string             `json:"symbol"`
+	Asks       EntriesByPriceAsc  `json:"asks"`
+	Bids       EntriesByPriceDesc `json:"bids"`
 }
