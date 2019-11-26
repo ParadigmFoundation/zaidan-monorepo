@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
+	"sync"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
@@ -11,15 +13,19 @@ import (
 )
 
 type Exchange struct {
+	sMutex  sync.RWMutex
+	symbols map[string]string
 }
 
 func New() *Exchange {
-	return &Exchange{}
+	return &Exchange{
+		symbols: make(map[string]string),
+	}
 }
 
 func (x *Exchange) depthHandler(s store.Store) binance.WsDepthHandler {
 	fn := func(event *binance.WsDepthEvent) {
-		update, err := newUpdates(event)
+		update, err := x.newUpdates(event)
 		if err != nil {
 			log.Printf("depthHandler: ERROR: %v", err)
 			return
@@ -28,6 +34,25 @@ func (x *Exchange) depthHandler(s store.Store) binance.WsDepthHandler {
 	}
 
 	return fn
+}
+
+func (x *Exchange) newSymbol(s string) string {
+	x.sMutex.Lock()
+	defer x.sMutex.Unlock()
+
+	newSymbol := strings.Replace(s, "/", "", 1)
+	x.symbols[newSymbol] = s
+	return newSymbol
+}
+
+func (x *Exchange) symbol(s string) string {
+	x.sMutex.RLock()
+	defer x.sMutex.RUnlock()
+
+	if found := x.symbols[s]; found != "" {
+		return found
+	}
+	return s
 }
 
 func (x *Exchange) Subscribe(ctx context.Context, s store.Store, syms ...string) error {
@@ -39,6 +64,11 @@ func (x *Exchange) Subscribe(ctx context.Context, s store.Store, syms ...string)
 		doneCh = make(chan struct{})
 		stopCh = make(chan struct{})
 	)
+
+	for i, _ := range syms {
+		syms[i] = x.newSymbol(syms[i])
+	}
+	log.Printf("%v", x.symbols)
 
 	log.Printf("Binance querying: %q", syms)
 	for _, sym := range syms {
@@ -67,9 +97,9 @@ func (x *Exchange) Subscribe(ctx context.Context, s store.Store, syms ...string)
 	}
 }
 
-func newUpdates(event *binance.WsDepthEvent) (*obm.Update, error) {
+func (x *Exchange) newUpdates(event *binance.WsDepthEvent) (*obm.Update, error) {
 	var updates = obm.Update{
-		Symbol: event.Symbol,
+		Symbol: x.symbol(event.Symbol),
 	}
 
 	for _, bid := range event.Bids {

@@ -27,12 +27,12 @@ func NewServer(store store.Store) *Server {
 
 func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	split := strings.Split(r.URL.Path, "/")
-	if len(split) != 3 {
+	if len(split) != 4 {
 		http.Error(w, "Invalid Path, try '/coinbase/BTC/USD'", 400)
 		return
 	}
 
-	sym := split[2]
+	sym := strings.Join(split[2:4], "/")
 	mkt, err := srv.store.Market(split[1], sym)
 	if err != nil {
 		http.Error(w, err.Error(), 404)

@@ -17,10 +17,10 @@ func TestMem(t *testing.T) {
 	})
 }
 
-func benchMem(b *testing.B, s store.Store, sym *obm.Symbol) {
+func benchMem(b *testing.B, s store.Store, sym string) {
 	// generate 3k updates
 	for i := 0; i < 3000; i++ {
-		update := &obm.Update{Symbol: *sym,
+		update := &obm.Update{Symbol: sym,
 			// Generate entries with prices ranging from 1 to 3000 and quantities ranging from 0 to 99
 			Asks: obm.Entries{&obm.Entry{Price: float64(rand.Int31n(3000) + 1), Quantity: float64(rand.Int31n(300))}},
 			Bids: obm.Entries{&obm.Entry{Price: float64(rand.Int31n(3000) + 1), Quantity: float64(rand.Int31n(300))}},
@@ -38,13 +38,13 @@ func benchMem(b *testing.B, s store.Store, sym *obm.Symbol) {
 func BenchmarkMem(b *testing.B) {
 	var s store.Store
 
-	sym := obm.NewSymbol("BTC", "USD")
+	sym := "BTC-USD"
 	for i := 0; i < b.N; i++ {
 		s = New()
 		benchMem(b, s, sym)
 	}
 
-	mkt, err := s.Market("mem1", sym.String())
+	mkt, err := s.Market("mem1", sym)
 	require.NoError(b, err)
 	b.Logf("mem -> Asks: %d, Bids: %d", len(mkt.Asks), len(mkt.Bids))
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
@@ -34,20 +35,28 @@ func (x *Exchange) dial(ctx context.Context) (*websocket.Conn, error) {
 	return conn, nil
 }
 
+func symbol2coinbase(s string) string { return strings.Replace(s, "/", "-", 1) }
+func coinbase2symbol(s string) string { return strings.Replace(s, "-", "/", 1) }
+
 func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...string) error {
 	ws, err := x.dial(ctx)
 	if err != nil {
 		return err
 	}
 
+	var ids = make([]string, len(syms))
+	for i, s := range syms {
+		ids[i] = symbol2coinbase(s)
+	}
+
 	req := coinbasepro.Message{
 		Type: "subscribe",
 		Channels: []coinbasepro.MessageChannel{
-			coinbasepro.MessageChannel{Name: "level2", ProductIds: syms},
+			coinbasepro.MessageChannel{Name: "level2", ProductIds: ids},
 		},
 	}
 
-	log.Printf("Coinbase querying: %q", syms)
+	log.Printf("Coinbase querying: %q", ids)
 
 	if err := ws.WriteJSON(req); err != nil {
 		return err
@@ -83,7 +92,7 @@ func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...str
 // NewUpdate returns a new obm.Update given a coinbasepro.Message
 func newUpdates(msg *coinbasepro.Message) (*obm.Update, error) {
 	var updates = obm.Update{
-		Symbol: msg.ProductID,
+		Symbol: coinbase2symbol(msg.ProductID),
 	}
 
 	for _, bid := range msg.Bids {

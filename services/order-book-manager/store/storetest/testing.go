@@ -30,9 +30,9 @@ func TestSuite(t *testing.T, f Factory) {
 }
 
 func ValidMarket(t *testing.T, store store.Store) {
-	sym := obm.NewSymbol("BTC", "USD")
-	store.OnUpdate("coinbase", &obm.Update{
-		Symbol: *sym,
+	sym := "BTC-USD"
+	store.OnUpdate("test", &obm.Update{
+		Symbol: sym,
 		Bids: obm.Entries{
 			{Price: 2, Quantity: 1},
 			{Price: 3, Quantity: 1},
@@ -45,12 +45,12 @@ func ValidMarket(t *testing.T, store store.Store) {
 		},
 	})
 
-	mkt, err := store.Market("coinbase", sym.String())
+	mkt, err := store.Market("test", sym)
 	require.NoError(t, err)
 	require.NotNil(t, mkt)
 
-	assert.Equal(t, "coinbase", mkt.Exchange)
-	assert.Equal(t, sym.String(), mkt.Symbol)
+	assert.Equal(t, "test", mkt.Exchange)
+	assert.Equal(t, sym, mkt.Symbol)
 
 	t.Run("Bids", func(t *testing.T) {
 		bids := mkt.Bids
@@ -67,5 +67,4 @@ func ValidMarket(t *testing.T, store store.Store) {
 		assert.Equal(t, &obm.Entry{Price: 2, Quantity: 1}, asks[1])
 		assert.Equal(t, &obm.Entry{Price: 3, Quantity: 1}, asks[2])
 	})
-
 }
