@@ -82,30 +82,32 @@ func (s *Store) doUpdate(name string, update *obm.Update) error {
 	return nil
 }
 
-func (s *Store) OrderBook(exchange, symbol string) (*obm.OrderBook, error) {
+func (s *Store) OrderBook(exchange, symbol string) (*obm.OrderBookResponse, error) {
 	s.m.RLock()
 	defer s.m.RUnlock()
 
 	mkt := s.findOrCreateMarket(exchange, symbol)
 
-	var asks obm.EntriesByPriceAsc
+	var asks obm.OrderBookEntriesByPriceAsc
 	for p, q := range mkt.asks {
-		asks = append(asks, &obm.Entry{Price: p, Quantity: q})
+		asks = append(asks, &obm.OrderBookEntry{Price: p, Quantity: q})
 	}
 	sort.Sort(asks)
 
-	var bids obm.EntriesByPriceDesc
+	var bids obm.OrderBookEntriesByPriceDesc
 	for p, q := range mkt.bids {
-		bids = append(bids, &obm.Entry{Price: p, Quantity: q})
+		bids = append(bids, &obm.OrderBookEntry{Price: p, Quantity: q})
 	}
 	sort.Sort(bids)
 
-	ob := &obm.OrderBook{
-		LastUpdate: obm.Time{mkt.lastUpdate},
-		Exchange:   exchange,
-		Symbol:     symbol,
-		Asks:       asks,
-		Bids:       bids,
+	ob := &obm.OrderBookResponse{
+		Exchange: exchange,
+		Symbol:   symbol,
+		Asks:     asks,
+		Bids:     bids,
+	}
+	if !mkt.lastUpdate.IsZero() {
+		ob.LastUpdate = mkt.lastUpdate.Unix()
 	}
 
 	return ob, nil

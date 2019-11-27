@@ -7,5 +7,5 @@ import (
 
 type Store interface {
 	exchange.Subscriber
-	OrderBook(exchange, symbol string) (*obm.OrderBook, error)
+	OrderBook(exchange, symbol string) (*obm.OrderBookResponse, error)
 }
