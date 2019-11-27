@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
 	"github.com/adshao/go-binance"
 )
 
@@ -23,14 +23,14 @@ func New() *Exchange {
 	}
 }
 
-func (x *Exchange) depthHandler(s store.Store) binance.WsDepthHandler {
+func (x *Exchange) depthHandler(sub exchange.Subscriber) binance.WsDepthHandler {
 	fn := func(event *binance.WsDepthEvent) {
 		update, err := x.newUpdates(event)
 		if err != nil {
 			log.Printf("depthHandler: ERROR: %v", err)
 			return
 		}
-		s.OnUpdate("binance", update)
+		sub.OnUpdate("binance", update)
 	}
 
 	return fn
@@ -55,7 +55,7 @@ func (x *Exchange) symbol(s string) string {
 	return s
 }
 
-func (x *Exchange) Subscribe(ctx context.Context, s store.Store, syms ...string) error {
+func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
 	errHandler := func(err error) {
 		log.Printf("ERROR: %+v", err)
 	}
@@ -70,7 +70,7 @@ func (x *Exchange) Subscribe(ctx context.Context, s store.Store, syms ...string)
 	}
 	log.Printf("Binance querying: %q", syms)
 	for _, sym := range syms {
-		done, stop, err := binance.WsDepthServe(sym, x.depthHandler(s), errHandler)
+		done, stop, err := binance.WsDepthServe(sym, x.depthHandler(sub), errHandler)
 
 		if err != nil {
 			return fmt.Errorf("Subscribe(): %w", err)

@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
 	"github.com/gorilla/websocket"
 )
 
@@ -45,7 +45,7 @@ func (x *Exchange) symbol(s string) string {
 	return s
 }
 
-func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...string) error {
+func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
 	for i, _ := range syms {
 		syms[i] = x.newSymbol(syms[i])
 	}
@@ -54,14 +54,14 @@ func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...str
 	errCh := make(chan error)
 	for _, sym := range syms {
 		go func() {
-			errCh <- x.subscribe(ctx, store, sym)
+			errCh <- x.subscribe(ctx, sub, sym)
 		}()
 	}
 
 	return <-errCh
 }
 
-func (x *Exchange) subscribe(ctx context.Context, store store.Store, sym string) error {
+func (x *Exchange) subscribe(ctx context.Context, sub exchange.Subscriber, sym string) error {
 	url := FEED_URL + sym //+ "?trades=false&auctions=false"
 	c, _, err := websocket.DefaultDialer.DialContext(ctx, url, nil)
 	if err != nil {
@@ -69,14 +69,14 @@ func (x *Exchange) subscribe(ctx context.Context, store store.Store, sym string)
 	}
 
 	for {
-		if err := x.handleWs(c, store, sym); err != nil {
+		if err := x.handleWs(c, sub, sym); err != nil {
 			return err
 		}
 	}
 
 }
 
-func (x *Exchange) handleWs(c *websocket.Conn, s store.Store, sym string) error {
+func (x *Exchange) handleWs(c *websocket.Conn, sub exchange.Subscriber, sym string) error {
 	var msg Message
 	err := c.ReadJSON(&msg)
 	if err != nil {
@@ -110,7 +110,7 @@ func (x *Exchange) handleWs(c *websocket.Conn, s store.Store, sym string) error 
 	}
 
 	if len(update.Bids) != 0 || len(update.Asks) != 0 {
-		s.OnUpdate("gemini", update)
+		sub.OnUpdate("gemini", update)
 	}
 
 	return nil

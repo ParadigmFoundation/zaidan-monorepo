@@ -8,7 +8,6 @@ import (
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
 	"github.com/gorilla/websocket"
 	coinbasepro "github.com/preichenberger/go-coinbasepro/v2"
 )
@@ -38,7 +37,7 @@ func (x *Exchange) dial(ctx context.Context) (*websocket.Conn, error) {
 func symbol2coinbase(s string) string { return strings.Replace(s, "/", "-", 1) }
 func coinbase2symbol(s string) string { return strings.Replace(s, "-", "/", 1) }
 
-func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...string) error {
+func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
 	ws, err := x.dial(ctx)
 	if err != nil {
 		return err
@@ -71,9 +70,9 @@ func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...str
 		var fn func(string, *obm.Update) error
 		switch msg.Type {
 		case "snapshot":
-			fn = store.OnSnapshot
+			fn = sub.OnSnapshot
 		case "l2update":
-			fn = store.OnUpdate
+			fn = sub.OnUpdate
 		}
 
 		if fn != nil {

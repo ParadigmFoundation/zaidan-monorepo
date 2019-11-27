@@ -1,9 +1,11 @@
 package store
 
-import "github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
+import (
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
+)
 
 type Store interface {
-	OnSnapshot(string, *obm.Update) error
-	OnUpdate(string, *obm.Update) error
+	exchange.Subscriber
 	OrderBook(exchange, symbol string) (*obm.OrderBook, error)
 }
