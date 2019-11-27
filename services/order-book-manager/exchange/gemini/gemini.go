@@ -51,11 +51,14 @@ func (x *Exchange) Subscribe(ctx context.Context, store store.Store, syms ...str
 	}
 	log.Printf("Gemini querying: %q", syms)
 
+	errCh := make(chan error)
 	for _, sym := range syms {
-		x.subscribe(ctx, store, sym)
+		go func() {
+			errCh <- x.subscribe(ctx, store, sym)
+		}()
 	}
 
-	return nil
+	return <-errCh
 }
 
 func (x *Exchange) subscribe(ctx context.Context, store store.Store, sym string) error {
@@ -65,52 +68,50 @@ func (x *Exchange) subscribe(ctx context.Context, store store.Store, sym string)
 		return nil
 	}
 
-	go func() {
+	for {
 		if err := x.handleWs(c, store, sym); err != nil {
-			// TODO(gchaincl): please
-			panic(err)
+			return err
 		}
-	}()
+	}
 
-	select {}
 }
 
 func (x *Exchange) handleWs(c *websocket.Conn, s store.Store, sym string) error {
-	for {
-		var msg Message
-		err := c.ReadJSON(&msg)
+	var msg Message
+	err := c.ReadJSON(&msg)
+	if err != nil {
+		return err
+	}
+
+	if msg.Type != "update" {
+		return nil
+	}
+
+	update := &obm.Update{
+		Symbol: x.symbol(sym),
+	}
+
+	for _, event := range msg.Events {
+		if event.Type != "change" {
+			continue
+		}
+
+		entry, err := obm.NewEntryFromStrings(event.Price, event.Remaining)
 		if err != nil {
 			return err
 		}
 
-		if msg.Type != "update" {
-			continue
-		}
-
-		update := &obm.Update{
-			Symbol: x.symbol(sym),
-		}
-
-		for _, event := range msg.Events {
-			if event.Type != "change" {
-				continue
-			}
-
-			entry, err := obm.NewEntryFromStrings(event.Price, event.Remaining)
-			if err != nil {
-				return err
-			}
-
-			switch event.Side {
-			case "bid":
-				update.Bids = append(update.Bids, entry)
-			case "ask":
-				update.Asks = append(update.Asks, entry)
-			}
-		}
-
-		if len(update.Bids) != 0 || len(update.Asks) != 0 {
-			s.OnUpdate("gemini", update)
+		switch event.Side {
+		case "bid":
+			update.Bids = append(update.Bids, entry)
+		case "ask":
+			update.Asks = append(update.Asks, entry)
 		}
 	}
+
+	if len(update.Bids) != 0 || len(update.Asks) != 0 {
+		s.OnUpdate("gemini", update)
+	}
+
+	return nil
 }

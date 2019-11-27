@@ -68,8 +68,6 @@ func (x *Exchange) Subscribe(ctx context.Context, s store.Store, syms ...string)
 	for i, _ := range syms {
 		syms[i] = x.newSymbol(syms[i])
 	}
-	log.Printf("%v", x.symbols)
-
 	log.Printf("Binance querying: %q", syms)
 	for _, sym := range syms {
 		done, stop, err := binance.WsDepthServe(sym, x.depthHandler(s), errHandler)
