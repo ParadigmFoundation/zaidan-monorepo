@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
@@ -19,15 +20,35 @@ const (
 var _ exchange.Exchange = &Exchange{}
 
 type Exchange struct {
+	url        string
+	retryAfter time.Duration
 }
 
-func New() *Exchange {
-	return &Exchange{}
+type Option func(x *Exchange)
+
+func WithURL(url string) Option {
+	return func(x *Exchange) { x.url = url }
+}
+
+func WithRetryAfter(d time.Duration) Option {
+	return func(x *Exchange) { x.retryAfter = d }
+}
+
+func New(options ...Option) *Exchange {
+	x := &Exchange{
+		url:        FEED_URL,
+		retryAfter: 1 * time.Second,
+	}
+
+	for _, opt := range options {
+		opt(x)
+	}
+	return x
 }
 
 func (x *Exchange) dial(ctx context.Context) (*websocket.Conn, error) {
 	var ws websocket.Dialer
-	conn, _, err := ws.DialContext(ctx, FEED_URL, nil)
+	conn, _, err := ws.DialContext(ctx, x.url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("Coinbase: DialContext(): %w", err)
 	}
@@ -38,6 +59,21 @@ func symbol2coinbase(s string) string { return strings.Replace(s, "/", "-", 1) }
 func coinbase2symbol(s string) string { return strings.Replace(s, "-", "/", 1) }
 
 func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
+	for {
+		errCh := make(chan error)
+		go func() { errCh <- x.subscribe(ctx, sub, syms...) }()
+
+		select {
+		case err := <-errCh:
+			log.Printf("Coinbase: Error: %+v", err)
+			time.Sleep(x.retryAfter)
+		case <-ctx.Done():
+			return ctx.Err()
+		}
+	}
+}
+
+func (x *Exchange) subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
 	ws, err := x.dial(ctx)
 	if err != nil {
 		return err
