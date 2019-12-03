@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: droneci
+  name: droneci
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: droneci
+  template:
+    metadata:
+      labels:
+        app: droneci
+    spec:
+      containers:
+      - image: drone/drone:1
+        name: drone
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        env:
+        - name: DRONE_AGENTS_ENABLED
+          value: "true"
+        - name: DRONE_GITHUB_SERVER
+          value: "https://github.com"
+        - name: DRONE_REPOSITORY_FILTER
+          value: "ParadigmFoundation"
+        - name: DRONE_USER_CREATE
+          value: username:gchaincl,admin:true
+        - name: DRONE_GITHUB_CLIENT_ID
+          value: "9db5d7d5606c438ac00c"
+        - name: DRONE_GITHUB_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: droneci
+              key: github-client-secret
+        - name: DRONE_RPC_SECRET
+          value: k8s-secret
+        - name: DRONE_SERVER_HOST
+          value: ci.paradigm.dev
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: droneci-runner
+  labels:
+    app: droneci-runner
+spec:
+  containers:
+  - name: runner
+    image: drone/drone-runner-docker:1
+    ports:
+    - containerPort: 3000
+    env:
+    - name: DRONE_RPC_HOST
+      value: droneci
+    - name: DRONE_RPC_PROTO
+      value: http
+    - name: DRONE_RPC_SECRET
+      value: k8s-secret
+    volumeMounts: 
+    - mountPath: /var/run 
+      name: docker-sock 
+  volumes: 
+  - name: docker-sock 
+    hostPath: 
+      path: /var/run 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: droneci
+  name: droneci
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: droneci
