@@ -18,8 +18,9 @@ import (
 )
 
 var (
-	TestAccountPath_A = accounts.DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 8}
-	TestAccountPath_B = accounts.DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 9}
+	TestAccountPath_A = accounts.DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 7}
+	TestAccountPath_B = accounts.DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 8}
+	TestAccountPath_C = accounts.DerivationPath{0x80000000 + 44, 0x80000000 + 60, 0x80000000 + 0, 0, 9}
 )
 
 type TestConfig struct {
@@ -38,8 +39,8 @@ func TestProvider(t *testing.T) {
 	require.NoError(t, err, "should have no error creating new provider")
 
 	// run test runners
-	testDeriveAccounts(provider, t)
-	testTransferEther(provider, t)
+	t.Run("derive accounts", func(t *testing.T) { testDeriveAccounts(provider, t) })
+	t.Run("transfer ether", func(t *testing.T) { testTransferEther(provider, t) })
 }
 
 func testDeriveAccounts(provider *Provider, t *testing.T) {
