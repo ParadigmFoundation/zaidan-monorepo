@@ -2,6 +2,7 @@ package coinbase
 
 import (
 	"context"
+	"sync"
 	"testing"
 
 	"github.com/gorilla/websocket"
@@ -120,10 +121,14 @@ func TestCoinbaseChanges(t *testing.T) {
 }
 
 func TestCoinbaseReconnection(t *testing.T) {
+	connMutex := sync.Mutex{}
 	connReady := make(chan struct{})
 	var conn *websocket.Conn
 	ws := exchangetest.NewWS(t, func(t *testing.T, c *websocket.Conn) {
+		connMutex.Lock()
 		conn = c
+		connMutex.Unlock()
+
 		connReady <- struct{}{}
 	})
 	url, closer := ws.Start()
@@ -136,6 +141,9 @@ func TestCoinbaseReconnection(t *testing.T) {
 	go x.Subscribe(ctx, exchangetest.NewFakeSubscriber(nil), "BTC/USD")
 	<-connReady
 
+	connMutex.Lock()
 	conn.Close()
+	connMutex.Unlock()
+
 	<-connReady
 }

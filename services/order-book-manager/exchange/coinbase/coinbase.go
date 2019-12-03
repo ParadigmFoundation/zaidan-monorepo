@@ -60,16 +60,17 @@ func coinbase2symbol(s string) string { return strings.Replace(s, "-", "/", 1) }
 
 func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
 	for {
-		errCh := make(chan error)
-		go func() { errCh <- x.subscribe(ctx, sub, syms...) }()
+		err := x.subscribe(ctx, sub, syms...)
+		if err != nil {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
 
-		select {
-		case err := <-errCh:
 			log.Printf("Coinbase: Error: %+v", err)
 			time.Sleep(x.retryAfter)
-		case <-ctx.Done():
-			return ctx.Err()
+			continue
 		}
+		return nil
 	}
 }
 
@@ -98,30 +99,36 @@ func (x *Exchange) subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 	}
 
 	for {
-		var msg coinbasepro.Message
-		if err := ws.ReadJSON(&msg); err != nil {
+		if err := x.handleJSON(ws, sub); err != nil {
+			return err
+		}
+	}
+}
+
+func (x *Exchange) handleJSON(ws *websocket.Conn, sub exchange.Subscriber) error {
+	var msg coinbasepro.Message
+	if err := ws.ReadJSON(&msg); err != nil {
+		return err
+	}
+
+	var fn func(string, *obm.Update) error
+	switch msg.Type {
+	case "snapshot":
+		fn = sub.OnSnapshot
+	case "l2update":
+		fn = sub.OnUpdate
+	}
+
+	if fn != nil {
+		updates, err := newUpdates(&msg)
+		if err != nil {
 			return err
 		}
 
-		var fn func(string, *obm.Update) error
-		switch msg.Type {
-		case "snapshot":
-			fn = sub.OnSnapshot
-		case "l2update":
-			fn = sub.OnUpdate
-		}
-
-		if fn != nil {
-			updates, err := newUpdates(&msg)
-			if err != nil {
-				return err
-			}
-
-			if err := fn("coinbase", updates); err != nil {
-				return err
-			}
-		}
+		return fn("coinbase", updates)
 	}
+
+	return nil
 }
 
 // NewUpdate returns a new obm.Update given a coinbasepro.Message
