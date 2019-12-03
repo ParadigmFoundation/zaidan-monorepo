@@ -2,10 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"strings"
 
 	flag "github.com/spf13/pflag"
@@ -14,33 +12,9 @@ import (
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/coinbase"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/gemini"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store/mem"
 )
-
-type Server struct {
-	store store.Store
-}
-
-func NewServer(store store.Store) *Server {
-	return &Server{store: store}
-}
-
-func (srv *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	split := strings.Split(r.URL.Path, "/")
-	if len(split) != 4 {
-		http.Error(w, "Invalid Path, try '/coinbase/BTC/USD'", 400)
-		return
-	}
-
-	sym := strings.Join(split[2:4], "/")
-	ob, err := srv.store.OrderBook(split[1], sym)
-	if err != nil {
-		http.Error(w, err.Error(), 404)
-	}
-
-	json.NewEncoder(w).Encode(ob)
-}
 
 type xchange struct {
 	name    string
@@ -91,10 +65,10 @@ func main() {
 	}
 
 	store := mem.New()
-	srv := NewServer(store)
+	srv := grpc.NewServer(store)
 
 	log.Printf("API Listening on %s", cfg.bind)
-	go func() { http.ListenAndServe(cfg.bind, srv) }()
+	go func() { srv.Listen(cfg.bind) }()
 
 	errCh := make(chan error)
 	ctx := context.Background()
@@ -121,4 +95,5 @@ func main() {
 	}
 
 	log.Fatal(<-errCh)
+	srv.Stop()
 }

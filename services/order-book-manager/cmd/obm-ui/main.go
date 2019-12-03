@@ -12,54 +12,29 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/coinbase"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/gemini"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store/mem"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/grpc"
 )
 
 func main() {
+	addr := flag.String("addr", "localhost:8000", "Server address")
 	xChng := flag.String("exchange", "coinbase", "Exchange [coinbase,binance,gemini]")
 	symbol := flag.String("symbol", "BTC/USD", "Currency pair symbol")
 	flag.Parse()
 
-	store := mem.New()
-
-	var xch exchange.Exchange
-	switch *xChng {
-	case "coinbase":
-		xch = coinbase.New()
-	case "binance":
-		xch = binance.New()
-	case "gemini":
-		xch = gemini.New()
-	default:
-		log.Fatalf("unknown exchange %s. Available exchanges: [coinbase,binance]", *xChng)
+	ctx := context.Background()
+	c, err := grpc.NewClient(ctx, *addr)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	errCh := make(chan error)
-	ctx := context.Background()
-	go func() {
-		err := xch.Subscribe(ctx, store, *symbol)
-		if err != nil {
-			errCh <- err
-			return
-		}
-	}()
-
 	for {
-		select {
-		case err := <-errCh:
+		time.After(100 * time.Millisecond)
+		ob, err := c.OrderBook(ctx, &obm.OrderBookRequest{Exchange: *xChng, Symbol: *symbol})
+		if err != nil {
 			log.Fatal(err)
-		case <-time.After(100 * time.Millisecond):
-			ob, err := store.OrderBook(*xChng, *symbol)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			render(ob, 1000)
 		}
+
+		render(ob, 1000)
 	}
 }
 
