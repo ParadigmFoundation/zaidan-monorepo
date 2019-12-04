@@ -12,28 +12,72 @@ import (
 	"github.com/adshao/go-binance"
 )
 
+/*
+How to manage a local order book correctly:
+https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly
+
+1. Open a stream to wss://stream.binance.com:9443/ws/bnbbtc@depth.
+2. Buffer the events you receive from the stream.
+3. Get a depth snapshot from binance.com/api/v1/depth?symbol=BNBBTC&limit=1000 .
+4. Drop any event where u is <= lastUpdateId in the snapshot.
+5. The first processed event should have U <= lastUpdateId+1 AND u >= lastUpdateId+1.
+6. While listening to the stream, each new event's U should be equal to the previous event's u+1.
+7. The data in each event is the absolute quantity for a price level.
+8. If the quantity is 0, remove the price level.
+9. Receiving an event that removes a price level that is not in your local order book can happen and is normal.
+*/
 type Exchange struct {
 	sMutex  sync.RWMutex
 	symbols map[string]string
+
+	// events
+	events chan *binance.WsDepthEvent
 }
 
 func New() *Exchange {
 	return &Exchange{
 		symbols: make(map[string]string),
+		events:  make(chan *binance.WsDepthEvent, 1000),
 	}
 }
 
-func (x *Exchange) depthHandler(sub exchange.Subscriber) binance.WsDepthHandler {
-	fn := func(event *binance.WsDepthEvent) {
+func (x *Exchange) handleEvent(symbol string, sub exchange.Subscriber) error {
+	// we use depth to get the snapshot, id  and secret
+	depth := binance.NewClient("", "").NewDepthService()
+	depth.Symbol(symbol)
+	depth.Limit(1000)
+
+	res, err := depth.Do(context.Background())
+	if err != nil {
+		return err
+	}
+
+	// Turn the response into events so that we can reuse our newUpdates function
+	updates, err := x.newUpdates(&binance.WsDepthEvent{
+		Symbol: symbol,
+		Asks:   res.Asks,
+		Bids:   res.Bids,
+	})
+	if err != nil {
+		return err
+	}
+	if err := sub.OnSnapshot("binance", updates); err != nil {
+		return err
+	}
+
+	// read events and update the Subscriber
+	for {
+		event := <-x.events
+		if event.UpdateID <= res.LastUpdateID {
+			log.Printf("skipping event %d / %d", event.UpdateID, res.LastUpdateID)
+			continue
+		}
 		update, err := x.newUpdates(event)
 		if err != nil {
-			log.Printf("depthHandler: ERROR: %v", err)
-			return
+			return err
 		}
 		sub.OnUpdate("binance", update)
 	}
-
-	return fn
 }
 
 func (x *Exchange) newSymbol(s string) string {
@@ -56,6 +100,10 @@ func (x *Exchange) symbol(s string) string {
 }
 
 func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
+	eventHandler := func(event *binance.WsDepthEvent) {
+		x.events <- event
+	}
+
 	errHandler := func(err error) {
 		log.Printf("ERROR: %+v", err)
 	}
@@ -70,11 +118,13 @@ func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 	}
 	log.Printf("Binance querying: %q", syms)
 	for _, sym := range syms {
-		done, stop, err := binance.WsDepthServe(sym, x.depthHandler(sub), errHandler)
+		done, stop, err := binance.WsDepthServe(sym, eventHandler, errHandler)
 
 		if err != nil {
 			return fmt.Errorf("Subscribe(): %w", err)
 		}
+
+		x.handleEvent(sym, sub)
 
 		go func() {
 			select {
