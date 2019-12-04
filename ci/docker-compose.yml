@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  drone:
+    image: drone/drone:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/lib/drone:/data
+    restart: always
+    env_file:
+      - drone.env
+    environment:
+      - DRONE_SERVER_HOST=ci.paradigm.dev
+      - DRONE_SERVER_PROTO=https
+      - DRONE_TLS_AUTOCERT=true
+      - DRONE_AGENTS_ENABLED=true
+      - DRONE_REPOSITORY_FILTER=ParadigmFoundation
+      - DRONE_USER_CREATE=username:gchaincl,admin:true
+      - DRONE_JSONNET_ENABLED=true
+      - DRONE_GITHUB_SERVER=https://github.com
+
+  runner:
+    image: drone/drone-runner-docker:1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 3000
+    restart: always
+    environment:
+      - DRONE_RPC_HOST=drone
+      - DRONE_RUNNER_CAPACITY=10
+    env_file:
+      - drone.env
