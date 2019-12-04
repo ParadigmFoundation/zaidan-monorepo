@@ -13,6 +13,6 @@ steps:
     - make test
 
 volumes:
-  - name: gocache
+  - name: gomod
     host: 
-      path: /tmp/drone/gocache
+      path: /tmp/drone/zaidan/gomod
