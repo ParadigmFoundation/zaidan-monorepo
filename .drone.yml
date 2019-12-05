@@ -7,7 +7,7 @@ steps:
 - name: test
   image: golang:1.13
   volumes:
-  - name: gocache
+  - name: gomod
     path: /go/pkg/mod
   commands:
     - make test
