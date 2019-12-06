@@ -1,6 +1,8 @@
 package zeroex
 
-import "golang.org/x/crypto/sha3"
+import (
+	"golang.org/x/crypto/sha3"
+)
 
 // keccak256 calculates and returns the Keccak256 hash of the input data.
 func keccak256(data ...[]byte) []byte {

@@ -2,13 +2,21 @@ package eth
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/zeroex"
+
+	"golang.org/x/crypto/sha3"
+
+	"github.com/btcsuite/btcd/btcec"
 
 	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
+
 	hdwallet "github.com/miguelmota/go-ethereum-hdwallet"
 )
 
@@ -78,6 +86,49 @@ func (pvr *Provider) SignTx(account accounts.Account, tx *types.Transaction) (*t
 	return pvr.hw.SignTx(account, tx, id)
 }
 
+// Primarily taken from: https://github.com/0xProject/0x-mesh/blob/bd3060d3efaab759913c4de2152c2ef4e5940301/ethereum/signer/sign.go
+// EthSign implements zeroex.Signer
+func (pvr *Provider) EthSign(message []byte, signer common.Address) (*zeroex.ECSignature, error) {
+	var acct accounts.Account
+	for _, account := range pvr.hw.Accounts() {
+		if account.Address == signer {
+			acct = account
+		}
+	}
+
+	if acct.Address != signer {
+		return nil, fmt.Errorf("invalid signer: unsupported account")
+	}
+
+	// Add message prefix: "\x19Ethereum Signed Message:\n"${message length}
+	messageWithPrefix, _ := textAndHash(message)
+
+	privateKey, err := pvr.hw.PrivateKey(acct)
+	if err != nil {
+		return nil, err
+	}
+
+	signatureBytes, err := sign(messageWithPrefix, privateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	vParam := signatureBytes[64]
+	if vParam == byte(0) {
+		vParam = byte(27)
+	} else if vParam == byte(1) {
+		vParam = byte(28)
+	}
+
+	ecSignature := &zeroex.ECSignature{
+		V: vParam,
+		R: common.BytesToHash(signatureBytes[0:32]),
+		S: common.BytesToHash(signatureBytes[32:64]),
+	}
+
+	return ecSignature, nil
+}
+
 // Accounts gets currently supported accounts.
 func (pvr *Provider) Accounts() []accounts.Account { return pvr.hw.Accounts() }
 
@@ -133,4 +184,52 @@ func (pvr *Provider) ensureNonce(acct accounts.Account, tx *types.Transaction) e
 	}
 
 	return nil
+}
+
+// FROM: https://github.com/ethereum/go-ethereum/blob/master/crypto/signature_nocgo.go
+//
+// Original comment:
+// Sign calculates an ECDSA signature.
+//
+// This function is susceptible to chosen plaintext attacks that can leak
+// information about the private key that is used for signing. Callers must
+// be aware that the given hash cannot be chosen by an adversery. Common
+// solution is to hash any input before calculating the signature.
+//
+// The produced signature is in the [R || S || V] format where V is 0 or 1.
+func sign(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	if len(hash) != 32 {
+		return nil, fmt.Errorf("hash is required to be exactly 32 bytes (%d)", len(hash))
+	}
+	if prv.Curve != btcec.S256() {
+		return nil, fmt.Errorf("private key curve is not secp256k1")
+	}
+	sig, err := btcec.SignCompact(btcec.S256(), (*btcec.PrivateKey)(prv), hash, false)
+	if err != nil {
+		return nil, err
+	}
+	// Convert to Ethereum signature format with 'recovery id' v at the end.
+	v := sig[0] - 27
+	copy(sig, sig[1:])
+	sig[64] = v
+	return sig, nil
+}
+
+// FROM: https://github.com/0xProject/0x-mesh/blob/bd3060d3efaab759913c4de2152c2ef4e5940301/ethereum/signer/sign.go#L180-L194
+//
+// Original comment:
+// textAndHash is a helper function that calculates a hash for the given message that can be
+// safely used to calculate a signature from.
+//
+// The hash is calulcated as
+//   keccak256("\x19Ethereum Signed Message:\n"${message length}${message}).
+//
+// This gives context to the signed message and prevents signing of transactions.
+func textAndHash(data []byte) ([]byte, string) {
+	msg := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(data), string(data))
+	hasher := sha3.NewLegacyKeccak256()
+	// Note: Write will never return an error here. We added placeholders in order
+	// to satisfy the linter.
+	_, _ = hasher.Write([]byte(msg))
+	return hasher.Sum(nil), msg
 }
