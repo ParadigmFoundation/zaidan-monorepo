@@ -16,16 +16,13 @@ type TimeResponse struct {
 
 // MarshalJSON implements json.Marshaller. TimeResponse is marshalled as an array
 func (tr *TimeResponse) MarshalJSON() ([]byte, error) {
-	return json.Marshal(map[string]interface{}{
-		"time": tr.dealerTime,
-		"diff": tr.diff,
-	})
+	return json.Marshal([]interface{}{tr.dealerTime, tr.diff})
 }
 
 // Time implements the dealer_time method
 func (svc *Service) Time(clientTime *float64) *TimeResponse {
-	diff := new(float64)
 	ts := timeutil.TimestampNow()
+	diff := new(float64)
 
 	// if client has specified their local timestamp, we calculate the difference
 	if clientTime != nil {
