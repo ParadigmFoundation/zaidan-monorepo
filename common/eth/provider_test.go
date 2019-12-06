@@ -24,7 +24,7 @@ var (
 )
 
 type TestConfig struct {
-	Ethurl   string `env:"ETHEREUM_JSONRPC_URL" envDefault:"http://localhost:8545"`
+	Ethurl   string `env:"ETHEREUM_JSONRPC_URL" envDefault:"http://0x-snapshot:8545"`
 	Mnemonic string `env:"ETHEREUM_MNEMONIC" envDefault:"concert load couple harbor equip island argue ramp clarify fence smart topic"`
 }
 
