@@ -1,5 +1,7 @@
 SNAPSHOT_IMAGE_URL=gcr.io/zaidan-eth-net/0x-snapshot:latest
 
+ci: run-test
+
 test: ganache-start run-test ganache-stop
 
 run-test:
