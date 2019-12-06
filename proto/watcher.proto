@@ -8,8 +8,7 @@ message WatchTransactionRequest {
 
 message WatchTransactionResponse {
     string txHash = 1;
-    string txStatus = 2;
-    bool isPending = 3;
+    bool isPending = 2;
 }
 
 service Watcher {
