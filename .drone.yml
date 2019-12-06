@@ -12,7 +12,12 @@ steps:
   - name: gocache
     path: /root/.cache/go-build
   commands:
-    - make test
+    - make ci
+
+services:
+- name: 0x-snapshot
+  pull: always
+  image: gcr.io/zaidan-eth-net/0x-snapshot:v3
 
 volumes:
   - name: gomod
@@ -21,3 +26,8 @@ volumes:
   - name: gocache
     host:
       path: /tmp/drone/zaidan/gocache
+
+trigger:
+  event:
+  - pull_request
+  
