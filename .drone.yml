@@ -23,3 +23,7 @@ volumes:
   - name: gomod
     host: 
       path: /tmp/drone/zaidan/gomod
+
+trigger:
+  event:
+  - pull_request
