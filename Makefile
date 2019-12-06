@@ -4,9 +4,9 @@ build:
 .PHONY: test
 test:
 	$(MAKE) -C ./services/order-book-manager test
-	$(MAKE) -C ./common test
+	$(MAKE) -C ./services/hot-wallet test
 
 .PHONY: ci
 ci:
 	$(MAKE) -C ./services/order-book-manager ci
-	$(MAKE) -C ./common ci
+	$(MAKE) -C ./services/hot-wallet ci
