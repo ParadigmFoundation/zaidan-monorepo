@@ -53,7 +53,11 @@ func (tm *ERC20TokenManager) BalanceOf(token common.Address, owner common.Addres
 		return nil, err
 	}
 
-	return session.BalanceOf(owner)
+	bal, err := session.BalanceOf(owner)
+	if err != nil {
+		return nil, err
+	}
+	return bal, nil
 }
 
 // Approve calls Approve on token for owner, approving spender to spend value
@@ -73,9 +77,6 @@ func (tm *ERC20TokenManager) Approve(token common.Address, spender common.Addres
 
 // adds a new tracked ERC-20 token session
 func (tm *ERC20TokenManager) addToken(address common.Address) error {
-	tm.mu.Lock()
-	defer tm.mu.Unlock()
-
 	token, err := NewERC20Token(address, tm.provider.eth)
 	if err != nil {
 		return err
@@ -99,9 +100,6 @@ func (tm *ERC20TokenManager) addToken(address common.Address) error {
 
 // gets a token session for a given address, adds it if it doesn't exist
 func (tm *ERC20TokenManager) tokenSession(token common.Address) (*ERC20TokenSession, error) {
-	tm.mu.Lock()
-	defer tm.mu.Unlock()
-
 	session, has := tm.erc20s[token]
 	if has {
 		return session, nil
