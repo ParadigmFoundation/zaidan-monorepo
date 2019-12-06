@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "proto";
+
+message WatchTransactionRequest {
+    string txHash = 1;
+}
+
+message WatchTransactionResponse {
+    string txHash = 1;
+    string txStatus = 2;
+    bool isPending = 3;
+}
+
+service Watcher {
+    rpc WatchTransaction(WatchTransactionRequest) returns (WatchTransactionResponse);
+}
