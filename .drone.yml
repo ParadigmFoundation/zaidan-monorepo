@@ -7,8 +7,10 @@ steps:
 - name: test
   image: golang:1.13
   volumes:
-  - name: gocache
+  - name: gomod
     path: /go/pkg/mod
+  - name: gocache
+    path: /root/.cache/go-build
   commands:
     - make test
 
@@ -16,3 +18,6 @@ volumes:
   - name: gomod
     host: 
       path: /tmp/drone/zaidan/gomod
+  - name: gocache
+    host:
+      path: /tmp/drone/zaidan/gocache
