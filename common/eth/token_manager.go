@@ -32,6 +32,7 @@ func NewERC20TokenManager(provider *Provider, account accounts.Account, tokens [
 	mgr := &ERC20TokenManager{
 		provider: provider,
 		opts:     bind.NewKeyedTransactor(key),
+		erc20s:   make(map[common.Address]*ERC20TokenSession),
 	}
 
 	if tokens != nil {
