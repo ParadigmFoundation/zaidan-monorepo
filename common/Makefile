@@ -1,5 +1,6 @@
 SNAPSHOT_IMAGE_URL=gcr.io/zaidan-eth-net/0x-snapshot:latest
 
+ci: export ETHEREUM_JSONRPC_URL = http://0x-snapshot:8545
 ci: run-test
 
 test: ganache-start run-test ganache-stop
@@ -13,3 +14,5 @@ ganache-start:
 
 ganache-stop:
 	docker kill zrx
+
+.PHONY: ci test run-test ganache-start ganache-stop
