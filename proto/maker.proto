@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+message GetQuoteRequest {
+    string clientAsset = 1;
+    string dealerAsset = 2;
+    string clientSize = 3;
+    string dealerSize = 4;
+    string takerAddress = 5;
+}
+
+message QuoteResponse {
+    string id = 1;
+    string expiration = 2;
+    string clientAsset = 3;
+    string dealerAsset = 4;
+    string clientSize = 5;
+    string dealerSize = 6;
+    string fee = 7;
+}
+
+message CheckQuoteRequest {
+    string quoteId = 1;
+    string orderHash = 2;
+}
+
+message Bool {
+    string val = 1;
+}
+
+message OrderStatusUpdateRequest {
+    string orderHash = 1;
+    string orderStatus = 2;
+}
+
+message Status {
+    string status = 1;
+}
+
+service Maker {
+  rpc GetQuote(GetQuoteRequest) returns (QuoteResponse);
+  rpc CheckQuote(CheckQuoteRequest) returns (Bool);
+  rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (Status);
+
+}
