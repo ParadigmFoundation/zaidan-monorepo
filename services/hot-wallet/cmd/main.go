@@ -1,23 +1,29 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/grpc"
+
 	"github.com/ethereum/go-ethereum/accounts"
 
 	"github.com/caarlos0/env/v6"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/eth"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/zeroex"
+	"github.com/0xProject/0x-mesh/zeroex"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/common/eth"
 )
 
 // a test server
 type server struct {
 	pvr *eth.Provider
 	mux *http.ServeMux
+
+	gsvr *grpc.Server
 }
 
 // test server config
@@ -28,16 +34,65 @@ type config struct {
 
 func newServer(provider *eth.Provider) *server {
 	mux := http.NewServeMux()
-	svr := &server{pvr: provider, mux: mux}
+	gsvr := grpc.NewServer(provider, 0, 0)
+	svr := &server{pvr: provider, mux: mux, gsvr: gsvr}
 
 	svr.mux.HandleFunc("/order/hash", svr.hashOrder)
 	svr.mux.HandleFunc("/order/sign", svr.signOrder)
+	svr.mux.HandleFunc("/order/marshal", svr.marshalOrder)
+	svr.mux.HandleFunc("/order/create", svr.createOrder)
 
 	return svr
 }
 
 func (s *server) start(path string, errChan chan<- error) {
 	errChan <- http.ListenAndServe(path, s.mux)
+}
+
+func (s *server) createOrder(w http.ResponseWriter, r *http.Request) {
+	var createOrderRequest *hw.CreateOrderRequest
+
+	if err := json.NewDecoder(r.Body).Decode(&createOrderRequest); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	signedOrderResponse, err := s.gsvr.CreateOrder(context.Background(), createOrderRequest)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	output, err := json.Marshal(signedOrderResponse.Order)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprintf(w, string(output))
+}
+
+func (s *server) marshalOrder(w http.ResponseWriter, r *http.Request) {
+	var order hw.Order
+
+	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	zrxOrder, err := order.ToZeroExOrder()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	hash, err := zrxOrder.ComputeOrderHash()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprintf(w, hash.Hex())
 }
 
 func (s *server) hashOrder(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +147,7 @@ func main() {
 	errChan := make(chan error)
 	server := newServer(provider)
 	go func() {
-		server.start("0.0.0.0:8000", errChan)
+		server.start("0.0.0.0:7999", errChan)
 	}()
 
 	log.Fatal(<-errChan)
