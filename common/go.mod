@@ -3,7 +3,7 @@ module github.com/ParadigmFoundation/zaidan-monorepo/common
 go 1.13
 
 require (
-	github.com/0xProject/0x-mesh v6.1.2-beta+incompatible
+	github.com/0xProject/0x-mesh v0.0.0-20191204233214-2a293766deaa
 	github.com/btcsuite/btcd v0.20.1-beta
 	github.com/caarlos0/env/v6 v6.1.0
 	github.com/ethereum/go-ethereum v1.9.9

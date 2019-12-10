@@ -1,4 +1,6 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+github.com/0xProject/0x-mesh v0.0.0-20191204233214-2a293766deaa h1:b+hGk/CQvyB0xxmiBbW2TLCMWyEYRdUMP1txXWzX1XI=
+github.com/0xProject/0x-mesh v0.0.0-20191204233214-2a293766deaa/go.mod h1:YwtDLcy+HUSTBl0O+aHEkl39rsGW+/18rJWtEx4sgAA=
 github.com/0xProject/0x-mesh v6.1.2-beta+incompatible h1:Ekhc//4kMc1w/oUf2yYEApS2c/TX9YV8rzN293t2Rro=
 github.com/0xProject/0x-mesh v6.1.2-beta+incompatible/go.mod h1:YwtDLcy+HUSTBl0O+aHEkl39rsGW+/18rJWtEx4sgAA=
 github.com/Azure/azure-pipeline-go v0.2.1/go.mod h1:UGSo8XybXnIGZ3epmeBw7Jdz+HiUVpqIlpz/HKHylF4=
