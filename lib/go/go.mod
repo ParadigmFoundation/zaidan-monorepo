@@ -1,4 +1,4 @@
-module github.com/ParadigmFoundation/zaidan-monorepo/common
+module github.com/ParadigmFoundation/zaidan-monorepo/lib/go
 
 go 1.13
 
