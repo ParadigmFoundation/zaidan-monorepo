@@ -62,7 +62,7 @@ func testTransferEther(provider *Provider, t *testing.T) {
 	// prep transaction
 	transferAmt, ok := new(big.Int).SetString("10000000000000000000", 10) // 1e19 wei (10 ether)
 	assert.True(t, ok, "should be able to set transfer amount as 10 ether")
-	nonce, err := provider.nonce(fromAccount)
+	nonce, err := provider.Nonce(context.Background(), fromAccount)
 	require.NoError(t, err, "should be no error getting nonce")
 	expectedNonce, err := provider.eth.NonceAt(context.Background(), fromAccount.Address, nil)
 	require.NoError(t, err, "should be no error getting nonce")
@@ -70,11 +70,11 @@ func testTransferEther(provider *Provider, t *testing.T) {
 	tx := types.NewTransaction(nonce, toAccount.Address, transferAmt, 21000, big.NewInt(1), nil)
 
 	// sign transaction
-	stx, err := provider.SignTx(fromAccount, tx)
+	stx, err := provider.SignTx(context.Background(), fromAccount, tx)
 	require.NoError(t, err, "should be no error signing transaction")
 
 	// send transaction
-	err = provider.SendTx(stx)
+	err = provider.SendTx(context.Background(), stx)
 	require.NoError(t, err, "should be no error sending transaction")
 
 	// wait for a block then get post-transfer balances
