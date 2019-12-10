@@ -14,6 +14,7 @@ services:
     environment:
       - DRONE_SERVER_HOST=ci.paradigm.dev
       - DRONE_SERVER_PROTO=https
+      - DRONE_SERVER_PORT=443
       - DRONE_TLS_AUTOCERT=true
       - DRONE_AGENTS_ENABLED=true
       - DRONE_REPOSITORY_FILTER=ParadigmFoundation
@@ -22,7 +23,7 @@ services:
       - DRONE_GITHUB_SERVER=https://github.com
 
   runner:
-    image: drone/drone-runner-docker:1
+    image: drone/drone-runner-docker:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
