@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+message Order {
+    uint64 chainId = 1;
+    string exchangeAddress = 2;
+    string makerAddress = 3;
+    string makerAssetData = 4;
+    string makerFeeAssetData = 5;
+    string makerAssetAmount = 6;
+    string makerFee = 7;
+    string takerAddress = 8;
+    string takerAssetData = 9;
+    string takerFeeAssetData = 10;
+    string takerAssetAmount = 11;
+    string takerFee = 12;
+    string senderAddress = 13;
+    string feeRecipientAddress = 14;
+    string expirationTimeSeconds = 15;
+    string salt = 16;
+}
+
+message SignedOrder {
+    uint64 chainId = 1;
+    string exchangeAddress = 2;
+    string makerAddress = 3;
+    string makerAssetData = 4;
+    string makerFeeAssetData = 5;
+    string makerAssetAmount = 6;
+    string makerFee = 7;
+    string takerAddress = 8;
+    string takerAssetData = 9;
+    string takerFeeAssetData = 10;
+    string takerAssetAmount = 11;
+    string takerFee = 12;
+    string senderAddress = 13;
+    string feeRecipientAddress = 14;
+    string expirationTimeSeconds = 15;
+    string salt = 16;
+    string signature = 17;
+}
+
+message SignOrderRequest {
+    Order order = 1;
+}
+
+message SignOrderResponse {
+    SignedOrder signedOrder = 1;
+}
+
+message HashOrderRequest {
+    Order order = 1;
+}
+
+message HashOrderResponse {
+    bytes hash = 1;
+}
+
+message CreateOrderRequest {
+    string takerAddress = 1;
+    string makerAssetAddress = 2;
+    string takerAssetAddress = 3;
+    string makerAssetAmount = 4;
+    string takerAssetAmount = 5;
+    string expirationTimeSeconds = 6;
+}
+
+message CreateOrderResponse {
+    SignedOrder order = 1;
+}
+
+service HotWallet {
+    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
+    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+}
