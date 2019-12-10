@@ -1,6 +1,8 @@
 package eth
 
 import (
+	"context"
+	"math"
 	"math/big"
 	"sync"
 
@@ -61,14 +63,14 @@ func (tm *ERC20TokenManager) BalanceOf(token common.Address, owner common.Addres
 }
 
 // Approve calls Approve on token for owner, approving spender to spend value
-func (tm *ERC20TokenManager) Approve(token common.Address, spender common.Address, value *big.Int) (*types.Transaction, error) {
+func (tm *ERC20TokenManager) Approve(ctx context.Context, token common.Address, spender common.Address, value *big.Int) (*types.Transaction, error) {
 	session, err := tm.tokenSession(token)
 	if err != nil {
 		return nil, err
 	}
 
 	stx, err := session.Approve(spender, value)
-	if err := tm.provider.SendTx(stx); err != nil {
+	if err := tm.provider.SendTx(ctx, stx); err != nil {
 		return stx, err
 	}
 
@@ -88,9 +90,11 @@ func (tm *ERC20TokenManager) addToken(address common.Address) error {
 			Pending: true,
 		},
 		TransactOpts: bind.TransactOpts{
-			From:     tm.opts.From,
-			Signer:   tm.opts.Signer,
-			GasLimit: uint64(500000),
+			From:   tm.opts.From,
+			Signer: tm.opts.Signer,
+
+			// todo(@hrharder): reconsider where this value should come from
+			GasLimit: math.MaxUint64,
 		},
 	}
 
