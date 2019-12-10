@@ -3,7 +3,7 @@ package grpc
 import (
 	"context"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw"
+	hw "github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
 	"google.golang.org/grpc"
 )
 

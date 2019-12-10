@@ -11,8 +11,8 @@ import (
 
 	"github.com/0xProject/0x-mesh/zeroex"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/common/eth"
+	hw "github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
+	"github.com/ParadigmFoundation/zaidan-monorepo/common/eth"
 	"google.golang.org/grpc"
 )
 

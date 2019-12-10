@@ -7,15 +7,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/grpc"
 
 	"github.com/ethereum/go-ethereum/accounts"
 
 	"github.com/caarlos0/env/v6"
 
 	"github.com/0xProject/0x-mesh/zeroex"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hw/common/eth"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
+	"github.com/ParadigmFoundation/zaidan-monorepo/common/eth"
 )
 
 // a test server
