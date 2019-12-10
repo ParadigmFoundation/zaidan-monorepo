@@ -15,7 +15,7 @@ import (
 	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
-	"github.com/ParadigmFoundation/zaidan-monorepo/common/eth"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
 )
 
 // a test server

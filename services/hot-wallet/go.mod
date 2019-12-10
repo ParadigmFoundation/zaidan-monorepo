@@ -4,15 +4,13 @@ go 1.13
 
 require (
 	github.com/0xProject/0x-mesh v0.0.0-20191204233214-2a293766deaa
-	github.com/ParadigmFoundation/zaidan-monorepo/common v0.0.0-00010101000000-000000000000
+	github.com/ParadigmFoundation/zaidan-monorepo/lib/go v0.0.0-00010101000000-000000000000
 	github.com/caarlos0/env/v6 v6.1.0
 	github.com/ethereum/go-ethereum v1.9.9
 	github.com/golang/protobuf v1.3.2
-	github.com/miguelmota/go-ethereum-hdwallet v0.0.0-20191015012459-abf3d7f7f00c // indirect
-	github.com/multiformats/go-multiaddr-dns v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.4.2 // indirect
 	github.com/stretchr/testify v1.4.0
 	google.golang.org/grpc v1.25.1
 )
 
-replace github.com/ParadigmFoundation/zaidan-monorepo/common => ../../common
+replace github.com/ParadigmFoundation/zaidan-monorepo/lib/go => ../../lib/go
