@@ -3,12 +3,14 @@ syntax = "proto3";
 option go_package = "proto";
 
 message WatchTransactionRequest {
-    string txHash = 1;
+    string quoteId = 1;
+    string txHash = 2;
 }
 
 message WatchTransactionResponse {
-    string txHash = 1;
-    bool isPending = 2;
+    string quoteId = 1;
+    string txHash = 2;
+    bool isPending = 3;
 }
 
 service Watcher {
