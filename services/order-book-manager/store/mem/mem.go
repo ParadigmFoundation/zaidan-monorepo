@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 )
 
@@ -82,25 +83,25 @@ func (s *Store) doUpdate(name string, update *obm.Update) error {
 	return nil
 }
 
-func (s *Store) OrderBook(exchange, symbol string) (*obm.OrderBookResponse, error) {
+func (s *Store) OrderBook(exchange, symbol string) (*grpc.OrderBookResponse, error) {
 	s.m.RLock()
 	defer s.m.RUnlock()
 
 	mkt := s.findOrCreateMarket(exchange, symbol)
 
-	var asks obm.OrderBookEntriesByPriceAsc
+	var asks grpc.OrderBookEntriesByPriceAsc
 	for p, q := range mkt.asks {
-		asks = append(asks, &obm.OrderBookEntry{Price: p, Quantity: q})
+		asks = append(asks, &grpc.OrderBookEntry{Price: p, Quantity: q})
 	}
 	sort.Sort(asks)
 
-	var bids obm.OrderBookEntriesByPriceDesc
+	var bids grpc.OrderBookEntriesByPriceDesc
 	for p, q := range mkt.bids {
-		bids = append(bids, &obm.OrderBookEntry{Price: p, Quantity: q})
+		bids = append(bids, &grpc.OrderBookEntry{Price: p, Quantity: q})
 	}
 	sort.Sort(bids)
 
-	ob := &obm.OrderBookResponse{
+	ob := &grpc.OrderBookResponse{
 		Exchange: exchange,
 		Symbol:   symbol,
 		Asks:     asks,

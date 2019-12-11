@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
 )
 
@@ -20,7 +20,7 @@ func NewServer(store store.Store) *Server {
 		store: store,
 		grpc:  grpc.NewServer(),
 	}
-	obm.RegisterOrderBookManagerServer(srv.grpc, srv)
+	types.RegisterOrderBookManagerServer(srv.grpc, srv)
 	return srv
 }
 
@@ -35,6 +35,6 @@ func (s *Server) Listen(bind string) error {
 
 func (s *Server) Stop() { s.grpc.GracefulStop() }
 
-func (s *Server) OrderBook(ctx context.Context, req *obm.OrderBookRequest) (*obm.OrderBookResponse, error) {
+func (s *Server) OrderBook(ctx context.Context, req *types.OrderBookRequest) (*types.OrderBookResponse, error) {
 	return s.store.OrderBook(req.Exchange, req.Symbol)
 }

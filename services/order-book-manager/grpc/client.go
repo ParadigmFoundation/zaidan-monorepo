@@ -5,11 +5,11 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 )
 
 type Client struct {
-	obm.OrderBookManagerClient
+	types.OrderBookManagerClient
 }
 
 func NewClient(ctx context.Context, addr string) (*Client, error) {
@@ -19,6 +19,6 @@ func NewClient(ctx context.Context, addr string) (*Client, error) {
 	}
 
 	return &Client{
-		obm.NewOrderBookManagerClient(conn),
+		types.NewOrderBookManagerClient(conn),
 	}, nil
 }

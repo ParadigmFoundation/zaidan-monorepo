@@ -7,15 +7,14 @@ import (
 	"log"
 	"net/http"
 
-
 	"github.com/ethereum/go-ethereum/accounts"
 
 	"github.com/caarlos0/env/v6"
 
 	"github.com/0xProject/0x-mesh/zeroex"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/grpc"
 )
 
 // a test server
@@ -50,7 +49,7 @@ func (s *server) start(path string, errChan chan<- error) {
 }
 
 func (s *server) createOrder(w http.ResponseWriter, r *http.Request) {
-	var createOrderRequest *hw.CreateOrderRequest
+	var createOrderRequest *types.CreateOrderRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&createOrderRequest); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -73,7 +72,7 @@ func (s *server) createOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) marshalOrder(w http.ResponseWriter, r *http.Request) {
-	var order hw.Order
+	var order types.Order
 
 	if err := json.NewDecoder(r.Body).Decode(&order); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
