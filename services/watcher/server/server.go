@@ -6,6 +6,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
+	"strings"
 )
 
 type WatcherServer struct {
@@ -15,7 +16,9 @@ type WatcherServer struct {
 
 func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransactionRequest) (*pb.WatchTransactionResponse, error) {
 	log.Printf("Received: %v", in.TxHash)
-	_, isPending, err:= s.GethClient.TransactionByHash(context.Background(), common.HexToHash(in.TxHash))
+	txHash := common.HexToHash(strings.TrimSpace(in.TxHash))
+
+	_, isPending, err:= s.GethClient.TransactionByHash(context.Background(), txHash)
 	if err != nil {
 		return nil, err
 		//TODO do a thing
