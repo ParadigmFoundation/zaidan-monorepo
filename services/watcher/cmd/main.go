@@ -33,7 +33,7 @@ func main() {
 
 func configureFlags() {
 	flags := cmd.PersistentFlags()
-	flags.StringVar(&gethAddress, "geth", "https://ropsten.infura.io", "Geth endpoint")
+	flags.StringVar(&gethAddress, "geth", "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w", "Geth endpoint")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
 }
 
