@@ -3,8 +3,9 @@ package main
 import (
 	"net/http"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
 	gethrpc "github.com/ethereum/go-ethereum/rpc"
+
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
 )
 
 func main() {

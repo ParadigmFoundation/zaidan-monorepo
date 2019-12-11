@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message Trade {
+  string quoteId = 1;
+  string marketId = 2;
+  string orderHash = 3;
+}
