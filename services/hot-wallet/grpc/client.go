@@ -3,13 +3,13 @@ package grpc
 import (
 	"context"
 
-	hw "github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"google.golang.org/grpc"
 )
 
 // Client is a gRPC client for the hot wallet service
 type Client struct {
-	hw.HotWalletClient
+	types.HotWalletClient
 }
 
 // NewClient returns a new gRPC client for the hot wallet
@@ -20,6 +20,6 @@ func NewClient(ctx context.Context, addr string) (*Client, error) {
 	}
 
 	return &Client{
-		hw.NewHotWalletClient(conn),
+		types.NewHotWalletClient(conn),
 	}, nil
 }

@@ -3,6 +3,7 @@ package storetest
 import (
 	"testing"
 
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store"
 	"github.com/stretchr/testify/assert"
@@ -55,16 +56,16 @@ func ValidMarket(t *testing.T, store store.Store) {
 	t.Run("Bids", func(t *testing.T) {
 		bids := ob.Bids
 		require.Len(t, bids, 3)
-		assert.Equal(t, &obm.OrderBookEntry{Price: 3, Quantity: 1}, bids[0])
-		assert.Equal(t, &obm.OrderBookEntry{Price: 2, Quantity: 1}, bids[1])
-		assert.Equal(t, &obm.OrderBookEntry{Price: 1, Quantity: 1}, bids[2])
+		assert.Equal(t, &grpc.OrderBookEntry{Price: 3, Quantity: 1}, bids[0])
+		assert.Equal(t, &grpc.OrderBookEntry{Price: 2, Quantity: 1}, bids[1])
+		assert.Equal(t, &grpc.OrderBookEntry{Price: 1, Quantity: 1}, bids[2])
 	})
 
 	t.Run("Asks", func(t *testing.T) {
 		asks := ob.Asks
 		require.Len(t, ob.Bids, 3)
-		assert.Equal(t, &obm.OrderBookEntry{Price: 1, Quantity: 1}, asks[0])
-		assert.Equal(t, &obm.OrderBookEntry{Price: 2, Quantity: 1}, asks[1])
-		assert.Equal(t, &obm.OrderBookEntry{Price: 3, Quantity: 1}, asks[2])
+		assert.Equal(t, &grpc.OrderBookEntry{Price: 1, Quantity: 1}, asks[0])
+		assert.Equal(t, &grpc.OrderBookEntry{Price: 2, Quantity: 1}, asks[1])
+		assert.Equal(t, &grpc.OrderBookEntry{Price: 3, Quantity: 1}, asks[2])
 	})
 }
