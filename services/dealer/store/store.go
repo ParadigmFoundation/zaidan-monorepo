@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/paradigmfoundation/zaidan-monorepo/services/dealer"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer"
 )
 
 type Store interface {
