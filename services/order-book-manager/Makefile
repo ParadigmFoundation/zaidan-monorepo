@@ -1,8 +1,8 @@
 .PHONY = help buil gen test ci
 
 build: ## Build the binaries
-	CGO_ENABLED=0 go build -o obm    ./cmd/obm/main.go 
-	CGO_ENABLED=0 go build -o obm-ui ./cmd/obm-ui/main.go
+	go build -o obm    ./cmd/obm/main.go 
+	go build -o obm-ui ./cmd/obm-ui/main.go
 
 clean: ## Clean the build objects
 	rm -r obm obm-ui

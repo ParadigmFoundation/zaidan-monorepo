@@ -12,7 +12,7 @@ import (
 	"github.com/0xProject/0x-mesh/zeroex"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
-	hw "github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"google.golang.org/grpc"
 )
 
@@ -31,12 +31,12 @@ func NewServer(provider *eth.Provider, makerAccountIndex int, senderAccountIndex
 		makerAccountIndex:  makerAccountIndex,
 		senderAccountIndex: senderAccountIndex,
 	}
-	hw.RegisterHotWalletServer(srv.grpc, srv)
+	types.RegisterHotWalletServer(srv.grpc, srv)
 	return srv
 }
 
 // HashOrder implements hw.HotWalletServer
-func (srv *Server) HashOrder(ctx context.Context, req *hw.HashOrderRequest) (*hw.HashOrderResponse, error) {
+func (srv *Server) HashOrder(ctx context.Context, req *types.HashOrderRequest) (*types.HashOrderResponse, error) {
 	order, err := req.GetOrder().ToZeroExOrder()
 	if err != nil {
 		return nil, err
@@ -47,11 +47,11 @@ func (srv *Server) HashOrder(ctx context.Context, req *hw.HashOrderRequest) (*hw
 		return nil, err
 	}
 
-	return &hw.HashOrderResponse{Hash: hash.Bytes()}, nil
+	return &types.HashOrderResponse{Hash: hash.Bytes()}, nil
 }
 
 // SignOrder implements hw.HotWalletServer
-func (srv *Server) SignOrder(ctx context.Context, req *hw.SignOrderRequest) (*hw.SignOrderResponse, error) {
+func (srv *Server) SignOrder(ctx context.Context, req *types.SignOrderRequest) (*types.SignOrderResponse, error) {
 	order, err := req.GetOrder().ToZeroExOrder()
 	if err != nil {
 		return nil, err
@@ -62,12 +62,12 @@ func (srv *Server) SignOrder(ctx context.Context, req *hw.SignOrderRequest) (*hw
 		return nil, err
 	}
 
-	protoOrder := hw.SignedOrderToProto(signedOrder)
-	return &hw.SignOrderResponse{SignedOrder: protoOrder}, nil
+	protoOrder := types.SignedOrderToProto(signedOrder)
+	return &types.SignOrderResponse{SignedOrder: protoOrder}, nil
 }
 
 // CreateOrder implements hw.HotWalletServer
-func (srv *Server) CreateOrder(ctx context.Context, req *hw.CreateOrderRequest) (*hw.CreateOrderResponse, error) {
+func (srv *Server) CreateOrder(ctx context.Context, req *types.CreateOrderRequest) (*types.CreateOrderResponse, error) {
 	chainId, err := srv.pvr.ChainID(ctx)
 	if err != nil {
 		return nil, err
@@ -122,5 +122,5 @@ func (srv *Server) CreateOrder(ctx context.Context, req *hw.CreateOrderRequest) 
 		return nil, err
 	}
 
-	return &hw.CreateOrderResponse{Order: hw.SignedOrderToProto(signedOrder)}, nil
+	return &types.CreateOrderResponse{Order: types.SignedOrderToProto(signedOrder)}, nil
 }
