@@ -45,8 +45,8 @@ func startup (cmd *cobra.Command, args []string) {
 	}
 	s := grpc.NewServer()
 	watcherServer := &server.WatcherServer{ GethAddress: gethAddress }
-	if watcherServer.Init() != nil {
-		log.Fatalf("failed connect to geth: %v", err)
+	if err := watcherServer.Init(); err != nil {
+		log.Fatalf("failed to initialize server: %v", err)
 	}
 	pb.RegisterWatcherServer(s, watcherServer)
 	if err := s.Serve(lis); err != nil {
