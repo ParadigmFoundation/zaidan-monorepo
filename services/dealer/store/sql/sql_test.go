@@ -7,7 +7,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/stretchr/testify/suite"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 )
 
 type SQLSuite struct {
@@ -26,7 +26,7 @@ func (suite *SQLSuite) SetupTest() {
 }
 
 func (suite *SQLSuite) TestTrades() {
-	t := &dealer.Trade{
+	t := &types.Trade{
 		QuoteId:  "test-id",
 		MarketId: "mkt-id",
 	}

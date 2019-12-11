@@ -21,6 +21,18 @@ func (m *Migrations) CreateTradesTable() string {
 	)`
 }
 
+func (m *Migrations) CreateQuotesTable() string {
+	return `
+	CREATE TABLE quotes (
+		  quote_id VARCHAR(100)
+		, maker_asset_ticker VARCHAR(100)
+		, taker_asset_ticker VARCHAR(100)
+		, maker_asset_size VARCHAR(100)
+		, quote_asset_size VARCHAR(100)
+		, PRIMARY KEY (quote_id)
+	)`
+}
+
 func (m *Migrations) CreateMigrationTable() string {
 	return `
 	CREATE TABLE IF NOT EXISTS migrations(
@@ -60,12 +72,15 @@ func (m *Migrations) Run(db *sqlx.DB) error {
 	if err != nil {
 		return err
 	}
+	// After a call to Commit or Rollback, all operations on the transaction fail with ErrTxDone.
+	defer tx.Rollback()
 
 	mz := []struct {
 		name string
 		fn   Migration
 	}{
 		{"create_trades_table", m.CreateTradesTable},
+		{"create_quotes_table", m.CreateQuotesTable},
 	}
 
 	for _, op := range mz {
@@ -73,24 +88,20 @@ func (m *Migrations) Run(db *sqlx.DB) error {
 		stmt := op.fn()
 
 		if ok, err := m.Migrated(tx, name); err != nil {
-			if err := tx.Rollback(); err != nil {
-				return err
-			}
 			return err
 		} else if ok {
 			continue
 		}
 
 		if _, err := tx.Exec(stmt); err != nil {
-			if err := tx.Rollback(); err != nil {
-				return err
-			}
-			return fmt.Errorf("%+v. query:%s", err, stmt)
+			return fmt.Errorf("%w. query:%s", err, stmt)
 		}
+
 		if err := m.AddMigration(tx, name); err != nil {
 			return err
 		}
 	}
 
+	// deferd Rollback won't have effect after commit
 	return tx.Commit()
 }

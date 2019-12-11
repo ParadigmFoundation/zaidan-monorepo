@@ -1,9 +1,10 @@
 package store
 
 import (
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 )
 
 type Store interface {
-	CreateTrade(*dealer.Trade) error
+	CreateTrade(*types.Trade) error
+	GetTrade(string) (*types.Trade, error)
 }

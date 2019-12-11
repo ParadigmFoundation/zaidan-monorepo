@@ -147,3 +147,18 @@ service HotWallet {
     rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
 }
+
+// Dealer
+message Quote {
+  string quoteId = 1;
+  string makerAssetTicker = 2;
+  string takerAssetTicker = 3;
+  string makerAssetSize = 4;
+  string quoteAssetSize = 5;
+}
+
+message Trade {
+  string quoteId = 1;
+  string marketId = 2;
+  string orderHash = 3;
+}
