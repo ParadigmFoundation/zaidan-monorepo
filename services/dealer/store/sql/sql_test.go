@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -26,19 +27,50 @@ func (suite *SQLSuite) SetupTest() {
 }
 
 func (suite *SQLSuite) TestTrades() {
-	t := &types.Trade{
-		QuoteId:  "test-id",
+	obj := &types.Trade{
+		QuoteId:  "quote-id",
 		MarketId: "mkt-id",
 	}
 	suite.Require().NoError(
-		suite.store.CreateTrade(t),
+		suite.store.CreateTrade(obj),
 	)
 
-	found, err := suite.store.GetTrade(t.QuoteId)
-	suite.Require().NoError(err)
-	suite.Require().NotNil(found)
+	suite.Run("Found", func() {
+		found, err := suite.store.GetTrade(obj.QuoteId)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+		suite.Assert().True(proto.Equal(found, obj))
+	})
 
-	suite.Assert().True(proto.Equal(found, t))
+	suite.Run("NotFound", func() {
+		found, err := suite.store.GetTrade(uuid.New().String())
+		suite.Assert().Error(err)
+		suite.Assert().Nil(found)
+	})
+}
+
+func (suite *SQLSuite) TestQuotes() {
+	obj := &types.Quote{}
+
+	suite.Require().NoError(
+		suite.store.CreateQuote(obj),
+	)
+	suite.Require().Len(obj.QuoteId, 36,
+		"CreateTrade should set a UUID",
+	)
+
+	suite.Run("Found", func() {
+		found, err := suite.store.GetQuote(obj.QuoteId)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+		suite.Assert().True(proto.Equal(found, obj))
+	})
+
+	suite.Run("NotFound", func() {
+		found, err := suite.store.GetTrade(uuid.New().String())
+		suite.Assert().Error(err)
+		suite.Assert().Nil(found)
+	})
 }
 
 func TestSQL(t *testing.T) {

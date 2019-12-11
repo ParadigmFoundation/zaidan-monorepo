@@ -3,6 +3,7 @@ package sql
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
@@ -67,6 +68,7 @@ func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
 }
 
 func (s *Store) CreateQuote(q *types.Quote) error {
+	q.QuoteId = uuid.New().String()
 	_, err := s.db.Exec(
 		`INSERT INTO quotes VALUES($1, $2, $3, $4, $5)`,
 		q.QuoteId,
@@ -86,7 +88,7 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 			taker_asset_ticker,
 			maker_asset_size,
 			quote_asset_size
-		FROM trades
+		FROM quotes
 		WHERE quote_id = $1 LIMIT 1
 	`
 	q := types.Quote{}
