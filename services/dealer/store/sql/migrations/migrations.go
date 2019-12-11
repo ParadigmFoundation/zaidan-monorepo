@@ -2,7 +2,7 @@ package migrations
 
 import (
 	"database/sql"
-	"reflect"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -17,6 +17,7 @@ func (m *Migrations) CreateTradesTable() string {
 	CREATE TABLE trades (
 		  quote_id  VARCHAR(100)
 		, market_id VARCHAR(100)
+		, PRIMARY KEY (quote_id)
 	)`
 }
 
@@ -31,7 +32,7 @@ func (m *Migrations) CreateMigrationTable() string {
 
 func (m *Migrations) AddMigration(tx *sql.Tx, name string) error {
 	q := `
-	INSERT INTO migrations (name) VALUES (?)
+	INSERT INTO migrations (name) VALUES ($1);
 	`
 	_, err := tx.Exec(q, name)
 	return err
@@ -39,7 +40,7 @@ func (m *Migrations) AddMigration(tx *sql.Tx, name string) error {
 
 func (m *Migrations) Migrated(tx *sql.Tx, name string) (bool, error) {
 	q := `
-	SELECT COUNT(*) FROM migrations WHERE name = ?
+	SELECT COUNT(*) FROM migrations WHERE name = $1
 	`
 	row := tx.QueryRow(q, name)
 	var count int
@@ -60,15 +61,21 @@ func (m *Migrations) Run(db *sqlx.DB) error {
 		return err
 	}
 
-	mz := []Migration{
-		m.CreateTradesTable,
+	mz := []struct {
+		name string
+		fn   Migration
+	}{
+		{"create_trades_table", m.CreateTradesTable},
 	}
 
-	for _, fn := range mz {
-		name := reflect.TypeOf(fn).String()
-		stmt := fn()
+	for _, op := range mz {
+		name := op.name
+		stmt := op.fn()
 
 		if ok, err := m.Migrated(tx, name); err != nil {
+			if err := tx.Rollback(); err != nil {
+				return err
+			}
 			return err
 		} else if ok {
 			continue
@@ -78,9 +85,11 @@ func (m *Migrations) Run(db *sqlx.DB) error {
 			if err := tx.Rollback(); err != nil {
 				return err
 			}
+			return fmt.Errorf("%+v. query:%s", err, stmt)
+		}
+		if err := m.AddMigration(tx, name); err != nil {
 			return err
 		}
-		m.AddMigration(tx, name)
 	}
 
 	return tx.Commit()

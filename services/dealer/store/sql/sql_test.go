@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"os"
 	"testing"
 
 	"github.com/gogo/protobuf/proto"
@@ -11,11 +12,15 @@ import (
 
 type SQLSuite struct {
 	suite.Suite
+
+	driver string
+	dsn    string
+
 	store *Store
 }
 
 func (suite *SQLSuite) SetupTest() {
-	s, err := New("sqlite3", ":memory:")
+	s, err := New(suite.driver, suite.dsn)
 	suite.Require().NoError(err)
 	suite.store = s
 }
@@ -37,5 +42,22 @@ func (suite *SQLSuite) TestTrades() {
 }
 
 func TestSQL(t *testing.T) {
-	suite.Run(t, &SQLSuite{})
+	t.Run("SQLite3", func(t *testing.T) {
+		env := "DEALER_TEST_SQLITE"
+		dsn := os.Getenv(env)
+		if dsn == "" {
+			dsn = ":memory:"
+		}
+		suite.Run(t, &SQLSuite{driver: "sqlite3", dsn: dsn})
+	})
+
+	t.Run("Postgres", func(t *testing.T) {
+		env := "DEALER_TEST_PSQL"
+		dsn := os.Getenv(env)
+		if dsn == "" {
+			t.Skipf("%s not defined", env)
+		}
+
+		suite.Run(t, &SQLSuite{driver: "postgres", dsn: dsn})
+	})
 }
