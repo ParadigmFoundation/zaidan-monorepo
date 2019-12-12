@@ -31,21 +31,15 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		//TODO do a thing
 	}
 
-	isWatched := false
+	_/*watchedTx*/, isWatched := s.TxWatching.WatchedTransactions[txHash] //TODO use watched tx?
 
-	if isPending {
-		for _, currentHash := range s.TxWatching.WatchedTransactions {
-			if currentHash.TxHash == txHash {
-				isWatched = true
-			}
-		}
-		if !isWatched {
-			s.TxWatching.WatchedTransactions = append(s.TxWatching.WatchedTransactions, watching.WatchedTransaction{TxHash: txHash, QuoteId: in.QuoteId})
-		}
-	} else {
-		log.Println("Transaction mined")
-		// TODO: if pending start listener if not make calls
+	if isPending && !isWatched {
+		s.TxWatching.WatchedTransactions[txHash] = watching.WatchedTransaction{TxHash: txHash, QuoteId: in.QuoteId}
 	}
+	//else { //TODO changed logic what now?
+	//	log.Println("Transaction mined")
+	//	// TODO: if pending start listener if not make calls
+	//}
 
 	return &pb.WatchTransactionResponse{ IsPending: isPending, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
 }
