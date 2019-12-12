@@ -1,7 +1,6 @@
 package main
 
 import (
-	pb "../proto"
 	"bufio"
 	"context"
 	"fmt"
@@ -9,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"google.golang.org/grpc"
 )
 

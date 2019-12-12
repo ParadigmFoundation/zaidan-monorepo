@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	pb "../proto"
+	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/stretchr/testify/assert"
 )
 

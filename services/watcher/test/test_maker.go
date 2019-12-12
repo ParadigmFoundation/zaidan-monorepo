@@ -1,13 +1,13 @@
 package main
 
 import (
-	pb "../proto"
 	"context"
 	"fmt"
 	"log"
 	"net"
 	"strconv"
 
+	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"google.golang.org/grpc"
 )
 

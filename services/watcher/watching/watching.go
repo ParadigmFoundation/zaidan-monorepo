@@ -1,14 +1,15 @@
 package watching
 
 import (
-	pb "../proto"
 	"context"
 	"fmt"
+	"log"
+
+	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"google.golang.org/grpc"
-	"log"
 )
 
 type WatchedTransaction struct {

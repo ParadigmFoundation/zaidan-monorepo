@@ -5,8 +5,8 @@ import (
 	"net"
 	"strconv"
 
-	pb "../proto"
-	"../server"
+	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/server"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
