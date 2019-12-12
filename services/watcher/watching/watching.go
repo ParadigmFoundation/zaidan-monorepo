@@ -58,12 +58,12 @@ func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChann
 			}
 			case headers, ok := <- headerChannel: {
 				if !ok {
-					fmt.Println("Headers died: ", len(headerChannel), ok)
+					log.Println("Headers died: ", len(headerChannel), ok)
 				}
 
 				block, err := txW.EthClient.BlockByNumber(bg, headers.Number)
 				if err != nil {
-					fmt.Println("Error getting block number: ", headers.Number.String(), err) //TODO Error handling
+					log.Println("Error getting block number: ", headers.Number.String(), err) //TODO Error handling
 					return
 				}
 
@@ -76,7 +76,7 @@ func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChann
 
 						receipt, err := txW.EthClient.TransactionReceipt(bg, txHash)
 						if err != nil {
-							fmt.Println(err) //TODO Error handling
+							log.Println(err) //TODO Error handling
 						}
 
 						//TODO CALL TO CONFIRM  //TODO Error handling
