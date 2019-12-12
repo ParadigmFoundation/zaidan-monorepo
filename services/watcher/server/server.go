@@ -22,6 +22,7 @@ type WatcherServer struct {
 func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransactionRequest) (*pb.WatchTransactionResponse, error) {
 	log.Printf("Received: %v", in.TxHash)
 	txHash := common.HexToHash(strings.TrimSpace(in.TxHash))
+	//TODO: validate transaction hash
 
 	_, isPending, err:= s.GethClient.TransactionByHash(context.Background(), txHash)
 	if err != nil {
