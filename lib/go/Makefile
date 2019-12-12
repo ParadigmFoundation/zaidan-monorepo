@@ -5,6 +5,9 @@ ci: run-test
 
 test: ganache-start run-test ganache-stop
 
+generate:
+	go generate ./...
+
 run-test:
 	go test -v ./...
 
@@ -15,4 +18,4 @@ ganache-start:
 ganache-stop:
 	docker kill zrx
 
-.PHONY: ci test run-test ganache-start ganache-stop
+.PHONY: ci generate test run-test ganache-start ganache-stop
