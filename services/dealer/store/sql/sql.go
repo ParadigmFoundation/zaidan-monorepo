@@ -49,18 +49,50 @@ func migrate(db *sqlx.DB) error {
 
 func (s *Store) CreateTrade(t *types.Trade) error {
 	_, err := s.db.Exec(
-		`INSERT INTO trades VALUES($1, $2)`,
-		t.QuoteId, t.MarketId,
+		`INSERT INTO trades VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+		t.QuoteId,
+		t.MarketId,
+		t.OrderHash,
+		t.TransactionHash,
+		t.TakerAddress,
+		t.Timestamp,
+		t.MakerAssetTicker,
+		t.TakerAssetTicker,
+		t.MakerAssetAmount,
+		t.TakerAssetAmount,
 	)
 	return err
 }
 
 func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
+	stmt := `
+		SELECT
+		  "quote_id"
+		, "market_id"
+		, "order_hash"
+		, "transaction_hash"
+		, "taker_address"
+		, "timestamp"
+		, "maker_asset_ticker"
+		, "taker_asset_ticker"
+		, "maker_asset_amount"
+		, "taker_asset_amount"
+		FROM trades WHERE quote_id = $1 LIMIT 1
+	`
 	t := types.Trade{}
-	err := s.db.QueryRow(
-		`SELECT quote_id, market_id FROM trades WHERE quote_id = $1 LIMIT 1`,
-		quoteId,
-	).Scan(&t.QuoteId, &t.MarketId)
+	err := s.db.QueryRow(stmt, quoteId).
+		Scan(
+			&t.QuoteId,
+			&t.MarketId,
+			&t.OrderHash,
+			&t.TransactionHash,
+			&t.TakerAddress,
+			&t.Timestamp,
+			&t.MakerAssetTicker,
+			&t.TakerAssetTicker,
+			&t.TakerAssetAmount,
+			&t.MakerAssetAmount,
+		)
 	if err != nil {
 		return nil, err
 	}
@@ -70,12 +102,15 @@ func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
 func (s *Store) CreateQuote(q *types.Quote) error {
 	q.QuoteId = uuid.New().String()
 	_, err := s.db.Exec(
-		`INSERT INTO quotes VALUES($1, $2, $3, $4, $5)`,
+		`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
 		q.QuoteId,
 		q.MakerAssetTicker,
 		q.TakerAssetTicker,
 		q.MakerAssetSize,
 		q.QuoteAssetSize,
+		q.OrderHash,
+		q.Order,
+		q.FillTx,
 	)
 	return err
 }
@@ -83,11 +118,14 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 	stmt := `
 		SELECT
-			quote_id,
-			maker_asset_ticker,
-			taker_asset_ticker,
-			maker_asset_size,
-			quote_asset_size
+		  "quote_id"
+		, "maker_asset_ticker"
+		, "taker_asset_ticker"
+		, "maker_asset_size"
+		, "quote_asset_size"
+		, "order_hash"
+		, "order"
+		, "fill_tx"
 		FROM quotes
 		WHERE quote_id = $1 LIMIT 1
 	`
@@ -100,6 +138,9 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 			&q.TakerAssetTicker,
 			&q.MakerAssetSize,
 			&q.QuoteAssetSize,
+			&q.OrderHash,
+			&q.Order,
+			&q.FillTx,
 		)
 	if err != nil {
 		return nil, err

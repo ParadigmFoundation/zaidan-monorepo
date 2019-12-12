@@ -15,8 +15,16 @@ type Migrations struct {
 func (m *Migrations) CreateTradesTable() string {
 	return `
 	CREATE TABLE trades (
-		  quote_id  VARCHAR(100)
-		, market_id VARCHAR(100)
+		  "quote_id"           VARCHAR(100)
+		, "market_id"          VARCHAR(100)
+		, "order_hash"         VARCHAR(100)
+		, "transaction_hash"   VARCHAR(100)
+		, "taker_address"      VARCHAR(100)
+		, "timestamp"          INTEGER
+		, "maker_asset_ticker" VARCHAR(10)
+		, "taker_asset_ticker" VARCHAR(10)
+		, "maker_asset_amount" BIGINT
+		, "taker_asset_amount" BIGINT
 		, PRIMARY KEY (quote_id)
 	)`
 }
@@ -24,11 +32,14 @@ func (m *Migrations) CreateTradesTable() string {
 func (m *Migrations) CreateQuotesTable() string {
 	return `
 	CREATE TABLE quotes (
-		  quote_id VARCHAR(100)
-		, maker_asset_ticker VARCHAR(100)
-		, taker_asset_ticker VARCHAR(100)
-		, maker_asset_size VARCHAR(100)
-		, quote_asset_size VARCHAR(100)
+		  "quote_id"           VARCHAR(100)
+		, "maker_asset_ticker" VARCHAR(100)
+		, "taker_asset_ticker" VARCHAR(100)
+		, "maker_asset_size"   VARCHAR(100)
+		, "quote_asset_size"   VARCHAR(100)
+		, "order_hash"         VARCHAR(100)
+		, "order"              TEXT
+		, "fill_tx"            VARCHAR(100)
 		, PRIMARY KEY (quote_id)
 	)`
 }
@@ -102,6 +113,6 @@ func (m *Migrations) Run(db *sqlx.DB) error {
 		}
 	}
 
-	// deferd Rollback won't have effect after commit
+	// deferd Rollback won"t have effect after commit
 	return tx.Commit()
 }

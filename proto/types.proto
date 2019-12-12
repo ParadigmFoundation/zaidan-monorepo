@@ -150,15 +150,26 @@ service HotWallet {
 
 // Dealer
 message Quote {
-  string quoteId = 1;
-  string makerAssetTicker = 2;
-  string takerAssetTicker = 3;
-  string makerAssetSize = 4;
-  string quoteAssetSize = 5;
+  string quoteId = 1; // A UUID (v4) that MUST correspond to this offer only
+  string makerAssetTicker = 2; //Shorthand ticker of the quote's maker asset (see quotes)
+  string takerAssetTicker = 3; // Shorthand ticker of the quote's taker asset (see quotes)
+  string makerAssetSize = 4; // The quote's maker asset size provided by the dealer (see quotes)
+  string quoteAssetSize = 5; // The quote's taker asset size required by the client (see quotes)
+  int64  expiration = 6; // The UNIX timestamp after which the quote will be rejected for settlement
+  string orderHash = 7; // The 0x-specific order hash, as defined in the v3 specification
+  string order = 8; // The dealer-signed 0x order that corresponds to this offer
+  string fillTx = 9; // The raw 0x fill transaction data for this quote that the taker may sign (see 6)
 }
 
 message Trade {
-  string quoteId = 1;
-  string marketId = 2;
-  string orderHash = 3;
+  string quoteId = 1; // The ID of the original quote that was filled in a trade
+  string marketId = 2; // Implementation-specific ID corresponding to the correct market
+  string orderHash = 3; // The 0x order hash of the order filled in a trade
+  string transactionHash = 4; // The Ethereum transaction hash (transaction ID) of fill
+  string takerAddress = 5; // The Ethereum address of the taker who requested and filled the quote
+  int64 timestamp = 6; // The UNIX timestamp the fill was submitted (or mined) at
+  string makerAssetTicker = 7; // The ticker of the trade's maker asset
+  string takerAssetTicker = 8; // The ticker of the trade's taker asset
+  uint64 makerAssetAmount = 9; // The amount of the maker asset transacted in the trade
+  uint64 takerAssetAmount = 10; // The amount of the taker asset transacted in the trade
 }

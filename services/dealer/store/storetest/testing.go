@@ -1,6 +1,9 @@
 package storetest
 
 import (
+	"math"
+	"time"
+
 	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/suite"
@@ -20,8 +23,16 @@ func (suite *Suite) SetStore(store store.Store) {
 
 func (suite *Suite) TestTrades() {
 	obj := &types.Trade{
-		QuoteId:  "quote-id",
-		MarketId: "mkt-id",
+		QuoteId:          "quote-id",
+		MarketId:         "mkt-id",
+		OrderHash:        "order-hash",
+		TransactionHash:  "transaction-hash",
+		TakerAddress:     "taker-address",
+		Timestamp:        time.Now().Unix(),
+		MakerAssetTicker: "m/a/t",
+		TakerAssetTicker: "t/a/t",
+		MakerAssetAmount: math.MaxUint64 / 2,
+		TakerAssetAmount: math.MaxUint64 / 2,
 	}
 	suite.Require().NoError(
 		suite.store.CreateTrade(obj),
@@ -31,7 +42,9 @@ func (suite *Suite) TestTrades() {
 		found, err := suite.store.GetTrade(obj.QuoteId)
 		suite.Require().NoError(err)
 		suite.Require().NotNil(found)
-		suite.Assert().True(proto.Equal(found, obj))
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found,
+		)
 	})
 
 	suite.Run("NotFound", func() {
@@ -42,7 +55,16 @@ func (suite *Suite) TestTrades() {
 }
 
 func (suite *Suite) TestQuotes() {
-	obj := &types.Quote{}
+	obj := &types.Quote{
+		MakerAssetTicker: "maker-asset-ticker",
+		TakerAssetTicker: "taker-asset-ticker",
+		MakerAssetSize:   "maker-asset-size",
+		QuoteAssetSize:   "quote-asset-size",
+		Expiration:       10,
+		OrderHash:        "order-hash",
+		Order:            `["this", "is", {"json": "format"}]`,
+		FillTx:           "fill-tx",
+	}
 
 	suite.Require().NoError(
 		suite.store.CreateQuote(obj),
@@ -55,7 +77,13 @@ func (suite *Suite) TestQuotes() {
 		found, err := suite.store.GetQuote(obj.QuoteId)
 		suite.Require().NoError(err)
 		suite.Require().NotNil(found)
-		suite.Assert().True(proto.Equal(found, obj))
+		suite.Assert().Zero(found.Expiration, "expiration should not be set by the store")
+
+		// overwite Expiration so that proto.Equal does not fail
+		found.Expiration = obj.Expiration
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found,
+		)
 	})
 
 	suite.Run("NotFound", func() {
