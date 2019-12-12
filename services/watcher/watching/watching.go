@@ -52,10 +52,11 @@ func (txW *TxWatching) Init() error {
 func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChannel <-chan error) {
 	for {
 		select {
-			case errors := <- errorChannel:
+			case errors := <- errorChannel: {
 				//TODO reset connection
 				log.Fatal("Subscription error!", errors, len(headerChannel))
-			case headers, ok := <- headerChannel:
+			}
+			case headers, ok := <- headerChannel: {
 				if !ok {
 					fmt.Println("Headers died: ", len(headerChannel), ok)
 				}
@@ -89,6 +90,7 @@ func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChann
 						}
 					}
 				}
+			}
 		}
 	}
 }
