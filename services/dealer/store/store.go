@@ -7,4 +7,6 @@ import (
 type Store interface {
 	CreateTrade(*types.Trade) error
 	GetTrade(string) (*types.Trade, error)
+	CreateQuote(*types.Quote) error
+	GetQuote(string) (*types.Quote, error)
 }
