@@ -1,6 +1,3 @@
-//go:generate protoc -I ../../.. --go_out=plugins=grpc:.. ../../../proto/watcher.proto
-//go:generate protoc -I ../../.. --go_out=plugins=grpc:.. ../../../proto/maker.proto
-
 package main
 
 import (
