@@ -22,10 +22,6 @@ message OrderBookResponse {
   repeated OrderBookEntry bids = 5;
 }
 
-service OrderBookManager {
-  rpc OrderBook(OrderBookRequest) returns (OrderBookResponse);
-}
-
 // Maker 
 
 message GetQuoteRequest {
@@ -64,12 +60,6 @@ message OrderStatusUpdateRequest {
 
 message OrderStatusUpdateResponse {
     uint32 status = 1;
-}
-
-service Maker {
-  rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
-  rpc CheckQuote(CheckQuoteRequest) returns (CheckQuoteResponse);
-  rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse); 
 }
 
 // Hot wallet
@@ -140,10 +130,4 @@ message CreateOrderRequest {
 
 message CreateOrderResponse {
     SignedOrder order = 1;
-}
-
-service HotWallet {
-    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
-    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
-    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
 }
