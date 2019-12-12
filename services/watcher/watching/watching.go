@@ -19,7 +19,7 @@ type WatchedTransaction struct {
 
 type TxWatching struct {
 	EthClient           *ethclient.Client
-	WatchedTransactions []WatchedTransaction
+	WatchedTransactions map[common.Hash]WatchedTransaction
 	MakerEndpoint       string
 	MakerClient         pb.MakerClient
 }
@@ -27,6 +27,8 @@ type TxWatching struct {
 var bg = context.Background()
 
 func (txW *TxWatching) Init() error {
+	txW.WatchedTransactions = make(map[common.Hash]WatchedTransaction)
+
 	conn, err := grpc.Dial(txW.MakerEndpoint, grpc.WithInsecure())
 
 	if err != nil {
@@ -54,7 +56,7 @@ func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChann
 				//TODO reset connection
 				log.Fatal("Subscription error!", errors, len(headerChannel))
 			case headers, ok := <- headerChannel:
-				if (!ok) {
+				if !ok {
 					fmt.Println("Headers died: ", len(headerChannel), ok)
 				}
 
@@ -64,31 +66,26 @@ func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChann
 					return
 				}
 
-
 				for _, blockTx := range block.Transactions() {
 					txHash := blockTx.Hash()
-					for wI, watchTx := range txW.WatchedTransactions {
-						if txHash == watchTx.TxHash {
-							log.Println("Found ", txHash.String(), " in Block #", block.Number().String())
-							txW.WatchedTransactions[wI] = txW.WatchedTransactions[len(txW.WatchedTransactions)-1]
-							txW.WatchedTransactions = txW.WatchedTransactions[:len(txW.WatchedTransactions)-1]
 
-							receipt, err := txW.EthClient.TransactionReceipt(bg, txHash)
-							if err != nil {
-								fmt.Println(err) //TODO Error handling
-							}
+					if watchedTransaction, present := txW.WatchedTransactions[txHash]; present {
+						log.Println("Found ", txHash.String(), " in Block #", block.Number().String())
+						delete(txW.WatchedTransactions, txHash)
 
-							//TODO CALL TO CONFIRM  //TODO Error handling
-							_, err = txW.MakerClient.OrderStatusUpdate(context.Background(), &pb.OrderStatusUpdateRequest{
-								QuoteId: watchTx.QuoteId,
-								Status:  uint32(receipt.Status),
-							})
+						receipt, err := txW.EthClient.TransactionReceipt(bg, txHash)
+						if err != nil {
+							fmt.Println(err) //TODO Error handling
+						}
 
-							if err != nil {
-								log.Println("Failure calling maker: ", err)
-							}
+						//TODO CALL TO CONFIRM  //TODO Error handling
+						_, err = txW.MakerClient.OrderStatusUpdate(context.Background(), &pb.OrderStatusUpdateRequest{
+							QuoteId: watchedTransaction.QuoteId,
+							Status:  uint32(receipt.Status),
+						})
 
-							break
+						if err != nil {
+							log.Println("Failure calling maker: ", err)
 						}
 					}
 				}
