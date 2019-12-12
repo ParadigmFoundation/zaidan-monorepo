@@ -64,14 +64,12 @@ func (txW *TxWatching) watchBlock(headerChannel <-chan *types.Header, errorChann
 					return
 				}
 
-				var foundTxs []common.Hash
 
 				for _, blockTx := range block.Transactions() {
 					txHash := blockTx.Hash()
 					for wI, watchTx := range txW.WatchedTransactions {
 						if txHash == watchTx.TxHash {
 							log.Println("Found ", txHash.String(), " in Block #", block.Number().String())
-							foundTxs = append(foundTxs, txHash)
 							txW.WatchedTransactions[wI] = txW.WatchedTransactions[len(txW.WatchedTransactions)-1]
 							txW.WatchedTransactions = txW.WatchedTransactions[:len(txW.WatchedTransactions)-1]
 
