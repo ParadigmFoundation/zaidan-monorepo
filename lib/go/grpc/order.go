@@ -1,6 +1,6 @@
-// This file adds extra functionality to the generated hw.pb.go
-//go:generate protoc --go_out=plugins=grpc:. --proto_path=../../proto hw.proto
-package hw
+package grpc
+
+// This file adds extra functionality to the generated types.pb.go
 
 import (
 	fmt "fmt"
@@ -16,6 +16,26 @@ import (
 // NormalizeAddress converts an Ethereum address to an all-lowercase string representation with a leading "0x"
 func NormalizeAddress(address common.Address) string {
 	return strings.ToLower(address.Hex())
+}
+
+// OrderToProto converts a 0x unsigned order to a wire-safe protobuf representation
+func OrderToProto(order *zeroex.Order) *Order {
+	return &Order{
+		ChainId:               order.ChainID.Uint64(),
+		ExchangeAddress:       NormalizeAddress(order.ExchangeAddress),
+		MakerAddress:          NormalizeAddress(order.MakerAddress),
+		MakerAssetData:        common.Bytes2Hex(order.MakerAssetData),
+		MakerAssetAmount:      order.MakerAssetAmount.String(),
+		MakerFee:              order.MakerFee.String(),
+		TakerAddress:          NormalizeAddress(order.TakerAddress),
+		TakerAssetData:        common.Bytes2Hex(order.TakerAssetData),
+		TakerAssetAmount:      order.TakerAssetAmount.String(),
+		TakerFee:              order.TakerFee.String(),
+		SenderAddress:         NormalizeAddress(order.SenderAddress),
+		FeeRecipientAddress:   NormalizeAddress(order.FeeRecipientAddress),
+		ExpirationTimeSeconds: order.ExpirationTimeSeconds.String(),
+		Salt:                  order.Salt.String(),
+	}
 }
 
 // SignedOrderToProto converts a 0x signed order to a wire-safe protobuf representation

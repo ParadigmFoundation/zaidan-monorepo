@@ -11,7 +11,7 @@ import (
 	flag "github.com/spf13/pflag"
 	"golang.org/x/crypto/ssh/terminal"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/grpc"
 )
 
@@ -29,7 +29,7 @@ func main() {
 
 	for {
 		time.After(100 * time.Millisecond)
-		ob, err := c.OrderBook(ctx, &obm.OrderBookRequest{Exchange: *xChng, Symbol: *symbol})
+		ob, err := c.OrderBook(ctx, &types.OrderBookRequest{Exchange: *xChng, Symbol: *symbol})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -45,7 +45,7 @@ func min(a int, b int) int {
 	return b
 }
 
-func render(ob *obm.OrderBookResponse, n int) {
+func render(ob *types.OrderBookResponse, n int) {
 	var bids []float64
 	if l := len(ob.Bids); l > 0 {
 		m := min(n, l)
