@@ -3,6 +3,7 @@ package sql
 import (
 	"fmt"
 
+	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -116,7 +117,12 @@ func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
 
 func (s *Store) CreateQuote(q *types.Quote) error {
 	q.QuoteId = uuid.New().String()
-	_, err := s.db.Exec(
+	orderBytes, err := proto.Marshal(q.Order)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Exec(
 		`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
 		q.QuoteId,
 		q.MakerAssetTicker,
@@ -126,13 +132,15 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 		q.Expiration,
 		q.ServerTime,
 		q.OrderHash,
-		q.Order,
+		orderBytes,
 		q.FillTx,
 	)
 	return err
 }
 
 func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
+	var orderBytes []byte
+
 	stmt := `
 		SELECT
 		  "quote_id"
@@ -160,11 +168,18 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 			&q.Expiration,
 			&q.ServerTime,
 			&q.OrderHash,
-			&q.Order,
+			&orderBytes,
 			&q.FillTx,
 		)
 	if err != nil {
 		return nil, err
 	}
+
+	var order types.SignedOrder
+	if err := proto.Unmarshal(orderBytes, &order); err != nil {
+		return nil, err
+	}
+	q.Order = &order
+
 	return &q, nil
 }

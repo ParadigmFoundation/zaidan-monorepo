@@ -158,7 +158,7 @@ message Quote {
   int64 expiration = 6; // The UNIX timestamp after which the quote will be rejected for settlement
   int64 serverTime = 7; // The UNIX timestamp at which the server generated the quote. Helpful for clock synchronization
   string orderHash = 8; // The 0x-specific order hash, as defined in the v3 specification
-  string order = 9; // The dealer-signed 0x order that corresponds to this offer
+  SignedOrder order = 9; // The dealer-signed 0x order that corresponds to this offer
   string fillTx = 10; // The raw 0x fill transaction data for this quote that the taker may sign (see 6)
 }
 

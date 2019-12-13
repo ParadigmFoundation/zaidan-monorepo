@@ -62,8 +62,11 @@ func (suite *Suite) TestQuotes() {
 		Expiration:       time.Now().Add(1 * time.Second).Unix(),
 		ServerTime:       time.Now().Unix(),
 		OrderHash:        "order-hash",
-		Order:            `["this", "is", {"json": "format"}]`,
-		FillTx:           "fill-tx",
+		Order: &types.SignedOrder{
+			ChainId:         1,
+			ExchangeAddress: "exchange-address",
+		},
+		FillTx: "fill-tx",
 	}
 
 	suite.Require().NoError(
