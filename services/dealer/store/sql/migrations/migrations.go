@@ -15,7 +15,7 @@ type Migrations struct {
 func (m *Migrations) CreateTradesTable() string {
 	return `
 	CREATE TABLE trades (
-		  "quote_id"           VARCHAR(100)
+		 "quote_id"           VARCHAR(100)
 		, "market_id"          VARCHAR(100)
 		, "order_hash"         VARCHAR(100)
 		, "transaction_hash"   VARCHAR(100)
@@ -23,9 +23,9 @@ func (m *Migrations) CreateTradesTable() string {
 		, "timestamp"          INTEGER
 		, "maker_asset_ticker" VARCHAR(10)
 		, "taker_asset_ticker" VARCHAR(10)
-		, "maker_asset_amount" BIGINT
-		, "taker_asset_amount" BIGINT
-		, PRIMARY KEY (quote_id)
+		, "maker_asset_amount" TEXT
+		, "taker_asset_amount" TEXT
+		, UNIQUE (quote_id)
 	)`
 }
 
@@ -35,8 +35,10 @@ func (m *Migrations) CreateQuotesTable() string {
 		  "quote_id"           VARCHAR(100)
 		, "maker_asset_ticker" VARCHAR(100)
 		, "taker_asset_ticker" VARCHAR(100)
-		, "maker_asset_size"   VARCHAR(100)
-		, "quote_asset_size"   VARCHAR(100)
+		, "maker_asset_size"   TEXT
+		, "quote_asset_size"   TEXT
+		, "expiration"         INTEGER
+		, "server_time"        INTEGER
 		, "order_hash"         VARCHAR(100)
 		, "order"              TEXT
 		, "fill_tx"            VARCHAR(100)

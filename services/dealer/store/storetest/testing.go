@@ -1,7 +1,6 @@
 package storetest
 
 import (
-	"math"
 	"time"
 
 	"github.com/gogo/protobuf/proto"
@@ -31,8 +30,8 @@ func (suite *Suite) TestTrades() {
 		Timestamp:        time.Now().Unix(),
 		MakerAssetTicker: "m/a/t",
 		TakerAssetTicker: "t/a/t",
-		MakerAssetAmount: math.MaxUint64 / 2,
-		TakerAssetAmount: math.MaxUint64 / 2,
+		MakerAssetAmount: "10000000000000000",
+		TakerAssetAmount: "99999999999999999",
 	}
 	suite.Require().NoError(
 		suite.store.CreateTrade(obj),
@@ -60,7 +59,8 @@ func (suite *Suite) TestQuotes() {
 		TakerAssetTicker: "taker-asset-ticker",
 		MakerAssetSize:   "maker-asset-size",
 		QuoteAssetSize:   "quote-asset-size",
-		Expiration:       10,
+		Expiration:       time.Now().Add(1 * time.Second).Unix(),
+		ServerTime:       time.Now().Unix(),
 		OrderHash:        "order-hash",
 		Order:            `["this", "is", {"json": "format"}]`,
 		FillTx:           "fill-tx",
@@ -77,10 +77,7 @@ func (suite *Suite) TestQuotes() {
 		found, err := suite.store.GetQuote(obj.QuoteId)
 		suite.Require().NoError(err)
 		suite.Require().NotNil(found)
-		suite.Assert().Zero(found.Expiration, "expiration should not be set by the store")
 
-		// overwite Expiration so that proto.Equal does not fail
-		found.Expiration = obj.Expiration
 		suite.Assert().True(proto.Equal(obj, found),
 			"\nexpected: %s\ngot:      %s", obj, found,
 		)
