@@ -70,7 +70,7 @@ func (tm *ERC20TokenManager) Approve(ctx context.Context, token common.Address, 
 	}
 
 	stx, err := session.Approve(spender, value)
-	if err := tm.provider.SendTx(ctx, stx); err != nil {
+	if err := tm.provider.eth.SendTransaction(ctx, stx); err != nil {
 		return stx, err
 	}
 

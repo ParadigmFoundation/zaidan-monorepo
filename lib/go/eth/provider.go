@@ -49,10 +49,11 @@ func NewProvider(ethurl string, mnemonic string, path accounts.DerivationPath) (
 	return &Provider{hw: wallet, eth: client}, nil
 }
 
-// SendTx sends a signed transaction. It makes no modification (gas price, etc.).
-func (pvr *Provider) SendTx(ctx context.Context, tx *types.Transaction) error {
-	return pvr.eth.SendTransaction(ctx, tx)
-}
+// Client returns a pointer to the underlying Ethereum client
+func (pvr *Provider) Client() *ethclient.Client { return pvr.eth }
+
+// Wallet returns a pointer to the underlying wallet
+func (pvr *Provider) Wallet() *hdwallet.Wallet { return pvr.hw }
 
 // SignText signs a personal message with account if available.
 func (pvr *Provider) SignText(account accounts.Account, text []byte) ([]byte, error) {
