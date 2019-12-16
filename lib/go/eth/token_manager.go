@@ -2,7 +2,6 @@ package eth
 
 import (
 	"context"
-	"math"
 	"math/big"
 	"sync"
 
@@ -69,12 +68,7 @@ func (tm *ERC20TokenManager) Approve(ctx context.Context, token common.Address, 
 		return nil, err
 	}
 
-	stx, err := session.Approve(spender, value)
-	if err := tm.provider.eth.SendTransaction(ctx, stx); err != nil {
-		return stx, err
-	}
-
-	return stx, err
+	return session.Approve(spender, value)
 }
 
 // adds a new tracked ERC-20 token session
@@ -94,7 +88,7 @@ func (tm *ERC20TokenManager) addToken(address common.Address) error {
 			Signer: tm.opts.Signer,
 
 			// todo(@hrharder): reconsider where this value should come from
-			GasLimit: math.MaxUint64,
+			GasLimit: 1000000,
 		},
 	}
 
