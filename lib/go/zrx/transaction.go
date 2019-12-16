@@ -1,28 +1,31 @@
 package zrx
 
 import (
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"math/big"
 	"strings"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
-
 	"github.com/0xProject/0x-mesh/ethereum"
+	"github.com/0xProject/0x-mesh/ethereum/signer"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/signer/core"
+
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
 )
 
+// ZeroExProtocolName is the EIP-712 domain name of the 0x protocol
 const ZeroExProtocolName = "0x Protocol"
 
+// ZeroExProtocolVersion is the EIP-712 domain version of the 0x protocol
 const ZeroExProtocolVersion = "3.0.0"
 
-// ZeroExTransaction represents 0x transaction (see ZEIP-18)
-type ZeroExTransaction struct {
+// Transaction represents 0x transaction (see ZEIP-18)
+type Transaction struct {
 	Salt                  *big.Int
 	ExpirationTimeSeconds *big.Int
 	GasPrice              *big.Int
@@ -33,19 +36,19 @@ type ZeroExTransaction struct {
 }
 
 // MarshalJSON implements json.Marshaler
-func (tx *ZeroExTransaction) MarshalJSON() ([]byte, error) {
+func (tx *Transaction) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]string{
 		"salt":                  tx.Salt.String(),
 		"expirationTimeSeconds": tx.ExpirationTimeSeconds.String(),
 		"gasPrice":              tx.GasPrice.String(),
 		"signerAddress":         strings.ToLower(tx.SignerAddress.Hex()),
-		"data":                  hex.EncodeToString(tx.Data),
+		"data":                  hexutil.Encode(tx.Data),
 	})
 }
 
 // UnmarshalJSON implements json.Unmarshaler
-func (tx *ZeroExTransaction) UnmarshalJSON(data []byte) error {
-	var raw zeroExTransactionJSON
+func (tx *Transaction) UnmarshalJSON(data []byte) error {
+	var raw transactionJSON
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return err
 	}
@@ -59,7 +62,7 @@ func (tx *ZeroExTransaction) UnmarshalJSON(data []byte) error {
 
 // ComputeHashForChainID calculates the 0x transaction hash for the provided chain ID.
 // See https://github.com/0xProject/0x-protocol-specification/blob/master/v3/v3-specification.md#hashing-a-transaction
-func (tx *ZeroExTransaction) ComputeHashForChainID(chainID int) (common.Hash, error) {
+func (tx *Transaction) ComputeHashForChainID(chainID int) (common.Hash, error) {
 	if tx.hash != nil {
 		return *tx.hash, nil
 	}
@@ -102,7 +105,7 @@ func (tx *ZeroExTransaction) ComputeHashForChainID(chainID int) (common.Hash, er
 }
 
 // Map returns the transaction as an un-typed map (useful when hashing)
-func (tx *ZeroExTransaction) Map() map[string]interface{} {
+func (tx *Transaction) Map() map[string]interface{} {
 	return map[string]interface{}{
 		"salt":                  tx.Salt.String(),
 		"expirationTimeSeconds": tx.ExpirationTimeSeconds.String(),
@@ -113,12 +116,12 @@ func (tx *ZeroExTransaction) Map() map[string]interface{} {
 }
 
 // ResetHash returns the cached transaction hash to nil
-func (tx *ZeroExTransaction) ResetHash() {
+func (tx *Transaction) ResetHash() {
 	tx.hash = nil
 }
 
 // set a 0x transaction values from a JSON representation
-func (tx *ZeroExTransaction) fromJSON(ztx *zeroExTransactionJSON) error {
+func (tx *Transaction) fromJSON(ztx *transactionJSON) error {
 	salt, ok := new(big.Int).SetString(ztx.Salt, 10)
 	if !ok {
 		return errors.New(`unable to unmarshal value for "salt"`)
@@ -145,14 +148,87 @@ func (tx *ZeroExTransaction) fromJSON(ztx *zeroExTransactionJSON) error {
 		tx.Data = common.Hex2Bytes(ztx.Data)
 	}
 
+	data, err := hexutil.Decode(ztx.Data)
+	if err != nil {
+		return err
+	}
+
+	tx.Data = data
+	return nil
+}
+
+// SignedTransaction represents a signed 0x transaction
+type SignedTransaction struct {
+	Transaction
+
+	Signature []byte
+}
+
+// MarshalJSON implements json.Marshaler
+func (stx *SignedTransaction) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]string{
+		"salt":                  stx.Salt.String(),
+		"expirationTimeSeconds": stx.ExpirationTimeSeconds.String(),
+		"gasPrice":              stx.GasPrice.String(),
+		"signerAddress":         strings.ToLower(stx.SignerAddress.Hex()),
+		"data":                  hexutil.Encode(stx.Data),
+		"signature":             hexutil.Encode(stx.Signature),
+	})
+}
+
+// UnmarshalJSON implements json.Unmarshaler
+func (stx *SignedTransaction) UnmarshalJSON(data []byte) error {
+	var raw transactionJSON
+	var rawStx signedTransactionJSON
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+	if err := json.Unmarshal(data, &rawStx); err != nil {
+		return err
+	}
+
+	if err := stx.fromJSON(&raw); err != nil {
+		return err
+	}
+
+	sig, err := hexutil.Decode(rawStx.Signature)
+	if err != nil {
+		return err
+	}
+
+	stx.Signature = sig
 	return nil
 }
 
 // used to assist in un-marshalling 0x transactions
-type zeroExTransactionJSON struct {
+type transactionJSON struct {
 	Salt                  string `json:"salt"`
 	ExpirationTimeSeconds string `json:"expirationTimeSeconds"`
 	GasPrice              string `json:"gasPrice"`
 	SignerAddress         string `json:"signerAddress"`
 	Data                  string `json:"data"`
+}
+
+// used to assist in un-marshalling 0x transactions
+type signedTransactionJSON struct {
+	transactionJSON
+	Signature string `json:"signature"`
+}
+
+// SignTransaction signs the 0x transaction with the supplied Signer
+func SignTransaction(signer signer.Signer, tx *Transaction, chainID int) (*SignedTransaction, error) {
+	hash, err := tx.ComputeHashForChainID(chainID)
+	if err != nil {
+		return nil, err
+	}
+
+	ecSignature, err := signer.EthSign(hash.Bytes(), tx.SignerAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	return &SignedTransaction{
+		Transaction: *tx,
+		Signature:   ECSignatureToBytes(ecSignature),
+	}, nil
 }
