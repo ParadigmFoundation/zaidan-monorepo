@@ -164,6 +164,11 @@ func (pvr *Provider) ChainID(ctx context.Context) (id *big.Int, err error) {
 	return id, nil
 }
 
+// CanSignWithAddress returns true if the provider can sign with the given address
+func (pvr *Provider) CanSignWithAddress(addr common.Address) bool {
+	return pvr.hasAccount(accounts.Account{Address: addr})
+}
+
 // returns false if account not supported by provider
 func (pvr *Provider) hasAccount(acct accounts.Account) bool {
 	for _, account := range pvr.Accounts() {
