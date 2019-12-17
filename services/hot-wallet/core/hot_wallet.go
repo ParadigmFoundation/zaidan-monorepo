@@ -15,11 +15,15 @@ import (
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 )
 
+//
 type HotWalletConfig struct {
 	// Maximum request length used for the order validator
 	OrderValidatorMaxReqLength int
 
-	MakerAddress  string
+	// Address (0x-prefixed) to use as the maker address for orders
+	MakerAddress string
+
+	// Address (0x-prefixed) to use as the sender for order
 	SenderAddress string
 }
 
@@ -27,9 +31,6 @@ type HotWalletConfig struct {
 type HotWallet struct {
 	provider  *eth.Provider
 	zrxHelper *zrx.ZeroExHelper
-
-	ctx        context.Context
-	cancelFunc context.CancelFunc
 
 	makerAddress  common.Address
 	senderAddress common.Address
@@ -39,8 +40,6 @@ type HotWallet struct {
 
 // NewHotWallet creates a new hot wallet with the supplied provider and configuration
 func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, error) {
-	ctx, cancelFunc := context.WithCancel(context.Background())
-
 	zrxHelper, err := zrx.NewZeroExHelper(provider.Client(), cfg.OrderValidatorMaxReqLength)
 	if err != nil {
 		return nil, err
@@ -48,7 +47,6 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 
 	makerAddress := common.HexToAddress(cfg.MakerAddress)
 	senderAddress := common.HexToAddress(cfg.SenderAddress)
-
 	if !provider.CanSignWithAddress(makerAddress) || !provider.CanSignWithAddress(senderAddress) {
 		return nil, fmt.Errorf("unable to sign with maker or sender address")
 	}
@@ -56,11 +54,9 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 	return &HotWallet{
 		provider:      provider,
 		zrxHelper:     zrxHelper,
-		ctx:           ctx,
-		cancelFunc:    cancelFunc,
 		makerAddress:  makerAddress,
 		senderAddress: senderAddress,
-		logger:        log.New(ctx),
+		logger:        log.New(context.Background()),
 	}, nil
 }
 
