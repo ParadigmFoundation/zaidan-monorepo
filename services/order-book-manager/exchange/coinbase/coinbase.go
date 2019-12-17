@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	NAME     = "coinbase"
 	FEED_URL = "wss://ws-feed.pro.coinbase.com"
 )
 
@@ -125,7 +126,7 @@ func (x *Exchange) handleJSON(ws *websocket.Conn, sub exchange.Subscriber) error
 			return err
 		}
 
-		return fn("coinbase", updates)
+		return fn(NAME, updates)
 	}
 
 	return nil
@@ -169,4 +170,8 @@ func newUpdates(msg *coinbasepro.Message) (*obm.Update, error) {
 	}
 
 	return &updates, nil
+}
+
+func init() {
+	exchange.Register(NAME, New())
 }

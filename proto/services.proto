@@ -6,6 +6,7 @@ import "types.proto";
 
 service OrderBookManager {
   rpc OrderBook(OrderBookRequest) returns (OrderBookResponse);
+  rpc Updates(OrderBookUpdatesRequest) returns (stream OrderBookResponse);
 }
 
 service Maker {

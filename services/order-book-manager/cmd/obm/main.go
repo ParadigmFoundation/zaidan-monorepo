@@ -9,9 +9,10 @@ import (
 	flag "github.com/spf13/pflag"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/coinbase"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/gemini"
+	_ "github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"
+	_ "github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/coinbase"
+	_ "github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/gemini"
+
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store/mem"
 )
@@ -73,16 +74,9 @@ func main() {
 	errCh := make(chan error)
 	ctx := context.Background()
 	for _, i := range cfg.exchanges {
-		var xch exchange.Exchange
-		switch i.name {
-		case "coinbase":
-			xch = coinbase.New()
-		case "binance":
-			xch = binance.New()
-		case "gemini":
-			xch = gemini.New()
-		default:
-			log.Fatalf("unknown exchange %s. Available exchanges: [coinbase,binance]", i.name)
+		xch, err := exchange.Get(i.name)
+		if err != nil {
+			log.Fatalf("unknown exchange %s. Available exchanges: %q", i.name, exchange.ListNames())
 		}
 
 		syms := i.symbols

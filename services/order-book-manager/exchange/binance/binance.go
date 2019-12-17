@@ -12,6 +12,10 @@ import (
 	"github.com/adshao/go-binance"
 )
 
+const (
+	NAME = "binance"
+)
+
 /*
 How to manage a local order book correctly:
 https://github.com/binance-exchange/binance-official-api-docs/blob/master/web-socket-streams.md#how-to-manage-a-local-order-book-correctly
@@ -61,7 +65,7 @@ func (x *Exchange) handleEvent(symbol string, sub exchange.Subscriber) error {
 	if err != nil {
 		return err
 	}
-	if err := sub.OnSnapshot("binance", updates); err != nil {
+	if err := sub.OnSnapshot(NAME, updates); err != nil {
 		return err
 	}
 
@@ -76,7 +80,7 @@ func (x *Exchange) handleEvent(symbol string, sub exchange.Subscriber) error {
 		if err != nil {
 			return err
 		}
-		sub.OnUpdate("binance", update)
+		sub.OnUpdate(NAME, update)
 	}
 }
 
@@ -167,4 +171,8 @@ func (x *Exchange) newUpdates(event *binance.WsDepthEvent) (*obm.Update, error) 
 	}
 
 	return &updates, nil
+}
+
+func init() {
+	exchange.Register(NAME, New())
 }

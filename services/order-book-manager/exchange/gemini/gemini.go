@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	NAME     = "gemini"
 	FEED_URL = "wss://api.sandbox.gemini.com/v1/marketdata/"
 )
 
@@ -110,8 +111,10 @@ func (x *Exchange) handleWs(c *websocket.Conn, sub exchange.Subscriber, sym stri
 	}
 
 	if len(update.Bids) != 0 || len(update.Asks) != 0 {
-		sub.OnUpdate("gemini", update)
+		sub.OnUpdate(NAME, update)
 	}
 
 	return nil
 }
+
+func init() { exchange.Register(NAME, New()) }
