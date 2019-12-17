@@ -197,7 +197,7 @@ def _get_price_from_book_base(half_book, size, side):
 
     raise Exception('Error in calculating price')
 
-def _get_price_from_book_quote(self, half_book, size, side):
+def _get_price_from_book_quote(half_book, size, side):
     ''' Return price. '''
 
 
