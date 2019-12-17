@@ -28,7 +28,6 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	if err != nil {
 		log.Println("Transaction lookup failure", err)
 		return nil, err
-		//TODO do a thing
 	}
 
 	_/*watchedTx*/, isWatched := s.TxWatching.WatchedTransactions[txHash] //TODO use watched tx?
