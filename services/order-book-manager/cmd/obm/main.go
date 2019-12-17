@@ -12,6 +12,7 @@ import (
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/coinbase"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/gemini"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/hitbtc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/store/mem"
 )
@@ -81,6 +82,8 @@ func main() {
 			xch = binance.New()
 		case "gemini":
 			xch = gemini.New()
+		case "hitbtc":
+			xch = hitbtc.New()
 		default:
 			log.Fatalf("unknown exchange %s. Available exchanges: [coinbase,binance]", i.name)
 		}
