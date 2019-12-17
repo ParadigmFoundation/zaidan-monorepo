@@ -31,9 +31,23 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	}
 
 	_/*watchedTx*/, isWatched := s.TxWatching.WatchedTransactions[txHash] //TODO use watched tx?
-
 	if isPending && !isWatched {
+		log.Printf("Now watching: %v", in.TxHash)
 		s.TxWatching.WatchedTransactions[txHash] = watching.WatchedTransaction{TxHash: txHash, QuoteId: in.QuoteId}
+		isWatched = true
+	} else if isPending && isWatched {
+		log.Printf("Already watching ") //TODO
+	} else {
+		if isWatched {
+			log.Println("This is not pending but is watched so needs to be handled") //TODO
+		} else {
+			log.Println("Transaction mined and does not need to be watched") // TODO
+		}
+
+	}
+
+	return &pb.WatchTransactionResponse{ IsWatched: isWatched, IsPending: isPending, Status: status, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
+}
 
 func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
 	_, isPending, err:= s.GethClient.TransactionByHash(c, txHash)
