@@ -159,6 +159,8 @@ message WatchTransactionResponse {
     string quoteId = 1;
     string txHash = 2;
     bool isPending = 3;
+    bool isWatched = 4;
+    uint32 status = 5;
 }
 
 service Watcher {
