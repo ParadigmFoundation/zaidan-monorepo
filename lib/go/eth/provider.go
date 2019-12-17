@@ -49,6 +49,11 @@ func NewProvider(ethurl string, mnemonic string, path accounts.DerivationPath) (
 	return &Provider{hw: wallet, eth: client}, nil
 }
 
+// NewProviderWithDefaultPath creates a new provider with the default base derivation path
+func NewProviderWithDefaultPath(ethurl string, mnemonic string) (*Provider, error) {
+	return NewProvider(ethurl, mnemonic, accounts.DefaultBaseDerivationPath)
+}
+
 // Client returns a pointer to the underlying Ethereum client
 func (pvr *Provider) Client() *ethclient.Client { return pvr.eth }
 
