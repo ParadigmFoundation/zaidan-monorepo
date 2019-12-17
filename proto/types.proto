@@ -3,62 +3,61 @@ syntax = "proto3";
 option go_package = "grpc";
 
 // Order book manager
+message OrderBookEntry {
+  double price = 1;
+  double quantity = 2;
+}
 
 message OrderBookRequest {
   string exchange = 1;
   string symbol = 2;
 }
 
-message OrderBookEntry {
-  double price = 1;
-  double quantity = 2;
+message OrderBookUpdatesRequest {
+  OrderBookRequest request = 1;
+  uint32 limit = 2;
 }
 
 message OrderBookResponse {
-  int64 lastUpdate = 1;
+  int64 last_update = 1;
   string exchange = 2;
   string symbol = 3;
   repeated OrderBookEntry asks = 4;
   repeated OrderBookEntry bids = 5;
 }
 
-service OrderBookManager {
-  rpc OrderBook(OrderBookRequest) returns (OrderBookResponse);
-}
-
 // Maker 
-
 message GetQuoteRequest {
-    string quoteId = 1;
-    string takerAsset = 2;
-    string makerAsset = 3;
-    string takerSize = 4;
-    string makerSize = 5;
-    string takerAddress = 6;
+    string quote_id = 1;
+    string taker_asset = 2;
+    string maker_asset = 3;
+    string taker_size = 4;
+    string maker_size = 5;
+    string taker_address = 6;
 }
 
 message GetQuoteResponse {
-    string quoteId = 1;
+    string quote_id = 1;
     string expiration = 2;
-    string takerAsset = 3;
-    string makerAsset = 4;
-    string takerSize = 5;
-    string makerSize = 6;
+    string taker_asset = 3;
+    string maker_asset = 4;
+    string taker_size = 5;
+    string maker_size = 6;
     string fee = 7;
 }
 
 message CheckQuoteRequest {
-    string quoteId = 1;
+    string quote_id = 1;
 } 
 
 message CheckQuoteResponse {
-    string quoteId = 1;
-    bool isValid = 2;
+    string quote_id = 1;
+    bool is_valid = 2;
     uint32 status = 3;
 }
 
 message OrderStatusUpdateRequest {
-    string quoteId = 1;
+    string quote_id = 1;
     uint32 status = 2;
 }
 
@@ -66,49 +65,42 @@ message OrderStatusUpdateResponse {
     uint32 status = 1;
 }
 
-service Maker {
-  rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
-  rpc CheckQuote(CheckQuoteRequest) returns (CheckQuoteResponse);
-  rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse); 
-}
-
 // Hot wallet
-
 message Order {
-    uint64 chainId = 1;
-    string exchangeAddress = 2;
-    string makerAddress = 3;
-    string makerAssetData = 4;
-    string makerFeeAssetData = 5;
-    string makerAssetAmount = 6;
-    string makerFee = 7;
-    string takerAddress = 8;
-    string takerAssetData = 9;
-    string takerFeeAssetData = 10;
-    string takerAssetAmount = 11;
-    string takerFee = 12;
-    string senderAddress = 13;
-    string feeRecipientAddress = 14;
-    string expirationTimeSeconds = 15;
+    uint64 chain_id = 1;
+    string exchange_address = 2;
+    string maker_address = 3;
+    string maker_asset_data = 4;
+    string maker_fee_asset_data = 5;
+    string maker_asset_amount = 6;
+    string maker_fee = 7;
+    string taker_address = 8;
+    string taker_asset_data = 9;
+    string taker_fee_asset_data = 10;
+    string taker_asset_amount = 11;
+    string taker_fee = 12;
+    string sender_address = 13;
+    string fee_recipient_address = 14;
+    string expiration_time_seconds = 15;
     string salt = 16;
 }
 
 message SignedOrder {
-    uint64 chainId = 1;
-    string exchangeAddress = 2;
-    string makerAddress = 3;
-    string makerAssetData = 4;
-    string makerFeeAssetData = 5;
-    string makerAssetAmount = 6;
-    string makerFee = 7;
-    string takerAddress = 8;
-    string takerAssetData = 9;
-    string takerFeeAssetData = 10;
-    string takerAssetAmount = 11;
-    string takerFee = 12;
-    string senderAddress = 13;
-    string feeRecipientAddress = 14;
-    string expirationTimeSeconds = 15;
+    uint64 chain_id = 1;
+    string exchange_address = 2;
+    string maker_address = 3;
+    string maker_asset_data = 4;
+    string maker_fee_asset_data = 5;
+    string maker_asset_amount = 6;
+    string maker_fee = 7;
+    string taker_address = 8;
+    string taker_asset_data = 9;
+    string taker_fee_asset_data = 10;
+    string taker_asset_amount = 11;
+    string taker_fee = 12;
+    string sender_address = 13;
+    string fee_recipient_address = 14;
+    string expiration_time_seconds = 15;
     string salt = 16;
     string signature = 17;
 }
@@ -130,39 +122,27 @@ message HashOrderResponse {
 }
 
 message CreateOrderRequest {
-    string takerAddress = 1;
-    string makerAssetAddress = 2;
-    string takerAssetAddress = 3;
-    string makerAssetAmount = 4;
-    string takerAssetAmount = 5;
-    string expirationTimeSeconds = 6;
+    string taker_address = 1;
+    string maker_asset_address = 2;
+    string taker_asset_address = 3;
+    string maker_asset_amount = 4;
+    string taker_asset_amount = 5;
+    string expiration_time_seconds = 6;
 }
 
 message CreateOrderResponse {
     SignedOrder order = 1;
 }
 
-service HotWallet {
-    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
-    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
-    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
-}
-
-// Watcher
-
 message WatchTransactionRequest {
-    string quoteId = 1;
-    string txHash = 2;
+    string quote_id = 1;
+    string tx_hash = 2;
 }
 
 message WatchTransactionResponse {
-    string quoteId = 1;
-    string txHash = 2;
-    bool isPending = 3;
-    bool isWatched = 4;
+    string quote_id = 1;
+    string tx_hash = 2;
+    bool is_pending = 3;
+    bool is_watched = 4;
     uint32 status = 5;
-}
-
-service Watcher {
-    rpc WatchTransaction(WatchTransactionRequest) returns (WatchTransactionResponse);
 }

@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	NAME     = "gemini"
 	FEED_URL = "wss://api.sandbox.gemini.com/v1/marketdata/"
 )
 
@@ -67,13 +68,27 @@ func (x *Exchange) subscribe(ctx context.Context, sub exchange.Subscriber, sym s
 	if err != nil {
 		return nil
 	}
+	defer c.Close()
+
+	errCh := make(chan error, 1)
+	go func() {
+		defer close(errCh)
+
+		for {
+			errCh <- x.handleWs(c, sub, sym)
+		}
+	}()
 
 	for {
-		if err := x.handleWs(c, sub, sym); err != nil {
-			return err
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case err := <-errCh:
+			if err != nil {
+				return err
+			}
 		}
 	}
-
 }
 
 func (x *Exchange) handleWs(c *websocket.Conn, sub exchange.Subscriber, sym string) error {
@@ -110,8 +125,10 @@ func (x *Exchange) handleWs(c *websocket.Conn, sub exchange.Subscriber, sym stri
 	}
 
 	if len(update.Bids) != 0 || len(update.Asks) != 0 {
-		sub.OnUpdate("gemini", update)
+		sub.OnUpdate(NAME, update)
 	}
 
 	return nil
 }
+
+func init() { exchange.Register(NAME, New()) }
