@@ -162,53 +162,6 @@ func (m *OrderBookUpdatesRequest) GetLimit() uint32 {
 	return 0
 }
 
-type OrderBookRequest struct {
-	Exchange             string   `protobuf:"bytes,1,opt,name=exchange,proto3" json:"exchange,omitempty"`
-	Symbol               string   `protobuf:"bytes,2,opt,name=symbol,proto3" json:"symbol,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *OrderBookRequest) Reset()         { *m = OrderBookRequest{} }
-func (m *OrderBookRequest) String() string { return proto.CompactTextString(m) }
-func (*OrderBookRequest) ProtoMessage()    {}
-func (*OrderBookRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{1}
-}
-
-func (m *OrderBookRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OrderBookRequest.Unmarshal(m, b)
-}
-func (m *OrderBookRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OrderBookRequest.Marshal(b, m, deterministic)
-}
-func (m *OrderBookRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OrderBookRequest.Merge(m, src)
-}
-func (m *OrderBookRequest) XXX_Size() int {
-	return xxx_messageInfo_OrderBookRequest.Size(m)
-}
-func (m *OrderBookRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_OrderBookRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OrderBookRequest proto.InternalMessageInfo
-
-func (m *OrderBookRequest) GetExchange() string {
-	if m != nil {
-		return m.Exchange
-	}
-	return ""
-}
-
-func (m *OrderBookRequest) GetSymbol() string {
-	if m != nil {
-		return m.Symbol
-	}
-	return ""
-}
-
 type OrderBookResponse struct {
 	LastUpdate           int64             `protobuf:"varint,1,opt,name=last_update,json=lastUpdate,proto3" json:"last_update,omitempty"`
 	Exchange             string            `protobuf:"bytes,2,opt,name=exchange,proto3" json:"exchange,omitempty"`
