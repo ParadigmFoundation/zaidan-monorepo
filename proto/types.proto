@@ -13,6 +13,11 @@ message OrderBookRequest {
   string symbol = 2;
 }
 
+message OrderBookUpdatesRequest {
+  OrderBookRequest request = 1;
+  uint32 limit = 2;
+}
+
 message OrderBookResponse {
   int64 last_update = 1;
   string exchange = 2;
