@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"strconv"
@@ -24,7 +23,7 @@ func (ms *MakerServer) CheckQuote(c context.Context, r *pb.CheckQuoteRequest) (*
 }
 
 func (ms *MakerServer) OrderStatusUpdate(c context.Context, r *pb.OrderStatusUpdateRequest) (*pb.OrderStatusUpdateResponse, error) {
-	fmt.Println("Received update for ", r.QuoteId, " Status: ", r.Status)
+	log.Println("Received update for ", r.QuoteId, " Status: ", r.Status)
 	return &pb.OrderStatusUpdateResponse{ Status: 1 }, nil
 }
 

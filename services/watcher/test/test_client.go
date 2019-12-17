@@ -26,7 +26,7 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Println("Enter txHash:")
+		log.Println("Enter txHash:")
 		txHash, _ := reader.ReadString('\n')
 
 		resp, err := c.WatchTransaction(context.Background(), &pb.WatchTransactionRequest{ QuoteId: "Random from test_client", TxHash: strings.Replace(txHash, "\n", "", -1)})
@@ -34,7 +34,7 @@ func main() {
 		if (err != nil) {
 			log.Print("Error: ", err)
 		} else {
-			log.Print("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), " }")
+			log.Print("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), ", status: ", resp.Status, " }")
 		}
 	}
 
