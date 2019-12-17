@@ -140,10 +140,9 @@ message CreateOrderRequest {
 
 message CreateOrderResponse {
     SignedOrder order = 1;
+    bytes hash = 2;
 }
 
 service HotWallet {
-    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
-    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
 }
