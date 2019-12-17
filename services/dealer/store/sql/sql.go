@@ -6,6 +6,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx/reflectx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 
@@ -30,6 +31,9 @@ func New(driver, dsn string) (*Store, error) {
 		return nil, fmt.Errorf("migrate: %w", err)
 	}
 
+	// Map json tags to map to tables
+	db.Mapper = reflectx.NewMapper("json")
+
 	return &Store{db: db}, nil
 }
 
@@ -50,33 +54,20 @@ func migrate(db *sqlx.DB) error {
 
 func (s *Store) CreateTrade(t *types.Trade) error {
 	stmt := `
-		INSERT INTO trades (
-			quote_id,
-			market_id,
-			order_hash,
-			transaction_hash,
-			taker_address,
-			timestamp,
-			maker_asset_ticker,
-			taker_asset_ticker,
-			maker_asset_amount,
-			taker_asset_amount
-		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+		INSERT INTO trades VALUES (
+			:quote_id,
+			:market_id,
+			:order_hash,
+			:transaction_hash,
+			:taker_address,
+			:timestamp,
+			:maker_asset_ticker,
+			:taker_asset_ticker,
+			:maker_asset_amount,
+			:taker_asset_amount
 		);
 	`
-	_, err := s.db.Exec(stmt,
-		t.QuoteId,
-		t.MarketId,
-		t.OrderHash,
-		t.TransactionHash,
-		t.TakerAddress,
-		t.Timestamp,
-		t.MakerAssetTicker,
-		t.TakerAssetTicker,
-		t.MakerAssetAmount,
-		t.TakerAssetAmount,
-	)
+	_, err := s.db.NamedExec(stmt, t)
 	return err
 }
 
@@ -96,20 +87,7 @@ func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
 		FROM trades WHERE quote_id = $1 LIMIT 1
 	`
 	t := types.Trade{}
-	err := s.db.QueryRow(stmt, quoteId).
-		Scan(
-			&t.QuoteId,
-			&t.MarketId,
-			&t.OrderHash,
-			&t.TransactionHash,
-			&t.TakerAddress,
-			&t.Timestamp,
-			&t.MakerAssetTicker,
-			&t.TakerAssetTicker,
-			&t.MakerAssetAmount,
-			&t.TakerAssetAmount,
-		)
-	if err != nil {
+	if err := s.db.Get(&t, stmt, quoteId); err != nil {
 		return nil, err
 	}
 	return &t, nil
