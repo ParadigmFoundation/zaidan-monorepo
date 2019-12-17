@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "grpc";
+
+import "types.proto";
+
+service OrderBookManager {
+  rpc OrderBook(OrderBookRequest) returns (OrderBookResponse);
+}
+
+service Maker {
+  rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
+  rpc CheckQuote(CheckQuoteRequest) returns (CheckQuoteResponse);
+  rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse); 
+}
+
+service HotWallet {
+    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
+    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+}
