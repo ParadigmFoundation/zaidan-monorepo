@@ -1,0 +1,149 @@
+syntax = "proto3";
+
+option go_package = "grpc";
+
+// Order book manager
+
+message OrderBookRequest {
+  string exchange = 1;
+  string symbol = 2;
+}
+
+message OrderBookEntry {
+  double price = 1;
+  double quantity = 2;
+}
+
+message OrderBookResponse {
+  int64 lastUpdate = 1;
+  string exchange = 2;
+  string symbol = 3;
+  repeated OrderBookEntry asks = 4;
+  repeated OrderBookEntry bids = 5;
+}
+
+service OrderBookManager {
+  rpc OrderBook(OrderBookRequest) returns (OrderBookResponse);
+}
+
+// Maker 
+
+message GetQuoteRequest {
+    string quoteId = 1;
+    string takerAsset = 2;
+    string makerAsset = 3;
+    string takerSize = 4;
+    string makerSize = 5;
+    string takerAddress = 6;
+}
+
+message GetQuoteResponse {
+    string quoteId = 1;
+    string expiration = 2;
+    string takerAsset = 3;
+    string makerAsset = 4;
+    string takerSize = 5;
+    string makerSize = 6;
+    string fee = 7;
+}
+
+message CheckQuoteRequest {
+    string quoteId = 1;
+} 
+
+message CheckQuoteResponse {
+    string quoteId = 1;
+    bool isValid = 2;
+    uint32 status = 3;
+}
+
+message OrderStatusUpdateRequest {
+    string quoteId = 1;
+    uint32 status = 2;
+}
+
+message OrderStatusUpdateResponse {
+    uint32 status = 1;
+}
+
+service Maker {
+  rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
+  rpc CheckQuote(CheckQuoteRequest) returns (CheckQuoteResponse);
+  rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse); 
+}
+
+// Hot wallet
+
+message Order {
+    uint64 chainId = 1;
+    string exchangeAddress = 2;
+    string makerAddress = 3;
+    string makerAssetData = 4;
+    string makerFeeAssetData = 5;
+    string makerAssetAmount = 6;
+    string makerFee = 7;
+    string takerAddress = 8;
+    string takerAssetData = 9;
+    string takerFeeAssetData = 10;
+    string takerAssetAmount = 11;
+    string takerFee = 12;
+    string senderAddress = 13;
+    string feeRecipientAddress = 14;
+    string expirationTimeSeconds = 15;
+    string salt = 16;
+}
+
+message SignedOrder {
+    uint64 chainId = 1;
+    string exchangeAddress = 2;
+    string makerAddress = 3;
+    string makerAssetData = 4;
+    string makerFeeAssetData = 5;
+    string makerAssetAmount = 6;
+    string makerFee = 7;
+    string takerAddress = 8;
+    string takerAssetData = 9;
+    string takerFeeAssetData = 10;
+    string takerAssetAmount = 11;
+    string takerFee = 12;
+    string senderAddress = 13;
+    string feeRecipientAddress = 14;
+    string expirationTimeSeconds = 15;
+    string salt = 16;
+    string signature = 17;
+}
+
+message SignOrderRequest {
+    Order order = 1;
+}
+
+message SignOrderResponse {
+    SignedOrder signedOrder = 1;
+}
+
+message HashOrderRequest {
+    Order order = 1;
+}
+
+message HashOrderResponse {
+    bytes hash = 1;
+}
+
+message CreateOrderRequest {
+    string takerAddress = 1;
+    string makerAssetAddress = 2;
+    string takerAssetAddress = 3;
+    string makerAssetAmount = 4;
+    string takerAssetAmount = 5;
+    string expirationTimeSeconds = 6;
+}
+
+message CreateOrderResponse {
+    SignedOrder order = 1;
+}
+
+service HotWallet {
+    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
+    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
+    rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+}

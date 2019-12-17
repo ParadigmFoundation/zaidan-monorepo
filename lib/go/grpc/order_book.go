@@ -1,8 +1,6 @@
-package obm
+package grpc
 
 // This file adds extra functionality to the generated obm.pb.go
-
-//go:generate protoc --go_out=plugins=grpc:. --proto_path=../../proto obm.proto
 
 type OrderBookEntries []*OrderBookEntry
 

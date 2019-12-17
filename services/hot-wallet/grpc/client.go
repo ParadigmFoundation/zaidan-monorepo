@@ -3,15 +3,16 @@ package grpc
 import (
 	"context"
 
-	"google.golang.org/grpc"
-
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"google.golang.org/grpc"
 )
 
+// Client is a gRPC client for the hot wallet service
 type Client struct {
-	types.OrderBookManagerClient
+	types.HotWalletClient
 }
 
+// NewClient returns a new gRPC client for the hot wallet
 func NewClient(ctx context.Context, addr string) (*Client, error) {
 	conn, err := grpc.DialContext(ctx, addr, grpc.WithInsecure())
 	if err != nil {
@@ -19,6 +20,6 @@ func NewClient(ctx context.Context, addr string) (*Client, error) {
 	}
 
 	return &Client{
-		types.NewOrderBookManagerClient(conn),
+		types.NewHotWalletClient(conn),
 	}, nil
 }
