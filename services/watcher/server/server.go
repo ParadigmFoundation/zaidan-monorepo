@@ -24,7 +24,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	txHash := common.HexToHash(strings.TrimSpace(in.TxHash))
 	//TODO: validate transaction hash
 
-	_, isPending, err:= s.GethClient.TransactionByHash(context.Background(), txHash)
+	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
 		log.Println("Transaction lookup failure", err)
 		return nil, err
@@ -35,13 +35,24 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 
 	if isPending && !isWatched {
 		s.TxWatching.WatchedTransactions[txHash] = watching.WatchedTransaction{TxHash: txHash, QuoteId: in.QuoteId}
-	}
-	//else { //TODO changed logic what now?
-	//	log.Println("Transaction mined")
-	//	// TODO: if pending start listener if not make calls
-	//}
 
-	return &pb.WatchTransactionResponse{ IsPending: isPending, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
+func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
+	_, isPending, err:= s.GethClient.TransactionByHash(c, txHash)
+	if err != nil {
+		return false, 0, err
+	}
+
+
+	if isPending {
+		return isPending, 0, nil
+	}
+
+	receipt, err := s.GethClient.TransactionReceipt(c, txHash)
+	if err != nil {
+		return isPending, 0, err
+	}
+
+	return isPending, uint32(receipt.Status), nil
 }
 
 func (s *WatcherServer) Init() error {
