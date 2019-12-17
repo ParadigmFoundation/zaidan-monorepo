@@ -70,13 +70,12 @@ func (s *Server) Updates(req *types.OrderBookUpdatesRequest, stream types.OrderB
 
 	// Creates the update and error channels
 	upCh := make(chan *obm.Update)
-	errCh := make(chan error)
+	errCh := make(chan error, 1)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// Subscribe to the exchange in the background
 	go func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
-
 		sub := newChannSubscriber(upCh)
 		errCh <- x.Subscribe(ctx, sub, []string{req.Request.Symbol}...)
 	}()

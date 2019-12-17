@@ -112,41 +112,35 @@ func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 		log.Printf("ERROR: %+v", err)
 	}
 
-	var (
-		doneCh = make(chan struct{})
-		stopCh = make(chan struct{})
-	)
-
 	for i, _ := range syms {
 		syms[i] = x.newSymbol(syms[i])
 	}
 	log.Printf("Binance querying: %q", syms)
 	for _, sym := range syms {
-		done, stop, err := binance.WsDepthServe(sym, eventHandler, errHandler)
-
+		_, stop, err := binance.WsDepthServe(sym, eventHandler, errHandler)
 		if err != nil {
 			return fmt.Errorf("Subscribe(): %w", err)
 		}
 
-		x.handleEvent(sym, sub)
+		errCh := make(chan error, 1)
+		go func() {
+			for {
+				errCh <- x.handleEvent(sym, sub)
+			}
+		}()
 
 		go func() {
 			select {
-			case <-stop:
-				stopCh <- struct{}{}
-			case <-done:
-				doneCh <- struct{}{}
+			case <-ctx.Done():
+				stop <- struct{}{}
+			case err := <-errCh:
+				log.Printf("err = %+v\n", err)
 			}
 		}()
 	}
 
-	select {
-	case <-ctx.Done():
-		stopCh <- struct{}{}
-		return ctx.Err()
-	case <-doneCh:
-		return nil
-	}
+	<-ctx.Done()
+	return ctx.Err()
 }
 
 func (x *Exchange) newUpdates(event *binance.WsDepthEvent) (*obm.Update, error) {
