@@ -1,14 +1,17 @@
+TARGETS = ./services/* ./lib/go
+
+.PHONY: build
 build:
-	$(MAKE) -C ./services/order-book-manager build
+	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) build;)
 
 .PHONY: test
 test:
-	$(MAKE) -C ./services/order-book-manager test
-	$(MAKE) -C ./services/hot-wallet test
-	$(MAKE) -C ./lib/go test
+	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) test;)
 
 .PHONY: ci
 ci:
-	$(MAKE) -C ./services/order-book-manager ci
-	$(MAKE) -C ./services/hot-wallet ci
-	$(MAKE) -C ./lib/go ci
+	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) ci;)
+
+.PHONY: gen
+gen:
+	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) gen;)
