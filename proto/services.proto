@@ -16,8 +16,6 @@ service Maker {
 }
 
 service HotWallet {
-    rpc SignOrder(SignOrderRequest) returns (SignOrderResponse);
-    rpc HashOrder(HashOrderRequest) returns (HashOrderResponse);
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
 }
 

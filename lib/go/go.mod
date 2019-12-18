@@ -8,6 +8,7 @@ require (
 	github.com/caarlos0/env/v6 v6.1.0
 	github.com/ethereum/go-ethereum v1.9.9
 	github.com/golang/protobuf v1.3.2
+	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/miguelmota/go-ethereum-hdwallet v0.0.0-20191015012459-abf3d7f7f00c
 	github.com/multiformats/go-multiaddr-dns v0.2.0 // indirect
 	github.com/stretchr/testify v1.4.0

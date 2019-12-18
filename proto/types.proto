@@ -132,6 +132,7 @@ message CreateOrderRequest {
 
 message CreateOrderResponse {
     SignedOrder order = 1;
+    bytes hash = 2;
 }
 
 message WatchTransactionRequest {

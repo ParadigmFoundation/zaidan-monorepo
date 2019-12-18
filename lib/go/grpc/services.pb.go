@@ -8,8 +8,6 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -27,27 +25,24 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("services.proto", fileDescriptor_8e16ccb8c5307b32) }
 
 var fileDescriptor_8e16ccb8c5307b32 = []byte{
-	// 305 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x92, 0xc1, 0x4a, 0xf3, 0x40,
-	0x10, 0xc7, 0x09, 0x7c, 0x5f, 0x6b, 0xa7, 0x20, 0xcd, 0xd4, 0x43, 0x9b, 0x87, 0x58, 0x25, 0x22,
-	0xe8, 0xb5, 0x3d, 0xb4, 0x08, 0x45, 0x6c, 0x95, 0x82, 0xb7, 0x35, 0x1d, 0x92, 0x90, 0x92, 0x8d,
-	0xbb, 0x13, 0xc1, 0xa3, 0x0f, 0xe4, 0x13, 0xf8, 0x72, 0x62, 0xb2, 0x9b, 0xa4, 0x5a, 0xbc, 0xfd,
-	0xe7, 0x37, 0xf9, 0x4d, 0x86, 0x61, 0xe1, 0xd4, 0x90, 0x7e, 0x4d, 0x23, 0x32, 0xa2, 0xd0, 0x8a,
-	0x55, 0x30, 0xe4, 0xb7, 0xc2, 0x15, 0xe1, 0xbb, 0x07, 0xa3, 0x3b, 0xbd, 0x23, 0x3d, 0x53, 0x2a,
-	0x5b, 0xc9, 0x5c, 0xc6, 0xa4, 0x31, 0x84, 0x41, 0xc3, 0xd0, 0x17, 0x4d, 0x5e, 0xd3, 0x4b, 0x49,
-	0x86, 0x03, 0xec, 0x22, 0x53, 0xa8, 0xdc, 0x10, 0xde, 0x40, 0xff, 0xb1, 0xd8, 0x49, 0x26, 0x83,
-	0x93, 0xb6, 0x6d, 0xd1, 0x1f, 0xe2, 0x85, 0x17, 0x7e, 0x7a, 0xf0, 0x7f, 0x25, 0x33, 0xd2, 0x78,
-	0x0e, 0x27, 0x0b, 0xe2, 0xfb, 0x52, 0x31, 0xe1, 0x48, 0xb8, 0xe8, 0x6c, 0xbf, 0x43, 0xec, 0x5f,
-	0xaf, 0x00, 0xe6, 0x09, 0x45, 0x59, 0xad, 0xa0, 0x68, 0x0b, 0x27, 0x8d, 0x0f, 0x98, 0xd5, 0x6e,
-	0xc1, 0xaf, 0x16, 0xd9, 0xb0, 0xe4, 0xd2, 0xd4, 0x4b, 0xe2, 0x54, 0xfc, 0x62, 0x6e, 0x48, 0x70,
-	0xac, 0x55, 0xcf, 0x0a, 0x3f, 0x3c, 0x18, 0x2c, 0x15, 0x6f, 0xe5, 0x7e, 0x4f, 0xfc, 0x7d, 0xba,
-	0x4d, 0x1a, 0xe7, 0xd5, 0xe7, 0xe8, 0x8b, 0x26, 0xb7, 0x17, 0xe8, 0x20, 0xbb, 0x4d, 0x08, 0x83,
-	0xa5, 0x34, 0x89, 0x73, 0x9a, 0xdc, 0x3a, 0x1d, 0x64, 0x9d, 0x6b, 0x18, 0xce, 0x35, 0x49, 0xa6,
-	0xda, 0x1a, 0x8b, 0x4e, 0xe5, 0xbc, 0xb3, 0x43, 0x68, 0xf7, 0x5d, 0x43, 0x7f, 0x2b, 0x39, 0x4a,
-	0x48, 0xe3, 0x02, 0x46, 0x55, 0x7c, 0xd0, 0x32, 0x37, 0x32, 0xe2, 0x54, 0xe5, 0x38, 0x11, 0x3f,
-	0x91, 0x1b, 0x37, 0x3d, 0xd2, 0xa9, 0x67, 0xce, 0x7a, 0x4f, 0xff, 0x62, 0x5d, 0x44, 0xcf, 0xbd,
-	0xea, 0x51, 0x5d, 0x7e, 0x05, 0x00, 0x00, 0xff, 0xff, 0x80, 0xb6, 0x6b, 0xa1, 0x73, 0x02, 0x00,
-	0x00,
+	// 272 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x91, 0xc1, 0x4a, 0xc3, 0x40,
+	0x10, 0x86, 0x29, 0x68, 0x6b, 0xa7, 0x20, 0xc9, 0xd4, 0x43, 0x9b, 0x87, 0x58, 0x25, 0x22, 0xe8,
+	0xb5, 0x45, 0x2a, 0x42, 0x11, 0xab, 0x52, 0xf0, 0x36, 0xa6, 0x43, 0x5b, 0x52, 0xb2, 0x71, 0x76,
+	0x22, 0x78, 0xf4, 0xb9, 0x7c, 0x39, 0x21, 0xc9, 0xb6, 0xa9, 0x16, 0x6f, 0x33, 0xdf, 0x9f, 0xff,
+	0xcb, 0xc0, 0xc2, 0xa9, 0x63, 0xf9, 0x58, 0x27, 0xec, 0x4c, 0x2e, 0x56, 0x6d, 0xd4, 0xd3, 0xcf,
+	0xdc, 0x2f, 0xf1, 0x57, 0x0b, 0x82, 0x07, 0x59, 0xb0, 0x8c, 0xac, 0x4d, 0xa7, 0x94, 0xd1, 0x92,
+	0x05, 0x63, 0xe8, 0x6e, 0x19, 0x86, 0x66, 0x3b, 0xcf, 0xf8, 0xbd, 0x60, 0xa7, 0x11, 0x36, 0x91,
+	0xcb, 0x6d, 0xe6, 0x18, 0x6f, 0xa0, 0xf3, 0x92, 0x2f, 0x48, 0xd9, 0xe1, 0x60, 0x17, 0xd7, 0xe8,
+	0x9f, 0xe2, 0x45, 0x2b, 0xfe, 0x6e, 0xc1, 0xf1, 0x94, 0x52, 0x16, 0x3c, 0x87, 0x93, 0x09, 0xeb,
+	0x63, 0x61, 0x95, 0x31, 0x30, 0x7e, 0xf4, 0xed, 0xb0, 0x41, 0xea, 0xbf, 0x5e, 0x01, 0x8c, 0x57,
+	0x9c, 0xa4, 0x55, 0x05, 0xcd, 0x6e, 0xf1, 0xa5, 0xfe, 0x1e, 0xab, 0x6b, 0xf7, 0x10, 0x96, 0x87,
+	0x3c, 0x29, 0x69, 0xe1, 0xaa, 0x23, 0x71, 0x68, 0xfe, 0x30, 0x2f, 0x89, 0x0e, 0x45, 0x95, 0x2b,
+	0xbe, 0x85, 0xee, 0x9d, 0xd5, 0x39, 0x6d, 0x36, 0xac, 0x78, 0x0d, 0xbd, 0xb1, 0x30, 0x29, 0x97,
+	0xdf, 0x63, 0xdf, 0x34, 0x36, 0x2f, 0x3b, 0xdb, 0x87, 0xb5, 0x66, 0x06, 0x9d, 0x39, 0x69, 0xb2,
+	0x62, 0xc1, 0x09, 0x04, 0xe5, 0xf8, 0x2c, 0x94, 0x39, 0x4a, 0x74, 0x6d, 0x33, 0x1c, 0x98, 0xdf,
+	0xc8, 0xeb, 0x86, 0x07, 0x92, 0xca, 0x39, 0x6a, 0xbf, 0x1e, 0x2d, 0x25, 0x4f, 0xde, 0xda, 0xe5,
+	0x5b, 0x5f, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0x10, 0x58, 0x9a, 0xd8, 0x0a, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -119,17 +114,6 @@ func (x *orderBookManagerUpdatesClient) Recv() (*OrderBookResponse, error) {
 type OrderBookManagerServer interface {
 	OrderBook(context.Context, *OrderBookRequest) (*OrderBookResponse, error)
 	Updates(*OrderBookUpdatesRequest, OrderBookManager_UpdatesServer) error
-}
-
-// UnimplementedOrderBookManagerServer can be embedded to have forward compatible implementations.
-type UnimplementedOrderBookManagerServer struct {
-}
-
-func (*UnimplementedOrderBookManagerServer) OrderBook(ctx context.Context, req *OrderBookRequest) (*OrderBookResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderBook not implemented")
-}
-func (*UnimplementedOrderBookManagerServer) Updates(req *OrderBookUpdatesRequest, srv OrderBookManager_UpdatesServer) error {
-	return status.Errorf(codes.Unimplemented, "method Updates not implemented")
 }
 
 func RegisterOrderBookManagerServer(s *grpc.Server, srv OrderBookManagerServer) {
@@ -245,20 +229,6 @@ type MakerServer interface {
 	OrderStatusUpdate(context.Context, *OrderStatusUpdateRequest) (*OrderStatusUpdateResponse, error)
 }
 
-// UnimplementedMakerServer can be embedded to have forward compatible implementations.
-type UnimplementedMakerServer struct {
-}
-
-func (*UnimplementedMakerServer) GetQuote(ctx context.Context, req *GetQuoteRequest) (*GetQuoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetQuote not implemented")
-}
-func (*UnimplementedMakerServer) CheckQuote(ctx context.Context, req *CheckQuoteRequest) (*CheckQuoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckQuote not implemented")
-}
-func (*UnimplementedMakerServer) OrderStatusUpdate(ctx context.Context, req *OrderStatusUpdateRequest) (*OrderStatusUpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderStatusUpdate not implemented")
-}
-
 func RegisterMakerServer(s *grpc.Server, srv MakerServer) {
 	s.RegisterService(&_Maker_serviceDesc, srv)
 }
@@ -342,8 +312,6 @@ var _Maker_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type HotWalletClient interface {
-	SignOrder(ctx context.Context, in *SignOrderRequest, opts ...grpc.CallOption) (*SignOrderResponse, error)
-	HashOrder(ctx context.Context, in *HashOrderRequest, opts ...grpc.CallOption) (*HashOrderResponse, error)
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
 }
 
@@ -353,24 +321,6 @@ type hotWalletClient struct {
 
 func NewHotWalletClient(cc *grpc.ClientConn) HotWalletClient {
 	return &hotWalletClient{cc}
-}
-
-func (c *hotWalletClient) SignOrder(ctx context.Context, in *SignOrderRequest, opts ...grpc.CallOption) (*SignOrderResponse, error) {
-	out := new(SignOrderResponse)
-	err := c.cc.Invoke(ctx, "/HotWallet/SignOrder", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *hotWalletClient) HashOrder(ctx context.Context, in *HashOrderRequest, opts ...grpc.CallOption) (*HashOrderResponse, error) {
-	out := new(HashOrderResponse)
-	err := c.cc.Invoke(ctx, "/HotWallet/HashOrder", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *hotWalletClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
@@ -384,63 +334,11 @@ func (c *hotWalletClient) CreateOrder(ctx context.Context, in *CreateOrderReques
 
 // HotWalletServer is the server API for HotWallet service.
 type HotWalletServer interface {
-	SignOrder(context.Context, *SignOrderRequest) (*SignOrderResponse, error)
-	HashOrder(context.Context, *HashOrderRequest) (*HashOrderResponse, error)
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
-}
-
-// UnimplementedHotWalletServer can be embedded to have forward compatible implementations.
-type UnimplementedHotWalletServer struct {
-}
-
-func (*UnimplementedHotWalletServer) SignOrder(ctx context.Context, req *SignOrderRequest) (*SignOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SignOrder not implemented")
-}
-func (*UnimplementedHotWalletServer) HashOrder(ctx context.Context, req *HashOrderRequest) (*HashOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method HashOrder not implemented")
-}
-func (*UnimplementedHotWalletServer) CreateOrder(ctx context.Context, req *CreateOrderRequest) (*CreateOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
 
 func RegisterHotWalletServer(s *grpc.Server, srv HotWalletServer) {
 	s.RegisterService(&_HotWallet_serviceDesc, srv)
-}
-
-func _HotWallet_SignOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SignOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HotWalletServer).SignOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/HotWallet/SignOrder",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotWalletServer).SignOrder(ctx, req.(*SignOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HotWallet_HashOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HashOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HotWalletServer).HashOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/HotWallet/HashOrder",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotWalletServer).HashOrder(ctx, req.(*HashOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _HotWallet_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -465,14 +363,6 @@ var _HotWallet_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "HotWallet",
 	HandlerType: (*HotWalletServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "SignOrder",
-			Handler:    _HotWallet_SignOrder_Handler,
-		},
-		{
-			MethodName: "HashOrder",
-			Handler:    _HotWallet_HashOrder_Handler,
-		},
 		{
 			MethodName: "CreateOrder",
 			Handler:    _HotWallet_CreateOrder_Handler,
@@ -509,14 +399,6 @@ func (c *watcherClient) WatchTransaction(ctx context.Context, in *WatchTransacti
 // WatcherServer is the server API for Watcher service.
 type WatcherServer interface {
 	WatchTransaction(context.Context, *WatchTransactionRequest) (*WatchTransactionResponse, error)
-}
-
-// UnimplementedWatcherServer can be embedded to have forward compatible implementations.
-type UnimplementedWatcherServer struct {
-}
-
-func (*UnimplementedWatcherServer) WatchTransaction(ctx context.Context, req *WatchTransactionRequest) (*WatchTransactionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method WatchTransaction not implemented")
 }
 
 func RegisterWatcherServer(s *grpc.Server, srv WatcherServer) {
