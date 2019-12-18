@@ -19,3 +19,6 @@ service HotWallet {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
 }
 
+service Watcher {
+    rpc WatchTransaction(WatchTransactionRequest) returns (WatchTransactionResponse);
+}
