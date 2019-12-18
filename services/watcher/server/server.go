@@ -2,20 +2,17 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strings"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 type WatcherServer struct {
-	GethAddress string
-	MakerEndpoint string
-	GethClient *ethclient.Client
+	EthToolkit *eth.EthereumToolkit
 	TxWatching *watching.TxWatching
 }
 
@@ -30,13 +27,13 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		return nil, err
 	}
 
-	_/*watchedTx*/, isWatched := s.TxWatching.WatchedTransactions[txHash] //TODO use watched tx?
+	_/*watchedTx*/, isWatched := s.TxWatching.IsWatched(txHash) //TODO use watched tx?
 	if isPending && !isWatched {
 		log.Printf("Now watching: %v", in.TxHash)
-		s.TxWatching.WatchedTransactions[txHash] = watching.WatchedTransaction{TxHash: txHash, QuoteId: in.QuoteId}
+		s.TxWatching.Watch(txHash, in.QuoteId)
 		isWatched = true
 	} else if isPending && isWatched {
-		log.Printf("Already watching ") //TODO
+		log.Printf("Already watching") //TODO
 	} else {
 		if isWatched {
 			log.Println("This is not pending but is watched so needs to be handled") //TODO
@@ -50,7 +47,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 }
 
 func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
-	_, isPending, err:= s.GethClient.TransactionByHash(c, txHash)
+	_, isPending, err:= s.EthToolkit.Client.TransactionByHash(c, txHash)
 	if err != nil {
 		return false, 0, err
 	}
@@ -60,34 +57,10 @@ func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash)
 		return isPending, 0, nil
 	}
 
-	receipt, err := s.GethClient.TransactionReceipt(c, txHash)
+	receipt, err := s.EthToolkit.Client.TransactionReceipt(c, txHash)
 	if err != nil {
 		return isPending, 0, err
 	}
 
 	return isPending, uint32(receipt.Status), nil
-}
-
-func (s *WatcherServer) Init() error {
-	client, err := ethclient.Dial(s.GethAddress)
-
-	if err != nil {
-		return fmt.Errorf("failed to connect to rpc" + err.Error())
-	}
-
-	txWatching := watching.TxWatching{
-		EthClient: client,
-		MakerEndpoint: s.MakerEndpoint,
-	}
-
-	err = txWatching.Init()
-
-	if err != nil {
-		return fmt.Errorf("failed to start tx watching" + err.Error())
-	}
-
-	s.GethClient = client
-	s.TxWatching = &txWatching
-
-	return nil
 }

@@ -6,49 +6,68 @@ import (
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/server"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 )
 
 var (
-	gethAddress string
-	makerEndpoint string
-	port int
+	ethAddress string
+	makerUrl   string
+	port       int
 
 	cmd = &cobra.Command{
 		Use:   "watcher",
 		Short: "Zaidan Transaction Watcher",
-		Run: startup,
+		Run:   startup,
 	}
 )
 
-
 func main() {
 	configureFlags()
-	cmd.Execute()
+	if err := cmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func configureFlags() {
 	flags := cmd.PersistentFlags()
-	flags.StringVar(&gethAddress, "geth", "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w", "Geth endpoint")
+	flags.StringVarP(&ethAddress, "eth", "e", "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w", "Ethereum RPC url")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
-	flags.StringVar(&makerEndpoint, "maker", "localhost:5002", "Maker gRPC endpoint")
+	flags.StringVarP(&makerUrl, "maker", "m", "localhost:5002", "Maker gRPC url")
 }
 
-func startup (cmd *cobra.Command, args []string) {
+func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	log.Println("Starting")
-	lis, err := net.Listen("tcp", ":" + strconv.Itoa(port))
+
+	ethToolkit := eth.Init(ethAddress)
+	log.Println("Connected to ethereum at", ethAddress)
+
+	conn, err := grpc.Dial(makerUrl, grpc.WithInsecure())
+	if err != nil {
+		log.Fatal("failed to connect maker client" + err.Error())
+	}
+	makerClient :=  pb.NewMakerClient(conn)
+	log.Println("Maker client configured for", makerUrl)
+
+	//TODO look at var/package naming
+	watchingThing := watching.Init(ethToolkit, makerClient)
+
+	lis, err := net.Listen("tcp", ":"+strconv.Itoa(port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
-	watcherServer := &server.WatcherServer{ GethAddress: gethAddress, MakerEndpoint: makerEndpoint }
-	if err := watcherServer.Init(); err != nil {
-		log.Fatalf("failed to initialize server: %v", err)
+	watcherServer := &server.WatcherServer{
+		EthToolkit: ethToolkit,
+		TxWatching: watchingThing,
 	}
-	pb.RegisterWatcherServer(s, watcherServer)
-	if err := s.Serve(lis); err != nil {
+	grpcServer := grpc.NewServer()
+	pb.RegisterWatcherServer(grpcServer, watcherServer)
+	log.Println("Watcher listening on port", port)
+
+	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }
