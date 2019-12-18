@@ -3,3 +3,6 @@ build:
 
 test:
 	go test ./... -race
+
+ci:
+    go test -race ./...
