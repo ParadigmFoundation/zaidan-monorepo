@@ -30,10 +30,7 @@ func NewDeriver(basePath accounts.DerivationPath) *Deriver {
 
 // NewBaseDeriver creates a deriver from the standard base path
 func NewBaseDeriver() *Deriver {
-	return &Deriver{
-		base: accounts.DefaultBaseDerivationPath,
-		last: accounts.DefaultBaseDerivationPath[DerivationPathAddressIndex],
-	}
+	return NewDeriver(accounts.DefaultBaseDerivationPath)
 }
 
 // DeriveNext derives and returns the next path, by incrementing the address index
@@ -61,11 +58,7 @@ func (d *Deriver) next() uint32 {
 
 // copy base returns a copy of the base path
 func (d *Deriver) copyBase() accounts.DerivationPath {
-	copy := make(accounts.DerivationPath, DerivationPathLength)
-	copy[DerivationPathPurposeIndex] = d.base[DerivationPathPurposeIndex]
-	copy[DerivationPathCoinTypeIndex] = d.base[DerivationPathCoinTypeIndex]
-	copy[DerivationPathAccountIndex] = d.base[DerivationPathAccountIndex]
-	copy[DerivationPathChangeIndex] = d.base[DerivationPathChangeIndex]
-	copy[DerivationPathAddressIndex] = d.base[DerivationPathAddressIndex]
-	return copy
+	dst := make(accounts.DerivationPath, DerivationPathLength)
+	copy(dst, d.base)
+	return dst
 }

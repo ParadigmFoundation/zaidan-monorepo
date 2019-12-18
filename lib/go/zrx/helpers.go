@@ -106,9 +106,8 @@ func (zh *ZeroExHelper) ValidateFill(ctx context.Context, order *zeroex.SignedOr
 		return fmt.Errorf("unable to validate order")
 	}
 
-	// if taker is null address, skip taker checks
-	nullAddress := common.Address{}
-	if order.TakerAddress == nullAddress {
+	// if taker is null address, skip taker checks as we cannot verify their balance/allowance
+	if order.TakerAddress == NULL_ADDRESS {
 		return nil
 	}
 
