@@ -94,6 +94,7 @@ func (zh *ZeroExHelper) GetTransactionHash(tx *Transaction) (common.Hash, error)
 }
 
 // ValidateFill is a convenience wrapper for ordervalidator.BatchValidate with a single order
+// In addition, it also verifies the taker balance/allowance if the taker address is present.
 func (zh *ZeroExHelper) ValidateFill(ctx context.Context, order *zeroex.SignedOrder, takerAssetAmount *big.Int) error {
 	orders := []*zeroex.SignedOrder{order}
 	rawValidationResults := zh.orderValidator.BatchValidate(ctx, orders, true, rpc.LatestBlockNumber)
