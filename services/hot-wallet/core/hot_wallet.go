@@ -21,10 +21,10 @@ type HotWalletConfig struct {
 	OrderValidatorMaxReqLength int
 
 	// Address (0x-prefixed) to use as the maker address for orders
-	MakerAddress string
+	MakerAddress common.Address
 
 	// Address (0x-prefixed) to use as the sender for order
-	SenderAddress string
+	SenderAddress common.Address
 }
 
 // HotWallet represents a live hot wallet that can interact with the 0x contract system
@@ -45,17 +45,15 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		return nil, err
 	}
 
-	makerAddress := common.HexToAddress(cfg.MakerAddress)
-	senderAddress := common.HexToAddress(cfg.SenderAddress)
-	if !provider.CanSignWithAddress(makerAddress) || !provider.CanSignWithAddress(senderAddress) {
+	if !provider.CanSignWithAddress(cfg.MakerAddress) || !provider.CanSignWithAddress(cfg.SenderAddress) {
 		return nil, fmt.Errorf("unable to sign with maker or sender address")
 	}
 
 	return &HotWallet{
 		provider:      provider,
 		zrxHelper:     zrxHelper,
-		makerAddress:  makerAddress,
-		senderAddress: senderAddress,
+		makerAddress:  cfg.MakerAddress,
+		senderAddress: cfg.SenderAddress,
 		logger:        log.New(context.Background()),
 	}, nil
 }
