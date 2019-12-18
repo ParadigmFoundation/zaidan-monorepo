@@ -60,6 +60,11 @@ func (pvr *Provider) Client() *ethclient.Client { return pvr.eth }
 // Wallet returns a pointer to the underlying wallet
 func (pvr *Provider) Wallet() *hdwallet.Wallet { return pvr.hw }
 
+// AccountAt returns the account at the specified path (if applicable). Use Derive to add an address.
+func (pvr *Provider) AccountAt(path accounts.DerivationPath) (accounts.Account, error) {
+	return pvr.hw.Derive(path, false)
+}
+
 // SignText signs a personal message with account if available.
 func (pvr *Provider) SignText(account accounts.Account, text []byte) ([]byte, error) {
 	if err := pvr.hasAccountOrErr(account); err != nil {
