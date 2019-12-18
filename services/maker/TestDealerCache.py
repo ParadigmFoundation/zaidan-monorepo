@@ -96,22 +96,21 @@ class TestDealerCache():
         '''
 
         # record call time to use for expiration check
-        call_time = time()
+        placeholder_book = {}
+        if symbol == 'ZRX/ETH':
+            placeholder_book['bids'] = [[.0098, 100], [.0097, 200], [.0096, 300]]
+            placeholder_book['asks'] = [[.0102, 100], [.0103, 200], [.0104, 300]]
+        elif symbol == 'ZRX/USD':
+            placeholder_book['bids'] = [[.99, 100], [.98, 200], [.97, 300]]
+            placeholder_book['asks'] = [[1.01, 100], [1.02, 200], [1.03, 300]]
+        elif symbol == 'DAI/USDC':
+            placeholder_book['bids'] = [[1.001, 100], [1.002, 200], [1.003, 300]]
+            placeholder_book['asks'] = [[1.003, 100], [1.006, 200], [1.007, 300]]
+        elif symbol == 'ETH/USD':
+            placeholder_book['bids'] = [[99, 100], [98, 200], [97, 300]]
+            placeholder_book['asks'] = [[101, 100], [102, 200], [103, 300]]
 
-        symbols = symbol.split('/')
-        if len(symbols) != 2:
-            raise ValueError('symbol must be BASE_TICKER/QUOTE_TICKER format')
-
-        base_key = f'{symbol.upper()}_{exchange.lower()}_{side.lower()}'
-        timestamp_key = f'{base_key}_timestamp'
-
-        book_timestamp = self.db.get(timestamp_key)
-        book_age = call_time - float(book_timestamp)
-        if max_age > 0 and book_age >= max_age:
-            raise OutOfDateError(f'book is {book_age - max_age}s out of date')
-
-        raw_book = self.db.get(base_key)
-        return decode_from_bytes(raw_book)
+        return placeholder_book[side]
 
     def set_quote(self, quote_id: str, quote: object, status=0) -> None:
         '''

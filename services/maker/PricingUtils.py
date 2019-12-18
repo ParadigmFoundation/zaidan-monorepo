@@ -7,6 +7,8 @@ asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINA
                       'DAI': {'exchange_books': [('COINBASE', 'DAI/USD')], 'implied_pref': ('COINBASE', 'DAI/USD'), 'constant_rate': 'PREF_INSIDE'}
                       }
 
+EXCHANGE_FEES = {'BINANCE':.00075, 'COINBASE':.002, 'GEMINI':.001}
+PREMIUM = .001
 cache = TestDealerCache()
 
 def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
@@ -31,12 +33,12 @@ def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
                     order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'bids'))
                 if taker_size:
                     price = _get_price_from_book_base(order_books, taker_size, 'buy')
-                    price = adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
+                    price = adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='taker')
                     return {'maker_size': taker_size * price, 'taker_size': taker_size}
                 else:
                     price = _get_price_from_book_quote(order_books, taker_size, 'buy')
-                    price = adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
-                    return {'maker_size': maker_size, 'taker_size': maker_size*price}
+                    price = adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='maker')
+                    return {'maker_size': maker_size, 'taker_size': maker_size/price}
             elif 'constant_rate' in taker_asset_pricing_data.keys():
                 books_to_get = maker_asset_pricing_data['exchange_books']
                 order_books = {}
@@ -44,13 +46,13 @@ def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
                     order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'asks'))
                 if maker_size:
                     price = _get_price_from_book_base(order_books, maker_size, 'sell')
-                    price = adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
+                    price = adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='maker')
                     return {'maker_size': maker_size, 'taker_size': maker_size*price}
 
                 else:
                     price = _get_price_from_book_quote(order_books, maker_size, 'buy')
-                    price = adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
-                    return {'maker_size': taker_size * price, 'taker_size': taker_size}
+                    price = adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='taker')
+                    return {'maker_size': taker_size/price, 'taker_size': taker_size}
             else:
                 if taker_size:
                     books_to_get = taker_asset_pricing_data['implied_pref']
@@ -67,7 +69,7 @@ def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
 
                     maker_asset_price = _get_price_from_book_quote(order_books, taker_size*taker_asset_price, 'sell')
 
-                    return {'maker_size': maker_asset_price*taker_size*taker_asset_price, 'taker_size':taker_size}
+                    return {'maker_size': taker_size*taker_asset_price/maker_asset_price, 'taker_size':taker_size}
                 else:
                     books_to_get = maker_asset_pricing_data['implied_pref']
                     order_books = {}
@@ -83,7 +85,7 @@ def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
 
                     taker_asset_price = _get_price_from_book_quote(order_books, maker_size*maker_asset_price, 'sell')
 
-                    return {'maker_size': maker_size, 'taker_size':taker_asset_price*maker_size*maker_asset_price}
+                    return {'maker_size': maker_size, 'taker_size':maker_size*maker_asset_price/taker_asset_price}
 
 
         else:
@@ -139,7 +141,7 @@ def _get_price_from_book_base(half_book, size, side):
                 else:
                     exchange_exhausted[exchange] = True
             if False not in exchange_exhausted.values():
-                exchange_sizes[EXCHANGES[0]] = exchange_sizes[EXCHANGES[0]] + size
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
                 size = 0
 
         return min(exchange_prices.values())*(1 - PREMIUM)
@@ -183,7 +185,7 @@ def _get_price_from_book_base(half_book, size, side):
             for exchange in half_book.keys():
                 if not exchange_levels[exchange] >= len(half_book[exchange]):
                     inside_asks[exchange] = half_book[exchange][exchange_levels[exchange]]
-                    inside_asks[exchange][0] = inside_asks[exchange][0] * c_rate
+                    inside_asks[exchange][0] = inside_asks[exchange][0]
                     if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
                             1 + EXCHANGE_FEES[exchange]):
                         total_inside_ask = inside_asks[exchange]
@@ -191,7 +193,7 @@ def _get_price_from_book_base(half_book, size, side):
                 else:
                     exchange_exhausted[exchange] = True
             if False not in exchange_exhausted.values():
-                exchange_sizes[EXCHANGES[0]] = exchange_sizes[EXCHANGES[0]] + size
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
                 size = 0
         return max(exchange_prices.values())*(1 + PREMIUM)
 
@@ -249,15 +251,10 @@ def _get_price_from_book_quote(half_book, size, side):
                     exchange_exhausted[exchange] = True
 
             if False not in exchange_exhausted.values():
-                exchange_sizes[EXCHANGES[0]] = exchange_sizes[EXCHANGES[0]] + size
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
                 size = 0
 
-        total_price = 0
-
-        for key in exchange_prices.keys():
-            price = exchange_prices[key] * (1 + PREMIUM)
-            quantity = exchange_sizes[key]
-            total_price = total_price + (quantity / price)
+        return max(exchange_prices.values()) * (1 + PREMIUM)
 
     if side == 'buy':
         inside_bids = {}
@@ -293,7 +290,7 @@ def _get_price_from_book_quote(half_book, size, side):
                 if not exchange_levels[exchange] >= len(half_book[exchange]):
                     inside_bids[exchange] = half_book[exchange][exchange_levels[exchange]]
                     inside_bids[exchange][0] = inside_bids[exchange][0]
-                    if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
+                    if inside_bids[exchange][0] * (1 + EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
                             1 - EXCHANGE_FEES[exchange]):
                         total_inside_bid = inside_bids[exchange]
                         total_inside_bid_exchange = exchange
@@ -301,18 +298,18 @@ def _get_price_from_book_quote(half_book, size, side):
                     exchange_exhausted[exchange] = True
 
             if False not in exchange_exhausted.values():
-                exchange_sizes[EXCHANGES[0]] = exchange_sizes[EXCHANGES[0]] + size
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
                 size = 0
 
         total_price = 0
 
-        for key in exchange_prices.keys():
-            price = exchange_prices[key] * (1 - PREMIUM)
-            quantity = exchange_sizes[key]
-            total_price = total_price + (quantity / price)
-    try:
-        # make sure rounding right way
-        final_price = math.ceil(total_price * 100000000) / 100000000
-        return final_price
-    except:
-        raise Exception('Error in calculating price')
+        return min(exchange_prices.values())*(1 - PREMIUM)
+
+
+def adjust_for_constant_rate(price, book, asset_side, side_spef):
+    if asset_side == 'maker_asset':
+        half_book = cache.get_order_book(book[0], book[1], 'asks')
+        return price/(half_book[0][0])
+    if asset_side == 'taker_asset':
+        half_book = cache.get_order_book(book[0], book[1], 'bids')
+        return price/(half_book[0][0])
