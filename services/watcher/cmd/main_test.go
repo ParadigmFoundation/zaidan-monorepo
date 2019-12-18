@@ -15,11 +15,10 @@ func TestCommandConfig(t *testing.T) {
 	assert.Contains(t, cmd.Short, "Watcher")
 
 	flags := cmd.PersistentFlags()
-	assert.NotNil(t, flags.Lookup("geth"))
-	assert.Equal(t, flags.Lookup("geth").Value.String(), "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
+	assert.NotNil(t, flags.Lookup("eth"))
+	assert.Equal(t, flags.Lookup("eth").Value.String(), "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
 	assert.NotNil(t, flags.Lookup("port"))
 	assert.Equal(t, flags.Lookup("port").Value.String(), "5001")
 	assert.NotNil(t, flags.ShorthandLookup("p"))
-	// TODO how to test?
 }
 
