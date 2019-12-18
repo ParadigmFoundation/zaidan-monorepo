@@ -5,4 +5,4 @@ test:
 	go test ./... -race
 
 ci:
-    go test -race ./...
+	go test -race ./cmd ./server
