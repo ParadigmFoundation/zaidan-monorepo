@@ -30,3 +30,9 @@ func (s *Server) Listen(bind string) error {
 
 	return s.grpc.Serve(l)
 }
+
+// Stop triggers a graceful shutdown of the gRPC server
+func (s *Server) Stop() { s.grpc.GracefulStop() }
+
+// ForceStop forcefully terminates all open connections (only use if Stop fails)
+func (s *Server) ForceStop() { s.grpc.Stop() }
