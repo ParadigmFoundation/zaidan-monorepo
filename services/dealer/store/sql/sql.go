@@ -73,18 +73,7 @@ func (s *Store) CreateTrade(t *types.Trade) error {
 
 func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
 	stmt := `
-		SELECT
-		  "quote_id"
-		, "market_id"
-		, "order_hash"
-		, "transaction_hash"
-		, "taker_address"
-		, "timestamp"
-		, "maker_asset_ticker"
-		, "taker_asset_ticker"
-		, "maker_asset_amount"
-		, "taker_asset_amount"
-		FROM trades WHERE quote_id = $1 LIMIT 1
+		SELECT * FROM trades WHERE quote_id = $1 LIMIT 1
 	`
 	t := types.Trade{}
 	if err := s.db.Get(&t, stmt, quoteId); err != nil {
