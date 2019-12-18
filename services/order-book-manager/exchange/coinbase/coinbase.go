@@ -14,6 +14,7 @@ import (
 )
 
 const (
+	NAME     = "coinbase"
 	FEED_URL = "wss://ws-feed.pro.coinbase.com"
 )
 
@@ -79,6 +80,7 @@ func (x *Exchange) subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 	if err != nil {
 		return err
 	}
+	defer ws.Close()
 
 	var ids = make([]string, len(syms))
 	for i, s := range syms {
@@ -93,14 +95,25 @@ func (x *Exchange) subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 	}
 
 	log.Printf("Coinbase querying: %q", ids)
-
 	if err := ws.WriteJSON(req); err != nil {
 		return err
 	}
 
+	errCh := make(chan error)
+	go func() {
+		for {
+			errCh <- x.handleJSON(ws, sub)
+		}
+	}()
+
 	for {
-		if err := x.handleJSON(ws, sub); err != nil {
-			return err
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case err := <-errCh:
+			if err != nil {
+				return err
+			}
 		}
 	}
 }
@@ -125,7 +138,7 @@ func (x *Exchange) handleJSON(ws *websocket.Conn, sub exchange.Subscriber) error
 			return err
 		}
 
-		return fn("coinbase", updates)
+		return fn(NAME, updates)
 	}
 
 	return nil
@@ -169,4 +182,8 @@ func newUpdates(msg *coinbasepro.Message) (*obm.Update, error) {
 	}
 
 	return &updates, nil
+}
+
+func init() {
+	exchange.Register(NAME, New())
 }
