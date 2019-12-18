@@ -133,3 +133,16 @@ message CreateOrderRequest {
 message CreateOrderResponse {
     SignedOrder order = 1;
 }
+
+message WatchTransactionRequest {
+    string quote_id = 1;
+    string tx_hash = 2;
+}
+
+message WatchTransactionResponse {
+    string quote_id = 1;
+    string tx_hash = 2;
+    bool is_pending = 3;
+    bool is_watched = 4;
+    uint32 status = 5;
+}
