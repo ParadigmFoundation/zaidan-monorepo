@@ -7,7 +7,6 @@ import (
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/core/types"
 )
 
 type WatchedTransaction struct {
@@ -31,7 +30,7 @@ func Init(ethToolkit *eth.EthereumToolkit, makerClient pb.MakerClient ) *TxWatch
 	}
 	watching.watchedTransactions = make(map[common.Hash]WatchedTransaction)
 
-	go watching.watchBlock(ethToolkit.BlockHeaders, ethToolkit.SubscriptionErrors)
+	go watching.watchBlock()
 
 	return &watching
 }
@@ -48,15 +47,15 @@ func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
 	}
 }
 
-func (txW *TxWatching) watchBlock(headerChannel chan *types.Header, errorChannel <-chan error) {
+func (txW *TxWatching) watchBlock() {
 	for {
 		select {
-			case errors := <- errorChannel: {
+			case errors := <- txW.EthToolkit.SubscriptionErrors: {
 				log.Println("Subscription error! ", errors)
 				log.Println("Attempting to reconnect")
 				txW.EthToolkit.Reset()
 			}
-			case headers, ok := <- headerChannel: {
+			case headers, ok := <- txW.EthToolkit.BlockHeaders: {
 				log.Println(headers.Number.String())// TODO remove this
 				if !ok {
 					log.Fatal("Headers channel failure.")
@@ -67,7 +66,7 @@ func (txW *TxWatching) watchBlock(headerChannel chan *types.Header, errorChannel
 					log.Println("Error getting block number:", headers.Number.String(), err)
 					log.Println("Attempting to reconnect")
 					txW.EthToolkit.Reset()
-					headerChannel <- headers
+					txW.EthToolkit.BlockHeaders <- headers
 					return
 				}
 
