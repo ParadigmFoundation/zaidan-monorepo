@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
@@ -55,6 +56,65 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		makerAddress:  cfg.MakerAddress,
 		senderAddress: cfg.SenderAddress,
 		logger:        log.New(context.Background()),
+	}, nil
+}
+
+// GetBalance implements grpc.HotWalletServer
+func (hw *HotWallet) GetBalance(ctx context.Context, req *grpc.GetBalanceRequest) (*grpc.GetBalanceResponse, error) {
+	owner := common.HexToAddress(req.OwnerAddress)
+	token := common.HexToAddress(req.TokenAddress)
+
+	devUtils := hw.zrxHelper.DevUtils()
+	assetData, err := devUtils.EncodeERC20AssetData(nil, token)
+	if err != nil {
+		return nil, err
+	}
+
+	balance, err := devUtils.GetBalance(nil, owner, assetData)
+	if err != nil {
+		return nil, err
+	}
+
+	latestHeader, err := hw.provider.Client().HeaderByNumber(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.GetBalanceResponse{
+		OwnerAddress: strings.ToLower(owner.Hex()),
+		TokenAddress: strings.ToLower(token.Hex()),
+		Balance:      balance.String(),
+		BlockNumber:  latestHeader.Number.Uint64(),
+	}, nil
+}
+
+// GetAllowance implements grpc.HotWalletServer
+func (hw *HotWallet) GetAllowance(ctx context.Context, req *grpc.GetAllowanceRequest) (*grpc.GetAllowanceResponse, error) {
+	owner := common.HexToAddress(req.OwnerAddress)
+	token := common.HexToAddress(req.TokenAddress)
+
+	devUtils := hw.zrxHelper.DevUtils()
+	assetData, err := devUtils.EncodeERC20AssetData(nil, token)
+	if err != nil {
+		return nil, err
+	}
+
+	allowance, err := devUtils.GetAssetProxyAllowance(nil, owner, assetData)
+	if err != nil {
+		return nil, err
+	}
+
+	latestHeader, err := hw.provider.Client().HeaderByNumber(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.GetAllowanceResponse{
+		OwnerAddress: strings.ToLower(owner.Hex()),
+		TokenAddress: strings.ToLower(token.Hex()),
+		ProxyAddress: strings.ToLower(hw.zrxHelper.ContractAddresses.ERC20Proxy.Hex()),
+		Allowance:    allowance.String(),
+		BlockNumber:  latestHeader.Number.Uint64(),
 	}, nil
 }
 
