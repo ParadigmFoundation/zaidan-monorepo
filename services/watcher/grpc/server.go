@@ -55,7 +55,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		return nil, err
 	}
 
-	_/*watchedTx*/, isWatched := s.TxWatching.IsWatched(txHash) //TODO use watched tx?
+	_, isWatched := s.TxWatching.IsWatched(txHash)
 	if isPending && !isWatched {
 		log.Printf("Now watching: %v", in.TxHash)
 		s.TxWatching.Watch(txHash, in.QuoteId)
