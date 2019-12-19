@@ -48,6 +48,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	txHash := common.HexToHash(strings.TrimSpace(in.TxHash))
 	//TODO: validate transaction hash
 
+	s.TxWatching.Lock()
 	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
 		log.Println("Transaction lookup failure", err)
@@ -67,8 +68,8 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		} else {
 			log.Println("Transaction mined and does not need to be watched") // TODO
 		}
-
 	}
+	s.TxWatching.Unlock()
 
 	return &pb.WatchTransactionResponse{ IsWatched: isWatched, IsPending: isPending, Status: status, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
 }
