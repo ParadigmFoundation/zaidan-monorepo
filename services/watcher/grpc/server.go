@@ -60,9 +60,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		log.Printf("Now watching: %v", in.TxHash)
 		s.TxWatching.Watch(txHash, in.QuoteId)
 		isWatched = true
-	} else if isPending && isWatched {
-		log.Printf("Already watching") //TODO
-	} else {
+	} else if !isPending {
 		if isWatched {
 			log.Println("This is not pending but is watched so needs to be handled") //TODO
 		} else {
