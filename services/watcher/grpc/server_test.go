@@ -11,7 +11,7 @@ import (
 )
 
 func TestWatchTransaction(t *testing.T) {
-	ethToolkit := eth.Init("wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
+	ethToolkit := eth.New("wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
 	ws := WatcherServer{
 		EthToolkit: ethToolkit,
 		TxWatching: watching.Init(ethToolkit, nil),
