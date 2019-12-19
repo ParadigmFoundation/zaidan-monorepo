@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
@@ -12,7 +13,7 @@ type EthereumToolkit struct {
 	ethUrl 			   string
 	Client             *ethclient.Client
 	BlockHeaders       chan *types.Header
-	SubscriptionErrors <-chan error
+	BlockHeadersSubscription ethereum.Subscription
 }
 
 func Init (ethUrl string) *EthereumToolkit {
@@ -28,10 +29,12 @@ func Init (ethUrl string) *EthereumToolkit {
 		log.Fatal("failed to subscribe" + err.Error())
 	}
 
-	return &EthereumToolkit{ ethUrl: ethUrl, Client: client, BlockHeaders: channel, SubscriptionErrors: sub.Err() }
+	return &EthereumToolkit{ ethUrl: ethUrl, Client: client, BlockHeaders: channel, BlockHeadersSubscription: sub }
 }
 
 func (etk *EthereumToolkit) Reset() {
+	etk.BlockHeadersSubscription.Unsubscribe()
+
 	client, err := ethclient.Dial(etk.ethUrl)
 	if err != nil {
 		log.Fatal("Unable to reconnect to ethereum:" + err.Error())
@@ -43,5 +46,5 @@ func (etk *EthereumToolkit) Reset() {
 		log.Fatal("failed to subscribe" + err.Error())
 	}
 
-	etk.SubscriptionErrors = sub.Err()
+	etk.BlockHeadersSubscription = sub
 }

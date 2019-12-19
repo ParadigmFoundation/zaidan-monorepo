@@ -50,7 +50,7 @@ func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
 func (txW *TxWatching) watchBlocks() {
 	for {
 		select {
-			case errors := <- txW.EthToolkit.SubscriptionErrors: {
+			case errors := <- txW.EthToolkit.BlockHeadersSubscription.Err(): {
 				log.Println("Subscription error! ", errors)
 				log.Println("Attempting to reconnect")
 				txW.EthToolkit.Reset()
