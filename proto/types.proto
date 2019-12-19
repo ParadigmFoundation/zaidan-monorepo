@@ -147,3 +147,28 @@ message WatchTransactionResponse {
     bool is_watched = 4;
     uint32 status = 5;
 }
+
+message GetBalanceRequest {
+    string owner_address = 1;
+    string token_address = 2;
+}
+
+message GetBalanceResponse {
+    string owner_address = 1;
+    string token_address = 2;
+    string balance = 3;
+    uint64 block_number = 4;
+}
+
+message GetAllowanceRequest {
+    string owner_address = 1;
+    string token_address = 2;
+}
+
+message GetAllowanceResponse {
+    string owner_address = 1;
+    string token_address = 2;
+    string proxy_address = 3;
+    string allowance = 4;
+    uint64 block_number = 5;
+}
