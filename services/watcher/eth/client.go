@@ -36,6 +36,7 @@ func (etk *EthereumToolkit) Reset() {
 	if err != nil {
 		log.Fatal("Unable to reconnect to ethereum:" + err.Error())
 	}
+	etk.Client = client
 
 	sub, err := client.SubscribeNewHead(context.Background(), etk.BlockHeaders)
 	if err != nil {
