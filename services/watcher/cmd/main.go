@@ -51,13 +51,12 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	makerClient :=  pb.NewMakerClient(conn)
 	log.Println("Maker client configured for", makerUrl)
 
-	//TODO look at var/package naming
-	watchingThing := watching.Init(ethToolkit, makerClient)
+	txWatching := watching.New(ethToolkit, makerClient)
 
 
 	watcherServer := grpc.NewServer(
 		ethToolkit,
-		watchingThing,
+		txWatching,
 	)
 	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {
 		log.Fatalf("failed to listen: %v", err)

@@ -23,14 +23,14 @@ type TxWatching struct {
 
 var bg = context.Background()
 
-func Init(ethToolkit *eth.EthereumToolkit, makerClient pb.MakerClient ) *TxWatching {
+func New(ethToolkit *eth.EthereumToolkit, makerClient pb.MakerClient ) *TxWatching {
 	watching := TxWatching{
 		EthToolkit:    ethToolkit,
 		MakerClient: makerClient,
+		watchedTransactions: make(map[common.Hash]WatchedTransaction),
 	}
-	watching.watchedTransactions = make(map[common.Hash]WatchedTransaction)
 
-	go watching.watchBlocks()
+	go watching.startWatchingBlocks()
 
 	return &watching
 }
@@ -47,7 +47,7 @@ func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
 	}
 }
 
-func (txW *TxWatching) watchBlocks() {
+func (txW *TxWatching) startWatchingBlocks() {
 	for {
 		select {
 			case errors := <- txW.EthToolkit.BlockHeadersSubscription.Err(): {
