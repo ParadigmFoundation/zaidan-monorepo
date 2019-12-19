@@ -8,6 +8,7 @@ require (
 	github.com/albrow/stringset v2.1.0+incompatible // indirect
 	github.com/benbjohnson/clock v1.0.0 // indirect
 	github.com/ethereum/go-ethereum v1.9.9
+	github.com/gogo/protobuf v1.1.1
 	github.com/prometheus/tsdb v0.7.1 // indirect
 	github.com/sirupsen/logrus v1.4.2 // indirect
 	github.com/spf13/pflag v1.0.5
