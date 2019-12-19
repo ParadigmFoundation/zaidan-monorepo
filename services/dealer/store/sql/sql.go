@@ -52,6 +52,27 @@ func migrate(db *sqlx.DB) error {
 	return runner.Run(db)
 }
 
+type AtomicFn func(tx *sqlx.Tx) error
+
+// Atomic runs an AtomicFn inside a transaction (Begin).
+// If fn returns an error the Tx is rolledback and the error is returned,
+// otherwise the Tx is committed.
+func (s *Store) Atomic(fn AtomicFn) error {
+	tx, err := s.db.Beginx()
+	if err != nil {
+		return err
+	}
+
+	if err := fn(tx); err != nil {
+		if err := tx.Rollback(); err != nil {
+			return err
+		}
+		return err
+	}
+
+	return tx.Commit()
+}
+
 func (s *Store) CreateTrade(t *types.Trade) error {
 	stmt := `
 		INSERT INTO trades VALUES (
@@ -89,39 +110,47 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 		return err
 	}
 
-	_, err = s.db.Exec(
-		`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-		q.QuoteId,
-		q.MakerAssetTicker,
-		q.TakerAssetTicker,
-		q.MakerAssetSize,
-		q.QuoteAssetSize,
-		q.Expiration,
-		q.ServerTime,
-		q.OrderHash,
-		orderBytes,
-		q.FillTx,
-	)
-	return err
+	return s.Atomic(func(tx *sqlx.Tx) error {
+		_, err := tx.Exec(
+			`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+			q.QuoteId,
+			q.MakerAssetTicker,
+			q.TakerAssetTicker,
+			q.MakerAssetSize,
+			q.QuoteAssetSize,
+			q.Expiration,
+			q.ServerTime,
+			q.OrderHash,
+			q.FillTx,
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Exec(`INSERT INTO signed_orders(quote_id, order_bytes) VALUES ($1, $2)`, q.QuoteId, orderBytes)
+		return err
+	})
+
 }
 
 func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 	var orderBytes []byte
-
 	stmt := `
 		SELECT
-		  "quote_id"
-		, "maker_asset_ticker"
-		, "taker_asset_ticker"
-		, "maker_asset_size"
-		, "quote_asset_size"
-		, "expiration"
-		, "server_time"
-		, "order_hash"
-		, "order"
-		, "fill_tx"
-		FROM quotes
-		WHERE quote_id = $1 LIMIT 1
+		  q.quote_id
+		, q.maker_asset_ticker
+		, q.taker_asset_ticker
+		, q.maker_asset_size
+		, q.quote_asset_size
+		, q.expiration
+		, q.server_time
+		, q.order_hash
+		, q.fill_tx
+		, s.order_bytes
+		FROM quotes q
+		LEFT JOIN signed_orders s
+		ON q.quote_id = s.quote_id
+		WHERE q.quote_id = $1 LIMIT 1
 	`
 	q := types.Quote{}
 	err := s.db.
@@ -135,8 +164,8 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 			&q.Expiration,
 			&q.ServerTime,
 			&q.OrderHash,
-			&orderBytes,
 			&q.FillTx,
+			&orderBytes,
 		)
 	if err != nil {
 		return nil, err

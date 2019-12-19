@@ -40,9 +40,16 @@ func (m *Migrations) CreateQuotesTable() string {
 		, "expiration"         INTEGER
 		, "server_time"        INTEGER
 		, "order_hash"         VARCHAR(100)
-		, "order"              TEXT
 		, "fill_tx"            VARCHAR(100)
 		, PRIMARY KEY (quote_id)
+	)`
+}
+
+func (m *Migrations) CreateSignedOrderTable() string {
+	return `
+	CREATE TABLE signed_orders (
+	     quote_id VARCHAR(100)
+	   , order_bytes BLOB
 	)`
 }
 
@@ -94,6 +101,7 @@ func (m *Migrations) Run(db *sqlx.DB) error {
 	}{
 		{"create_trades_table", m.CreateTradesTable},
 		{"create_quotes_table", m.CreateQuotesTable},
+		{"create_signed_orders_table", m.CreateSignedOrderTable},
 	}
 
 	for _, op := range mz {
