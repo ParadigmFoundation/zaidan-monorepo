@@ -91,6 +91,7 @@ func (txW *TxWatching) startWatchingBlocks() {
 						if err != nil {
 							log.Println("Failure calling maker:", err)
 						}
+						//TODO: Can we resolve/escalate the previous two errors for some intervention
 					}
 				}
 			}
