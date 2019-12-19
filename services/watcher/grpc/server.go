@@ -71,7 +71,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	}
 	s.TxWatching.Unlock()
 
-	return &pb.WatchTransactionResponse{ IsWatched: isWatched, IsPending: isPending, Status: status, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
+	return &pb.WatchTransactionResponse{ IsWatched: isWatched, IsPending: isPending, TxStatus: status, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
 }
 
 func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
