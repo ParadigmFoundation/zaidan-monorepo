@@ -74,7 +74,7 @@ func testTransferEther(provider *Provider, t *testing.T) {
 	require.NoError(t, err, "should be no error signing transaction")
 
 	// send transaction
-	err = provider.SendTx(context.Background(), stx)
+	err = provider.eth.SendTransaction(context.Background(), stx)
 	require.NoError(t, err, "should be no error sending transaction")
 
 	// wait for a block then get post-transfer balances

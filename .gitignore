@@ -1,1 +1,10 @@
+# python environment and cache artifacts
 env
+.env
+__pycache__
+
+# js node modules
+node_modules
+
+# workspace settings/config
+.vscode
