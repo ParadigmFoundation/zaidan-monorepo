@@ -66,6 +66,15 @@ func (txW *TxWatching) delete(txHash common.Hash) {
 	delete(txW.safeWatchedTransactions.watchedTransactions, txHash)
 }
 
+func (txW *TxWatching) RequestRemoval(txHash common.Hash) {
+	_, isWatched := txW.IsWatched(txHash)
+	_, isPending, _:= txW.EthToolkit.Client.TransactionByHash(bg, txHash)
+
+	if !isPending && isWatched {
+		txW.delete(txHash)
+	}
+}
+
 func (txW *TxWatching) startWatchingBlocks() {
 	for {
 
@@ -103,7 +112,7 @@ func (txW *TxWatching) startWatchingBlocks() {
 							log.Println("Failure getting receipt for watched transaction", txHash.String(), ":", err)
 						}
 
-						_, err = txW.MakerClient.OrderStatusUpdate(context.Background(), &pb.OrderStatusUpdateRequest{
+						_, err = txW.MakerClient.OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
 							QuoteId: watchedTransaction.QuoteId,
 							Status:  uint32(receipt.Status),
 						})

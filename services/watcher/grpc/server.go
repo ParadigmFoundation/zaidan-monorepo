@@ -62,9 +62,14 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		isWatched = true
 	} else if !isPending {
 		if isWatched {
-			log.Println("This is not pending but is watched so needs to be handled") //TODO
+			log.Println("No longer watching previously mined transaction", txHash.String()) //TODO should never happen alert?
+			s.TxWatching.RequestRemoval(txHash)
 		} else {
-			log.Println("Transaction mined and does not need to be watched") // TODO
+			log.Println("Transaction", txHash.String(), "mined and does not need to be watched notifying maker")
+			_, _ = s.TxWatching.MakerClient.OrderStatusUpdate(ctx, &pb.OrderStatusUpdateRequest{ // TODO does this need to be called?
+				QuoteId: in.QuoteId,
+				Status:  status,
+			})
 		}
 	}
 	s.TxWatching.Unlock()
