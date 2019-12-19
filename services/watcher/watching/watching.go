@@ -30,7 +30,7 @@ func Init(ethToolkit *eth.EthereumToolkit, makerClient pb.MakerClient ) *TxWatch
 	}
 	watching.watchedTransactions = make(map[common.Hash]WatchedTransaction)
 
-	go watching.watchBlock()
+	go watching.watchBlocks()
 
 	return &watching
 }
@@ -47,7 +47,7 @@ func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
 	}
 }
 
-func (txW *TxWatching) watchBlock() {
+func (txW *TxWatching) watchBlocks() {
 	for {
 		select {
 			case errors := <- txW.EthToolkit.SubscriptionErrors: {
