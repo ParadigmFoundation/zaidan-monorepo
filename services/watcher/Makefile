@@ -1,3 +1,5 @@
+.PHONY: build test ci
+
 build:
 	go build -o watcher cmd/main.go
 
