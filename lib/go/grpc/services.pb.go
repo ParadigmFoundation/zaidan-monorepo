@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -114,6 +116,17 @@ func (x *orderBookManagerUpdatesClient) Recv() (*OrderBookResponse, error) {
 type OrderBookManagerServer interface {
 	OrderBook(context.Context, *OrderBookRequest) (*OrderBookResponse, error)
 	Updates(*OrderBookUpdatesRequest, OrderBookManager_UpdatesServer) error
+}
+
+// UnimplementedOrderBookManagerServer can be embedded to have forward compatible implementations.
+type UnimplementedOrderBookManagerServer struct {
+}
+
+func (*UnimplementedOrderBookManagerServer) OrderBook(ctx context.Context, req *OrderBookRequest) (*OrderBookResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrderBook not implemented")
+}
+func (*UnimplementedOrderBookManagerServer) Updates(req *OrderBookUpdatesRequest, srv OrderBookManager_UpdatesServer) error {
+	return status.Errorf(codes.Unimplemented, "method Updates not implemented")
 }
 
 func RegisterOrderBookManagerServer(s *grpc.Server, srv OrderBookManagerServer) {
@@ -229,6 +242,20 @@ type MakerServer interface {
 	OrderStatusUpdate(context.Context, *OrderStatusUpdateRequest) (*OrderStatusUpdateResponse, error)
 }
 
+// UnimplementedMakerServer can be embedded to have forward compatible implementations.
+type UnimplementedMakerServer struct {
+}
+
+func (*UnimplementedMakerServer) GetQuote(ctx context.Context, req *GetQuoteRequest) (*GetQuoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetQuote not implemented")
+}
+func (*UnimplementedMakerServer) CheckQuote(ctx context.Context, req *CheckQuoteRequest) (*CheckQuoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckQuote not implemented")
+}
+func (*UnimplementedMakerServer) OrderStatusUpdate(ctx context.Context, req *OrderStatusUpdateRequest) (*OrderStatusUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrderStatusUpdate not implemented")
+}
+
 func RegisterMakerServer(s *grpc.Server, srv MakerServer) {
 	s.RegisterService(&_Maker_serviceDesc, srv)
 }
@@ -337,6 +364,14 @@ type HotWalletServer interface {
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
 }
 
+// UnimplementedHotWalletServer can be embedded to have forward compatible implementations.
+type UnimplementedHotWalletServer struct {
+}
+
+func (*UnimplementedHotWalletServer) CreateOrder(ctx context.Context, req *CreateOrderRequest) (*CreateOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
+}
+
 func RegisterHotWalletServer(s *grpc.Server, srv HotWalletServer) {
 	s.RegisterService(&_HotWallet_serviceDesc, srv)
 }
@@ -399,6 +434,14 @@ func (c *watcherClient) WatchTransaction(ctx context.Context, in *WatchTransacti
 // WatcherServer is the server API for Watcher service.
 type WatcherServer interface {
 	WatchTransaction(context.Context, *WatchTransactionRequest) (*WatchTransactionResponse, error)
+}
+
+// UnimplementedWatcherServer can be embedded to have forward compatible implementations.
+type UnimplementedWatcherServer struct {
+}
+
+func (*UnimplementedWatcherServer) WatchTransaction(ctx context.Context, req *WatchTransactionRequest) (*WatchTransactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WatchTransaction not implemented")
 }
 
 func RegisterWatcherServer(s *grpc.Server, srv WatcherServer) {
