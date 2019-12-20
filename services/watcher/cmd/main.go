@@ -2,15 +2,14 @@ package main
 
 import (
 	"log"
-	"net"
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/server"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
+	ggrpc "google.golang.org/grpc"
 )
 
 var (
@@ -42,32 +41,24 @@ func configureFlags() {
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	log.Println("Starting")
 
-	ethToolkit := eth.Init(ethAddress)
+	ethToolkit := eth.New(ethAddress)
 	log.Println("Connected to ethereum at", ethAddress)
 
-	conn, err := grpc.Dial(makerUrl, grpc.WithInsecure())
+	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
 	if err != nil {
 		log.Fatal("failed to connect maker client" + err.Error())
 	}
 	makerClient :=  pb.NewMakerClient(conn)
 	log.Println("Maker client configured for", makerUrl)
 
-	//TODO look at var/package naming
-	watchingThing := watching.Init(ethToolkit, makerClient)
+	txWatching := watching.New(ethToolkit, makerClient)
 
-	lis, err := net.Listen("tcp", ":"+strconv.Itoa(port))
-	if err != nil {
+
+	watcherServer := grpc.NewServer(
+		ethToolkit,
+		txWatching,
+	)
+	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {
 		log.Fatalf("failed to listen: %v", err)
-	}
-	watcherServer := &server.WatcherServer{
-		EthToolkit: ethToolkit,
-		TxWatching: watchingThing,
-	}
-	grpcServer := grpc.NewServer()
-	pb.RegisterWatcherServer(grpcServer, watcherServer)
-	log.Println("Watcher listening on port", port)
-
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
 	}
 }
