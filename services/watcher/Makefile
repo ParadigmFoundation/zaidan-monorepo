@@ -8,4 +8,4 @@ lint:
 	golangci-lint run
 
 ci:
-	go test -race ./cmd ./server
+	go test -race ./...
