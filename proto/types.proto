@@ -145,7 +145,7 @@ message WatchTransactionResponse {
     string tx_hash = 2;
     bool is_pending = 3;
     bool is_watched = 4;
-    uint32 status = 5;
+    uint32 tx_status = 5;
 }
 
 message GetBalanceRequest {
