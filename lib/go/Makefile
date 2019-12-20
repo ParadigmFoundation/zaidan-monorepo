@@ -15,4 +15,7 @@ ganache-start:
 ganache-stop:
 	docker kill zrx
 
+gen:
+	go generate ./...
+
 .PHONY: ci test run-test ganache-start ganache-stop
