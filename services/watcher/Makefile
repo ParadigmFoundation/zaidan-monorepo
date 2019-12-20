@@ -5,7 +5,7 @@ test:
 	go test ./... -race
 
 lint:
-	@echo not implemented
+	golangci-lint run
 
 ci:
 	go test -race ./cmd ./server
