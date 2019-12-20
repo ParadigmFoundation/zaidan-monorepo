@@ -4,5 +4,8 @@ build:
 test:
 	go test ./... -race
 
+lint:
+	@echo not implemented
+
 ci:
 	go test -race ./cmd ./server
