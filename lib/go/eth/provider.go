@@ -198,6 +198,7 @@ func (pvr *Provider) hasAccountOrErr(acct accounts.Account) error {
 }
 
 // returns error if TX nonce does not match what it should
+/*
 func (pvr *Provider) ensureNonce(ctx context.Context, acct accounts.Account, tx *types.Transaction) error {
 	nonce, err := pvr.Nonce(ctx, acct)
 	if err != nil {
@@ -210,6 +211,7 @@ func (pvr *Provider) ensureNonce(ctx context.Context, acct accounts.Account, tx 
 
 	return nil
 }
+*/
 
 // FROM: https://github.com/ethereum/go-ethereum/blob/master/crypto/signature_nocgo.go
 //
