@@ -2,7 +2,7 @@ ci: export ETHEREUM_JSONRPC_URL = http://0x-snapshot:8545
 ci: run-test
 
 lint:
-	@echo not implemented
+	golangci-lint run
 
 test: run-test
 
