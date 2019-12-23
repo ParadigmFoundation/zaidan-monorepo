@@ -3,6 +3,9 @@ SNAPSHOT_IMAGE_URL=gcr.io/zaidan-eth-net/0x-snapshot:v3
 ci: export ETHEREUM_JSONRPC_URL = http://0x-snapshot:8545
 ci: run-test
 
+lint:
+	golangci-lint run
+
 test: ganache-start run-test ganache-stop
 
 run-test:
@@ -18,4 +21,4 @@ ganache-stop:
 gen:
 	go generate ./...
 
-.PHONY: ci test run-test ganache-start ganache-stop
+.PHONY: ci test run-test ganache-start ganache-stop lint

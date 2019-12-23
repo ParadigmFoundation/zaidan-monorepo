@@ -69,7 +69,7 @@ func main() {
 	srv := grpc.NewServer(store)
 
 	log.Printf("API Listening on %s", cfg.bind)
-	go func() { srv.Listen(cfg.bind) }()
+	go func() { _ = srv.Listen(cfg.bind) }()
 
 	errCh := make(chan error)
 	ctx := context.Background()

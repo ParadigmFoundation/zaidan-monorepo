@@ -1,0 +1,3 @@
+# Show only new issues: if there are unstaged changes or untracked files,
+# only those changes are analyzed, else only changes in HEAD~ are analyzed.
+new: true

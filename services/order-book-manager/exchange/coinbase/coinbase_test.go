@@ -42,7 +42,7 @@ func TestCoinbaseRequest(t *testing.T) {
 	// Subscribe
 	ctx := context.Background()
 	sub := mem.New()
-	go x.Subscribe(ctx, sub, "BTC/USD", "BTC/ETH")
+	go x.Subscribe(ctx, sub, "BTC/USD", "BTC/ETH") // nolint:errcheck
 	<-done
 }
 
@@ -58,7 +58,7 @@ func handleChanges(msgs chan interface{}, done chan struct{}) exchangetest.WsFn 
 			if !ok {
 				break
 			}
-			conn.WriteJSON(msg)
+			_ = conn.WriteJSON(msg)
 		}
 
 		// finish
@@ -93,7 +93,7 @@ func TestCoinbaseChanges(t *testing.T) {
 	// Subscribe
 	ctx, cancel := context.WithCancel(context.Background())
 	sub := exchangetest.NewFakeSubscriber(updates)
-	go x.Subscribe(ctx, sub, "BTC/USD")
+	go x.Subscribe(ctx, sub, "BTC/USD") // nolint:errcheck
 
 	msgs <- &JsonMessage{
 		Type:      "snapshot",
@@ -138,7 +138,7 @@ func TestCoinbaseReconnection(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	go x.Subscribe(ctx, exchangetest.NewFakeSubscriber(nil), "BTC/USD")
+	go x.Subscribe(ctx, exchangetest.NewFakeSubscriber(nil), "BTC/USD") // nolint:errcheck
 	<-connReady
 
 	connMutex.Lock()
