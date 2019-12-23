@@ -21,4 +21,4 @@ ganache-stop:
 gen:
 	go generate ./...
 
-.PHONY: ci test run-test ganache-start ganache-stop lint
+.PHONY: ci test run-test ganache-start ganache-stop lint gen
