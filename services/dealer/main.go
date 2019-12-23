@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
@@ -18,5 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	http.ListenAndServe("0.0.0.0:8000", server.WebsocketHandler([]string{"*"}))
+	if err := http.ListenAndServe("0.0.0.0:8000", server.WebsocketHandler([]string{"*"})); err != nil {
+		log.Fatal(err)
+	}
 }

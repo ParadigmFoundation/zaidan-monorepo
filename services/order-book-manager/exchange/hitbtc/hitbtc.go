@@ -25,6 +25,7 @@ func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 
 	wg := sync.WaitGroup{}
 	for _, sym := range syms {
+		sym := sym
 		fmtSym := strings.Replace(sym, "/", "", 1)
 		log.Printf("Adding: %s", fmtSym)
 		updates, snapshot, err := client.SubscribeOrderbook(fmtSym)
@@ -53,15 +54,19 @@ func subscribe(sub exchange.Subscriber, sym string,
 			up, err := newUpdate(sym, snapshot.Ask, snapshot.Bid)
 			if err != nil {
 				log.Printf("err: %+v", err)
-			} else {
-				sub.OnSnapshot(name, up)
+			}
+			if err := sub.OnSnapshot(name, up); err != nil {
+				log.Printf("err: %+v", err)
 			}
 		case update := <-updates:
 			up, err := newUpdate(sym, update.Ask, update.Bid)
 			if err != nil {
 				log.Printf("err: %+v", err)
-			} else {
-				sub.OnUpdate(name, up)
+				continue
+			}
+
+			if err := sub.OnUpdate(name, up); err != nil {
+				log.Printf("err: %+v", err)
 			}
 		}
 	}

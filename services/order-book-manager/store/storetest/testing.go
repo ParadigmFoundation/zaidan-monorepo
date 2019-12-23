@@ -32,7 +32,7 @@ func TestSuite(t *testing.T, f Factory) {
 
 func ValidMarket(t *testing.T, store store.Store) {
 	sym := "BTC-USD"
-	store.OnUpdate("test", &obm.Update{
+	err := store.OnUpdate("test", &obm.Update{
 		Symbol: sym,
 		Bids: obm.Entries{
 			{Price: 2, Quantity: 1},
@@ -45,6 +45,7 @@ func ValidMarket(t *testing.T, store store.Store) {
 			{Price: 1, Quantity: 1},
 		},
 	})
+	require.NoError(t, err)
 
 	ob, err := store.OrderBook("test", sym)
 	require.NoError(t, err)
