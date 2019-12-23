@@ -49,9 +49,20 @@ func NewProvider(ethurl string, mnemonic string, path accounts.DerivationPath) (
 	return &Provider{hw: wallet, eth: client}, nil
 }
 
-// SendTx sends a signed transaction. It makes no modification (gas price, etc.).
-func (pvr *Provider) SendTx(ctx context.Context, tx *types.Transaction) error {
-	return pvr.eth.SendTransaction(ctx, tx)
+// NewProviderWithDefaultPath creates a new provider with the default base derivation path
+func NewProviderWithDefaultPath(ethurl string, mnemonic string) (*Provider, error) {
+	return NewProvider(ethurl, mnemonic, accounts.DefaultBaseDerivationPath)
+}
+
+// Client returns a pointer to the underlying Ethereum client
+func (pvr *Provider) Client() *ethclient.Client { return pvr.eth }
+
+// Wallet returns a pointer to the underlying wallet
+func (pvr *Provider) Wallet() *hdwallet.Wallet { return pvr.hw }
+
+// AccountAt returns the account at the specified path (if applicable). Use Derive to add an address.
+func (pvr *Provider) AccountAt(path accounts.DerivationPath) (accounts.Account, error) {
+	return pvr.hw.Derive(path, false)
 }
 
 // SignText signs a personal message with account if available.
@@ -163,6 +174,11 @@ func (pvr *Provider) ChainID(ctx context.Context) (id *big.Int, err error) {
 	return id, nil
 }
 
+// CanSignWithAddress returns true if the provider can sign with the given address
+func (pvr *Provider) CanSignWithAddress(addr common.Address) bool {
+	return pvr.hasAccount(accounts.Account{Address: addr})
+}
+
 // returns false if account not supported by provider
 func (pvr *Provider) hasAccount(acct accounts.Account) bool {
 	for _, account := range pvr.Accounts() {
@@ -182,6 +198,7 @@ func (pvr *Provider) hasAccountOrErr(acct accounts.Account) error {
 }
 
 // returns error if TX nonce does not match what it should
+/*
 func (pvr *Provider) ensureNonce(ctx context.Context, acct accounts.Account, tx *types.Transaction) error {
 	nonce, err := pvr.Nonce(ctx, acct)
 	if err != nil {
@@ -194,6 +211,7 @@ func (pvr *Provider) ensureNonce(ctx context.Context, acct accounts.Account, tx 
 
 	return nil
 }
+*/
 
 // FROM: https://github.com/ethereum/go-ethereum/blob/master/crypto/signature_nocgo.go
 //

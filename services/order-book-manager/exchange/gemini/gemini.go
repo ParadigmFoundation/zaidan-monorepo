@@ -47,13 +47,14 @@ func (x *Exchange) symbol(s string) string {
 }
 
 func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms ...string) error {
-	for i, _ := range syms {
+	for i := range syms {
 		syms[i] = x.newSymbol(syms[i])
 	}
 	log.Printf("Gemini querying: %q", syms)
 
 	errCh := make(chan error)
 	for _, sym := range syms {
+		sym := sym
 		go func() {
 			errCh <- x.subscribe(ctx, sub, sym)
 		}()
@@ -125,7 +126,7 @@ func (x *Exchange) handleWs(c *websocket.Conn, sub exchange.Subscriber, sym stri
 	}
 
 	if len(update.Bids) != 0 || len(update.Asks) != 0 {
-		sub.OnUpdate(NAME, update)
+		return sub.OnUpdate(NAME, update)
 	}
 
 	return nil
