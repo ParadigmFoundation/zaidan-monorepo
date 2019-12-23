@@ -1,11 +1,10 @@
 .PHONY = help build gen test ci lint
 
 build: ## Build the binaries
-	go build -o obm    ./cmd/obm/main.go 
-	go build -o obm-ui ./cmd/obm-ui/main.go
+	go build
 
 clean: ## Clean the build objects
-	rm -r obm obm-ui
+	@echo "not implemented"
 
 gen: ## Generate required files
 	go generate ./...
@@ -14,10 +13,10 @@ test: ## Run the tests
 	go test ./... -race
 
 container: ## Build a docker container
-	docker build . -t zaidan-obm
+	@echo "not implemented"
 
 ci: ## Run the CI
-	go test ./... -race
+	$(MAKE) test
 
 lint:
 	golangci-lint run

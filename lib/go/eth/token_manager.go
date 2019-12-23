@@ -3,7 +3,6 @@ package eth
 import (
 	"context"
 	"math/big"
-	"sync"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -16,7 +15,6 @@ type ERC20TokenManager struct {
 	opts     *bind.TransactOpts
 
 	erc20s map[common.Address]*ERC20TokenSession
-	mu     *sync.Mutex
 }
 
 // NewERC20TokenManager creates a new manager with provider, where account is the signer. Adds tokens if provided.
@@ -36,7 +34,7 @@ func NewERC20TokenManager(provider *Provider, account accounts.Account, tokens [
 		erc20s:   make(map[common.Address]*ERC20TokenSession),
 	}
 
-	if tokens != nil {
+	if len(tokens) != 0 {
 		for _, token := range tokens {
 			if err := mgr.addToken(token); err != nil {
 				return nil, err

@@ -80,7 +80,9 @@ func (x *Exchange) handleEvent(symbol string, sub exchange.Subscriber) error {
 		if err != nil {
 			return err
 		}
-		sub.OnUpdate(NAME, update)
+		if err := sub.OnUpdate(NAME, update); err != nil {
+			return err
+		}
 	}
 }
 
@@ -112,7 +114,7 @@ func (x *Exchange) Subscribe(ctx context.Context, sub exchange.Subscriber, syms 
 		log.Printf("ERROR: %+v", err)
 	}
 
-	for i, _ := range syms {
+	for i := range syms {
 		syms[i] = x.newSymbol(syms[i])
 	}
 	log.Printf("Binance querying: %q", syms)
