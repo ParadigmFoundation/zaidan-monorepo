@@ -5,12 +5,19 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/spf13/pflag"
+
 	"google.golang.org/grpc"
 
 	"github.com/gogo/protobuf/jsonpb"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 )
+
+type config struct {
+	hwUrl string
+	bind  string
+}
 
 type server struct {
 	client types.HotWalletClient
@@ -19,43 +26,47 @@ type server struct {
 func (s *server) getBalance(w http.ResponseWriter, req *http.Request) {
 	var balreq types.GetBalanceRequest
 	if err := jsonpb.Unmarshal(req.Body, &balreq); err != nil {
-		http.Error(w, err.Error(), 400)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	balres, err := s.client.GetBalance(context.Background(), &balreq)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := new(jsonpb.Marshaler).Marshal(w, balres); err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func (s *server) getAllowance(w http.ResponseWriter, req *http.Request) {
-	var alreq types.GetAllowanceRequest
-	if err := jsonpb.Unmarshal(req.Body, &alreq); err != nil {
-		http.Error(w, err.Error(), 400)
+	var alReq types.GetAllowanceRequest
+	if err := jsonpb.Unmarshal(req.Body, &alReq); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	alres, err := s.client.GetAllowance(context.Background(), &alreq)
+	alRes, err := s.client.GetAllowance(context.Background(), &alReq)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := new(jsonpb.Marshaler).Marshal(w, alres); err != nil {
-		http.Error(w, err.Error(), 500)
+	if err := new(jsonpb.Marshaler).Marshal(w, alRes); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
 func main() {
-	conn, err := grpc.Dial("0.0.0.0:42001", grpc.WithInsecure())
+	var cfg config
+	pflag.StringVar(&cfg.hwUrl, "server", "0.0.0.0:42001", "host and port for the hot-wallet server")
+	pflag.StringVar(&cfg.bind, "bind", "0.0.0.0:7999", "host and port to bind HTTP server to")
+
+	conn, err := grpc.Dial(cfg.hwUrl, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,5 +76,5 @@ func main() {
 	mux.HandleFunc("/balance", svr.getBalance)
 	mux.HandleFunc("/allowance", svr.getAllowance)
 
-	log.Fatal(http.ListenAndServe("0.0.0.0:7999", mux))
+	log.Fatal(http.ListenAndServe(cfg.bind, mux))
 }
