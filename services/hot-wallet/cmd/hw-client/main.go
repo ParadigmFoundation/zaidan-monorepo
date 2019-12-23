@@ -29,13 +29,10 @@ func (s *server) getBalance(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res, err := new(jsonpb.Marshaler).MarshalToString(balres)
-	if err != nil {
+	if err := new(jsonpb.Marshaler).Marshal(w, balres); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-
-	w.Write([]byte(res))
 }
 
 func (s *server) getAllowance(w http.ResponseWriter, req *http.Request) {
@@ -51,13 +48,10 @@ func (s *server) getAllowance(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	res, err := new(jsonpb.Marshaler).MarshalToString(alres)
-	if err != nil {
+	if err := new(jsonpb.Marshaler).Marshal(w, alres); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-
-	w.Write([]byte(res))
 }
 
 func main() {
