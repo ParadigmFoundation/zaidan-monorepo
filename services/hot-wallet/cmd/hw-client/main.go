@@ -61,6 +61,25 @@ func (s *server) getAllowance(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (s *server) transfer(w http.ResponseWriter, req *http.Request) {
+	var transferReq types.TransferRequest
+	if err := jsonpb.Unmarshal(req.Body, &transferReq); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	transferRes, err := s.client.Transfer(context.Background(), &transferReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := new(jsonpb.Marshaler).Marshal(w, transferRes); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func main() {
 	var cfg config
 	pflag.StringVar(&cfg.hwUrl, "server", "0.0.0.0:42001", "host and port for the hot-wallet server")
@@ -75,6 +94,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/balance", svr.getBalance)
 	mux.HandleFunc("/allowance", svr.getAllowance)
+	mux.HandleFunc("/transfer", svr.transfer)
 
 	log.Fatal(http.ListenAndServe(cfg.bind, mux))
 }
