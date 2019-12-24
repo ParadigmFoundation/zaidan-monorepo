@@ -15,7 +15,7 @@ const AssetDataPrefixLength = int(4)
 func EncodeERC20AssetData(address common.Address) []byte {
 	prefixBytes, _ := hex.DecodeString(zeroex.ERC20AssetDataID)
 	assetData := common.LeftPadBytes(address.Bytes(), AssetDataLength)
-	for i, _ := range assetData {
+	for i := range assetData {
 		if i < AssetDataPrefixLength {
 			assetData[i] = prefixBytes[i]
 		}

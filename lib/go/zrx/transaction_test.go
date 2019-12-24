@@ -24,7 +24,7 @@ func TestTransactionComputeHash(t *testing.T) {
 	var testTransaction Transaction
 	require.NoError(t, json.Unmarshal([]byte(KnownTransactionJSON), &testTransaction))
 
-	hash, err := testTransaction.ComputeHashForChainID(1337)
+	hash, err := testTransaction.ComputeHashForChainID(ZeroExTestChainID)
 	require.NoError(t, err)
 	assert.Equal(t, KnownTransactionHash, hash.Hex())
 }

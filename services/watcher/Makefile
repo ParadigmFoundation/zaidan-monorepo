@@ -6,5 +6,8 @@ build:
 test:
 	go test ./... -race
 
+lint:
+	golangci-lint run
+
 ci:
-	go test -race ./cmd ./server
+	go test -race ./...
