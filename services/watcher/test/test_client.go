@@ -34,7 +34,7 @@ func main() {
 		if (err != nil) {
 			log.Print("Error: ", err)
 		} else {
-			log.Print("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), ", status: ", resp.Status, " }")
+			log.Print("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), ", txStatus: ", resp.TxStatus, " }")
 		}
 	}
 
