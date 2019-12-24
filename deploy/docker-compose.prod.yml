@@ -1,0 +1,5 @@
+services:
+  obm:
+    deploy:
+      mode: replicated
+      replicas: 2

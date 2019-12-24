@@ -1,12 +1,8 @@
-ci: export ETHEREUM_JSONRPC_URL = http://0x-snapshot:8545
-ci: run-test
+DOCKER_IMAGE=hwd
+DOCKER_CONTEXT=../..
 
-lint:
-	golangci-lint run
+GO_BINARIES = ./cmd/hwd
 
-test: run-test
-
-run-test:
-	go test -v ./...
-
-.PHONY: ci lint test run-test
+include ../../rules/docker.mk
+include ../../rules/golang.mk
+include ../../rules/rules.mk
