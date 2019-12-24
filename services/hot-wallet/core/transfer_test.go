@@ -45,6 +45,4 @@ func testTransferEther(hw *HotWallet, t *testing.T) {
 
 	// from account should have balance less than before - transfer amount (because of gas)
 	assert.Equal(t, -1, new(big.Int).Add(fromAfterBalance, big.NewInt(42)).Cmp(fromBeforeBalance))
-	t.Log(fromBeforeBalance)
-	t.Log(fromAfterBalance)
 }
