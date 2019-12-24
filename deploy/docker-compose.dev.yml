@@ -1,0 +1,9 @@
+version: '3.3'
+
+services:
+  dealer:
+    depends_on:
+      - db
+
+  db:
+    image: postgres
