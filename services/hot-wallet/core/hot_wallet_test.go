@@ -19,7 +19,7 @@ type TestConfig struct {
 func TestHotWallet(t *testing.T) {
 	var cfg TestConfig
 	require.NoError(t, env.Parse(&cfg))
-
+	t.Fatal(cfg.Ethurl)
 	deriver := eth.NewBaseDeriver()
 	provider, err := eth.NewProvider(cfg.Ethurl, cfg.Mnemonic, deriver.Base())
 	require.NoError(t, err)
