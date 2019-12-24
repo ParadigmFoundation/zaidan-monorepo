@@ -173,4 +173,13 @@ message Trade {
   string taker_asset_ticker = 8; // The ticker of the trade's taker asset
   string maker_asset_amount = 9; // The amount of the maker asset transacted in the trade
   string taker_asset_amount = 10; // The amount of the taker asset transacted in the trade
+  SignedOrder order = 11; // The dealer-signed 0x order that corresponds to this offer
+}
+
+message Asset {
+  string ticker = 1; // Short-form name of the ERC-20 asset. SHOULD match the value provided by the contract
+  string name = 2; // Long-form name of the ERC-20 asset. SHOULD match the value provided by the contract
+  uint32 decimals = 3; // The number of decimals used in the tokens user representation (see EIP-20)
+  uint32 network_id = 4; // The EIP-155 network ID of the active Ethereum network (2)
+  string address = 5; // ABIv2 encoded asset data (including address) as used in the 0x system
 }

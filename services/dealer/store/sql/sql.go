@@ -177,3 +177,26 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 
 	return &q, nil
 }
+
+func (s *Store) CreateAsset(a *types.Asset) error {
+	_, err := s.db.Exec(
+		`INSERT INTO assets VALUES($1, $2, $3, $4, $5)`,
+		a.Ticker,
+		a.Name,
+		a.Decimals,
+		a.NetworkId,
+		a.Address,
+	)
+	return err
+}
+
+func (s *Store) GetAsset(ticker string) (*types.Asset, error) {
+	stmt := `
+	SELECT * FROM assets WHERE ticker = $1 LIMIT 1
+	`
+	asset := types.Asset{}
+	if err := s.db.Get(&asset, stmt, ticker); err != nil {
+		return nil, err
+	}
+	return &asset, nil
+}

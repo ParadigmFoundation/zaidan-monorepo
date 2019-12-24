@@ -54,6 +54,17 @@ func (*SQLMigration) Schema() map[string]string {
 				 quote_id VARCHAR(100)
 			   , order_bytes BLOB
 			)`,
+
+		"create-assets-table": `
+			CREATE TABLE assets (
+				  "ticker"     VARCHAR(10)
+				, "name"       VARCHAR(100)
+				, "decimals"   INT
+				, "network_id" INT
+				, "address"    VARCHAR(100)
+				, PRIMARY KEY (ticker)
+			)
+		`,
 	}
 }
 

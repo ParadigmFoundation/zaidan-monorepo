@@ -92,3 +92,32 @@ func (suite *Suite) TestQuotes() {
 		suite.Assert().Nil(found)
 	})
 }
+
+func (suite *Suite) TestAssets() {
+	obj := &types.Asset{
+		Ticker:    "FOO/BAR",
+		Name:      "Foo to Bar",
+		Decimals:  18,
+		NetworkId: 1,
+		Address:   "0xdeadbeef",
+	}
+
+	suite.Require().NoError(
+		suite.store.CreateAsset(obj),
+	)
+
+	suite.Run("Found", func() {
+		found, err := suite.store.GetAsset(obj.Ticker)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found)
+	})
+
+	suite.Run("NotFound", func() {
+		found, err := suite.store.GetAsset("XXX/YYY")
+		suite.Assert().Error(err)
+		suite.Assert().Nil(found)
+	})
+}
