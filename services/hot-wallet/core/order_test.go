@@ -6,14 +6,16 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/0xProject/0x-mesh/ethereum"
+
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/stretchr/testify/require"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 )
 
 func testCreateOrder(hw *HotWallet, t *testing.T) {
-	zrxAddresses, err := ethereum.GetContractAddressesForChainID(1337)
+	zrxAddresses, err := ethereum.GetContractAddressesForChainID(zrx.ZeroExTestChainID)
 	require.NoError(t, err)
 
 	testReq := &grpc.CreateOrderRequest{
