@@ -1,4 +1,4 @@
-.PHONY = help buil gen test ci
+.PHONY = help build gen test ci lint
 
 build: ## Build the binaries
 	go build -o obm    ./cmd/obm/main.go 
@@ -18,6 +18,9 @@ container: ## Build a docker container
 
 ci: ## Run the CI
 	go test ./... -race
+
+lint:
+	golangci-lint run
 
 help: ## Show this help.
 	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

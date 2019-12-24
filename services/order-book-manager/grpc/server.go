@@ -91,7 +91,9 @@ func (s *Server) Updates(req *types.OrderBookUpdatesRequest, stream types.OrderB
 			resp := newResponseFromUpdate(update)
 			resp.Exchange = req.Request.Exchange
 			resp.Symbol = req.Request.Symbol
-			stream.Send(resp)
+			if err := stream.Send(resp); err != nil {
+				return err
+			}
 		}
 	}
 }

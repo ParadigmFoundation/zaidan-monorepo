@@ -27,11 +27,11 @@ func benchMem(b *testing.B, s store.Store, sym string) {
 		}
 
 		// update 5 exchanges
-		s.OnUpdate("mem1", update)
-		s.OnUpdate("mem2", update)
-		s.OnUpdate("mem3", update)
-		s.OnUpdate("mem4", update)
-		s.OnUpdate("mem5", update)
+		_ = s.OnUpdate("mem1", update)
+		_ = s.OnUpdate("mem2", update)
+		_ = s.OnUpdate("mem3", update)
+		_ = s.OnUpdate("mem4", update)
+		_ = s.OnUpdate("mem5", update)
 	}
 }
 
