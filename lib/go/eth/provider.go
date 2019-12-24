@@ -153,7 +153,7 @@ func (pvr *Provider) Derive(path accounts.DerivationPath) error {
 
 // returns the current nonce for account
 func (pvr *Provider) Nonce(ctx context.Context, addr common.Address) (uint64, error) {
-	return pvr.eth.NonceAt(ctx, acct, nil)
+	return pvr.eth.NonceAt(ctx, addr, nil)
 }
 
 // NetworkID gets the current network ID (tries network ID, if that fails, gets chain ID)
