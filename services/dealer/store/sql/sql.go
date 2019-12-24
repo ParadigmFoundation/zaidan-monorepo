@@ -38,18 +38,16 @@ func New(driver, dsn string) (*Store, error) {
 }
 
 func migrate(db *sqlx.DB) error {
-	var runner interface {
-		Run(*sqlx.DB) error
-	}
+	var m migrations.Interface
 
 	switch db.DriverName() {
 	case "postgres":
-		runner = &migrations.Postgres{}
+		m = &migrations.Postgres{}
 	default:
-		runner = &migrations.Migrations{}
+		m = &migrations.SQLMigration{}
 	}
 
-	return runner.Run(db)
+	return migrations.Run(db, m)
 }
 
 type AtomicFn func(tx *sqlx.Tx) error

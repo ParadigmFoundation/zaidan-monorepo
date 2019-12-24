@@ -1,7 +1,6 @@
 package migrations
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -9,72 +8,79 @@ import (
 
 type Migration func() string
 
-type Migrations struct {
+type Interface interface {
+	Schema() map[string]string
+	CreateMigrationTable(sqlx.Execer) error
+	AddMigration(sqlx.Execer, string) error
+	Migrated(sqlx.Queryer, string) (bool, error)
 }
 
-func (m *Migrations) CreateTradesTable() string {
-	return `
-	CREATE TABLE trades (
-		 "quote_id"           VARCHAR(100)
-		, "market_id"          VARCHAR(100)
-		, "order_hash"         VARCHAR(100)
-		, "transaction_hash"   VARCHAR(100)
-		, "taker_address"      VARCHAR(100)
-		, "timestamp"          INTEGER
-		, "maker_asset_ticker" VARCHAR(10)
-		, "taker_asset_ticker" VARCHAR(10)
-		, "maker_asset_amount" TEXT
-		, "taker_asset_amount" TEXT
-		, UNIQUE (quote_id)
-	)`
+type SQLMigration struct {
 }
 
-func (m *Migrations) CreateQuotesTable() string {
-	return `
-	CREATE TABLE quotes (
-		  "quote_id"           VARCHAR(100)
-		, "maker_asset_ticker" VARCHAR(100)
-		, "taker_asset_ticker" VARCHAR(100)
-		, "maker_asset_size"   TEXT
-		, "quote_asset_size"   TEXT
-		, "expiration"         INTEGER
-		, "server_time"        INTEGER
-		, "order_hash"         VARCHAR(100)
-		, "fill_tx"            VARCHAR(100)
-		, PRIMARY KEY (quote_id)
-	)`
+func (*SQLMigration) Schema() map[string]string {
+	return map[string]string{
+		"create-trades-table": `
+			CREATE TABLE trades (
+				 "quote_id"            VARCHAR(100)
+				, "market_id"          VARCHAR(100)
+				, "order_hash"         VARCHAR(100)
+				, "transaction_hash"   VARCHAR(100)
+				, "taker_address"      VARCHAR(100)
+				, "timestamp"          INTEGER
+				, "maker_asset_ticker" VARCHAR(10)
+				, "taker_asset_ticker" VARCHAR(10)
+				, "maker_asset_amount" TEXT
+				, "taker_asset_amount" TEXT
+				, UNIQUE (quote_id)
+			)`,
+
+		"create-quotes-table": `
+			CREATE TABLE quotes (
+				  "quote_id"           VARCHAR(100)
+				, "maker_asset_ticker" VARCHAR(100)
+				, "taker_asset_ticker" VARCHAR(100)
+				, "maker_asset_size"   TEXT
+				, "quote_asset_size"   TEXT
+				, "expiration"         INTEGER
+				, "server_time"        INTEGER
+				, "order_hash"         VARCHAR(100)
+				, "fill_tx"            VARCHAR(100)
+				, PRIMARY KEY (quote_id)
+			)`,
+
+		"create-orders-table": `
+			CREATE TABLE signed_orders (
+				 quote_id VARCHAR(100)
+			   , order_bytes BLOB
+			)`,
+	}
 }
 
-func (m *Migrations) CreateSignedOrderTable() string {
-	return `
-	CREATE TABLE signed_orders (
-	     quote_id VARCHAR(100)
-	   , order_bytes BLOB
-	)`
-}
-
-func (m *Migrations) CreateMigrationTable() string {
-	return `
+func (*SQLMigration) CreateMigrationTable(db sqlx.Execer) error {
+	q := `
 	CREATE TABLE IF NOT EXISTS migrations(
 		  name VARCHAR(255)
 		, UNIQUE(name)
 	)
 	`
-}
-
-func (m *Migrations) AddMigration(tx *sql.Tx, name string) error {
-	q := `
-	INSERT INTO migrations (name) VALUES ($1);
-	`
-	_, err := tx.Exec(q, name)
+	_, err := db.Exec(q)
 	return err
 }
 
-func (m *Migrations) Migrated(tx *sql.Tx, name string) (bool, error) {
+func (*SQLMigration) AddMigration(db sqlx.Execer, name string) error {
+	q := `
+	INSERT INTO migrations (name) VALUES ($1);
+	`
+	_, err := db.Exec(q, name)
+	return err
+}
+
+func (*SQLMigration) Migrated(db sqlx.Queryer, name string) (bool, error) {
 	q := `
 	SELECT COUNT(*) FROM migrations WHERE name = $1
 	`
-	row := tx.QueryRow(q, name)
+	row := db.QueryRowx(q, name)
 	var count int
 	if err := row.Scan(&count); err != nil {
 		return false, err
@@ -83,31 +89,19 @@ func (m *Migrations) Migrated(tx *sql.Tx, name string) (bool, error) {
 	return count > 0, nil
 }
 
-func (m *Migrations) Run(db *sqlx.DB) error {
-	if _, err := db.Exec(m.CreateMigrationTable()); err != nil {
+func Run(db *sqlx.DB, m Interface) error {
+	if err := m.CreateMigrationTable(db); err != nil {
 		return err
 	}
 
-	tx, err := db.Begin()
+	tx, err := db.Beginx()
 	if err != nil {
 		return err
 	}
 	// After a call to Commit or Rollback, all operations on the transaction fail with ErrTxDone.
 	defer tx.Rollback()
 
-	mz := []struct {
-		name string
-		fn   Migration
-	}{
-		{"create_trades_table", m.CreateTradesTable},
-		{"create_quotes_table", m.CreateQuotesTable},
-		{"create_signed_orders_table", m.CreateSignedOrderTable},
-	}
-
-	for _, op := range mz {
-		name := op.name
-		stmt := op.fn()
-
+	for name, stmt := range m.Schema() {
 		if ok, err := m.Migrated(tx, name); err != nil {
 			return err
 		} else if ok {
