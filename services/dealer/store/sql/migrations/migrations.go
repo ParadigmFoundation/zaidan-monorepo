@@ -110,7 +110,7 @@ func Run(db *sqlx.DB, m Interface) error {
 		return err
 	}
 	// After a call to Commit or Rollback, all operations on the transaction fail with ErrTxDone.
-	defer tx.Rollback()
+	defer tx.Rollback() // nolint:errcheck
 
 	for name, stmt := range m.Schema() {
 		if ok, err := m.Migrated(tx, name); err != nil {
