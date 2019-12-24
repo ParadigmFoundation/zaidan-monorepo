@@ -152,7 +152,7 @@ func (pvr *Provider) Derive(path accounts.DerivationPath) error {
 }
 
 // returns the current nonce for account
-func (pvr *Provider) Nonce(ctx context.Context, acct common.Address) (uint64, error) {
+func (pvr *Provider) Nonce(ctx context.Context, addr common.Address) (uint64, error) {
 	return pvr.eth.NonceAt(ctx, acct, nil)
 }
 
