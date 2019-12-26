@@ -1,9 +1,7 @@
-FROM golang:1.13
+FROM golang:1.13-alpine
 WORKDIR /src
 COPY . .
-RUN make -C services/dealer build
+RUN apk add make
 
-FROM alpine:3.8
-RUN apk --no-cache add ca-certificates
-COPY --from=0 /src/services/dealer/dealer /usr/bin
-ENTRYPOINT ["/usr/bin/dealer"]
+RUN make -C services/dealer build
+ENTRYPOINT /src/services/dealer/dealer

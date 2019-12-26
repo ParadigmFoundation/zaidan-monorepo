@@ -1,9 +1,7 @@
-FROM golang:1.13
+FROM golang:1.13-alpine
 WORKDIR /src
 COPY . .
-RUN make -C services/hot-wallet build
+RUN apk add make
 
-FROM alpine:3.8
-RUN apk --no-cache add ca-certificates
-COPY --from=0 /src/services/hot-wallet/hwd /usr/bin
-ENTRYPOINT ["hwd"]
+RUN make -C services/hot-wallet build
+ENTRYPOINT /src/services/hot-wallet/hwd

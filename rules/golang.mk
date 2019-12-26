@@ -1,10 +1,12 @@
 GO_BUILD ?= go build
 GO_TEST  ?= go test ./... -race
+CGO_ENABLED ?= 0
 
 build: ## Build the binaries
 ifeq ($(GO_BINARIES),)
 	@echo "GO_BINARIES not defined in Makefile"
 else
+	@go env -w CGO_ENABLED=$(CGO_ENABLED)
 	$(foreach var,$(wildcard $(GO_BINARIES)), $(GO_BUILD) $(var);)
 endif
 

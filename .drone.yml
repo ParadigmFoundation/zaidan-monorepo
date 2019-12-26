@@ -24,24 +24,59 @@ steps:
   commands:
     - make lint
 
-
 services:
 - name: 0x-snapshot
   pull: always
   image: gcr.io/zaidan-eth-net/0x-snapshot:v3
 
 volumes:
-  - name: gomod
-    host: 
-      path: /tmp/drone/zaidan/gomod
-  - name: gocache
-    host:
-      path: /tmp/drone/zaidan/gocache
-  - name: golint
-    host:
-      path: /tmp/drone/zaidan/golint
+- name: gomod
+  host:
+    path: /tmp/drone/zaidan/gomod
+- name: gocache
+  host:
+    path: /tmp/drone/zaidan/gocache
+- name: golint
+  host:
+    path: /tmp/drone/zaidan/golint
 
 trigger:
   event:
   - pull_request
+  
+---
+kind: pipeline
+type: docker
+name: release
+
+steps:
+- name: docker-push
+  image: docker
+  priviliged: true
+  volumes:
+  - name: dockersock
+    path: /var/run/docker.sock
+  environment:
+    GCLOUD_JSON_KEY:
+      from_secret: gcloud_json_key
+    DOCKER_TAG: ${DRONE_TAG}
+  commands:
+    - apk add make
+    - echo $GCLOUD_JSON_KEY | docker login -u _json_key --password-stdin https://gcr.io
+    - make docker
+    - make push
+  when:
+    status:
+      - success
+    ref:
+      - refs/tags/*
+
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
+
+trigger:
+  event:
+  - tag
   
