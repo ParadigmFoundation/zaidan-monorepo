@@ -1,9 +1,9 @@
-import TestDealerCache from TestDealerCache
+from TestDealerCache import TestDealerCache
 import math
 
 asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')], 'implied_pref': ('COINBASE', 'ZRX/USD')},
                       'LINK': {'exchange_books': [('COINBASE', 'LINK/USD'), ('BINANCE', 'LINK/ETH')], 'implied_pref': ('COINBASE', 'LINK/USD')},
-                      'ETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT'), ('GEMINI', 'ETH/USD')], 'implied_pref': ('COINBASE', 'ETH/USD')},
+                      'ETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT')], 'implied_pref': ('COINBASE', 'ETH/USD')},
                       'DAI': {'exchange_books': [('COINBASE', 'DAI/USD')], 'implied_pref': ('COINBASE', 'DAI/USD'), 'constant_rate': 'PREF_INSIDE'}
                       }
 
@@ -30,58 +30,56 @@ def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
                 books_to_get = taker_asset_pricing_data['exchange_books']
                 order_books = {}
                 for book in books_to_get:
-                    order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'bids'))
+                    if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
+                        order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'bids'))
                 if taker_size:
                     price = _get_price_from_book_base(order_books, taker_size, 'buy')
                     price = adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='taker')
                     return {'maker_size': taker_size * price, 'taker_size': taker_size}
                 else:
-                    price = _get_price_from_book_quote(order_books, taker_size, 'buy')
+                    price = _get_price_from_book_quote(order_books, maker_size, 'buy')
                     price = adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='maker')
                     return {'maker_size': maker_size, 'taker_size': maker_size/price}
             elif 'constant_rate' in taker_asset_pricing_data.keys():
                 books_to_get = maker_asset_pricing_data['exchange_books']
                 order_books = {}
                 for book in books_to_get:
-                    order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'asks'))
+                    if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
+                        order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'asks'))
                 if maker_size:
                     price = _get_price_from_book_base(order_books, maker_size, 'sell')
                     price = adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='maker')
                     return {'maker_size': maker_size, 'taker_size': maker_size*price}
 
                 else:
-                    price = _get_price_from_book_quote(order_books, maker_size, 'buy')
+                    price = _get_price_from_book_quote(order_books, taker_size, 'sell')
                     price = adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='taker')
                     return {'maker_size': taker_size/price, 'taker_size': taker_size}
             else:
                 if taker_size:
-                    books_to_get = taker_asset_pricing_data['implied_pref']
+                    imp_book = taker_asset_pricing_data['implied_pref']
                     order_books = {}
-                    for book in books_to_get:
-                        order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'bids'))
+                    order_books[imp_book[0]] = (cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
 
                     taker_asset_price = _get_price_from_book_base(order_books, taker_size, 'buy')
 
-                    books_to_get = maker_asset_pricing_data['implied_pref']
+                    imp_book = maker_asset_pricing_data['implied_pref']
                     order_books = {}
-                    for book in books_to_get:
-                        order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'asks'))
+                    order_books[imp_book[0]] = (cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
 
                     maker_asset_price = _get_price_from_book_quote(order_books, taker_size*taker_asset_price, 'sell')
 
                     return {'maker_size': taker_size*taker_asset_price/maker_asset_price, 'taker_size':taker_size}
                 else:
-                    books_to_get = maker_asset_pricing_data['implied_pref']
+                    imp_book = maker_asset_pricing_data['implied_pref']
                     order_books = {}
-                    for book in books_to_get:
-                        order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'bids'))
+                    order_books[imp_book[0]] = (cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
 
-                    maker_asset_price = _get_price_from_book_base(order_books, taker_size, 'buy')
+                    maker_asset_price = _get_price_from_book_base(order_books, maker_size, 'sell')
 
-                    books_to_get = taker_asset_pricing_data['implied_pref']
+                    imp_book = taker_asset_pricing_data['implied_pref']
                     order_books = {}
-                    for book in books_to_get:
-                        order_books[book[0]] = (cache.get_order_book(book[0], book[1], 'asks'))
+                    order_books[imp_book[0]] = (cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
 
                     taker_asset_price = _get_price_from_book_quote(order_books, maker_size*maker_asset_price, 'sell')
 
@@ -201,7 +199,6 @@ def _get_price_from_book_base(half_book, size, side):
 
 def _get_price_from_book_quote(half_book, size, side):
     ''' Return price. '''
-
 
 
     exchange_levels = {}

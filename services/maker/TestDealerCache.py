@@ -101,14 +101,17 @@ class TestDealerCache():
             placeholder_book['bids'] = [[.0098, 100], [.0097, 200], [.0096, 300]]
             placeholder_book['asks'] = [[.0102, 100], [.0103, 200], [.0104, 300]]
         elif symbol == 'ZRX/USD':
-            placeholder_book['bids'] = [[.99, 100], [.98, 200], [.97, 300]]
-            placeholder_book['asks'] = [[1.01, 100], [1.02, 200], [1.03, 300]]
-        elif symbol == 'DAI/USDC':
+            placeholder_book['bids'] = [[.29, 100], [.28, 200], [.27, 300]]
+            placeholder_book['asks'] = [[.31, 100], [.32, 200], [.33, 300]]
+        elif symbol == 'DAI/USD':
             placeholder_book['bids'] = [[1.001, 100], [1.002, 200], [1.003, 300]]
             placeholder_book['asks'] = [[1.003, 100], [1.006, 200], [1.007, 300]]
         elif symbol == 'ETH/USD':
             placeholder_book['bids'] = [[99, 100], [98, 200], [97, 300]]
             placeholder_book['asks'] = [[101, 100], [102, 200], [103, 300]]
+        elif symbol == 'LINK/USD':
+            placeholder_book['bids'] = [[1.99, 100], [1.98, 200], [1.97, 300]]
+            placeholder_book['asks'] = [[2.01, 100], [2.02, 200], [2.03, 300]]
 
         return placeholder_book[side]
 
