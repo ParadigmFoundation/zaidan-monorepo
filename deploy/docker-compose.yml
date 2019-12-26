@@ -11,3 +11,9 @@ services:
     command: ["--exchange", "coinbase:BTC/USD"]
     ports:
       - 8000
+
+  hwd:
+    image: gcr.io/zaidan-io/hwd
+
+  watcher:
+    image: gcr.io/zaidan-io/watcher
