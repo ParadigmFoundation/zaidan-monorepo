@@ -13,44 +13,7 @@ import (
 
 type Suite struct {
 	suite.Suite
-	store store.Store
-}
-
-func (suite *Suite) SetStore(store store.Store) {
-	suite.store = store
-}
-
-func (suite *Suite) TestTrades() {
-	obj := &types.Trade{
-		QuoteId:          "quote-id",
-		MarketId:         "mkt-id",
-		OrderHash:        "order-hash",
-		TransactionHash:  "transaction-hash",
-		TakerAddress:     "taker-address",
-		Timestamp:        time.Now().Unix(),
-		MakerAssetTicker: "m/a/t",
-		TakerAssetTicker: "t/a/t",
-		MakerAssetAmount: "10000000000000000",
-		TakerAssetAmount: "99999999999999999",
-	}
-	suite.Require().NoError(
-		suite.store.CreateTrade(obj),
-	)
-
-	suite.Run("Found", func() {
-		found, err := suite.store.GetTrade(obj.QuoteId)
-		suite.Require().NoError(err)
-		suite.Require().NotNil(found)
-		suite.Assert().True(proto.Equal(obj, found),
-			"\nexpected: %s\ngot:      %s", obj, found,
-		)
-	})
-
-	suite.Run("NotFound", func() {
-		found, err := suite.store.GetTrade(uuid.New().String())
-		suite.Assert().Error(err)
-		suite.Assert().Nil(found)
-	})
+	Store store.Store
 }
 
 func (suite *Suite) TestQuotes() {
@@ -70,14 +33,14 @@ func (suite *Suite) TestQuotes() {
 	}
 
 	suite.Require().NoError(
-		suite.store.CreateQuote(obj),
+		suite.Store.CreateQuote(obj),
 	)
 	suite.Require().Len(obj.QuoteId, 36,
 		"CreateTrade should set a UUID",
 	)
 
 	suite.Run("Found", func() {
-		found, err := suite.store.GetQuote(obj.QuoteId)
+		found, err := suite.Store.GetQuote(obj.QuoteId)
 		suite.Require().NoError(err)
 		suite.Require().NotNil(found)
 
@@ -87,7 +50,40 @@ func (suite *Suite) TestQuotes() {
 	})
 
 	suite.Run("NotFound", func() {
-		found, err := suite.store.GetTrade(uuid.New().String())
+		found, err := suite.Store.GetTrade(uuid.New().String())
+		suite.Assert().Error(err)
+		suite.Assert().Nil(found)
+	})
+}
+
+func (suite *Suite) TestTrades() {
+	obj := &types.Trade{
+		QuoteId:          "quote-id",
+		MarketId:         "mkt-id",
+		OrderHash:        "order-hash",
+		TransactionHash:  "transaction-hash",
+		TakerAddress:     "taker-address",
+		Timestamp:        time.Now().Unix(),
+		MakerAssetTicker: "m/a/t",
+		TakerAssetTicker: "t/a/t",
+		MakerAssetAmount: "10000000000000000",
+		TakerAssetAmount: "99999999999999999",
+	}
+	suite.Require().NoError(
+		suite.Store.CreateTrade(obj),
+	)
+
+	suite.Run("Found", func() {
+		found, err := suite.Store.GetTrade(obj.QuoteId)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found,
+		)
+	})
+
+	suite.Run("NotFound", func() {
+		found, err := suite.Store.GetTrade(uuid.New().String())
 		suite.Assert().Error(err)
 		suite.Assert().Nil(found)
 	})
@@ -103,11 +99,11 @@ func (suite *Suite) TestAssets() {
 	}
 
 	suite.Require().NoError(
-		suite.store.CreateAsset(obj),
+		suite.Store.CreateAsset(obj),
 	)
 
 	suite.Run("Found", func() {
-		found, err := suite.store.GetAsset(obj.Ticker)
+		found, err := suite.Store.GetAsset(obj.Ticker)
 		suite.Require().NoError(err)
 		suite.Require().NotNil(found)
 
@@ -116,7 +112,7 @@ func (suite *Suite) TestAssets() {
 	})
 
 	suite.Run("NotFound", func() {
-		found, err := suite.store.GetAsset("XXX/YYY")
+		found, err := suite.Store.GetAsset("XXX/YYY")
 		suite.Assert().Error(err)
 		suite.Assert().Nil(found)
 	})

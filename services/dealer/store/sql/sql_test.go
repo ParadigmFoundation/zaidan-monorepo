@@ -17,7 +17,18 @@ type SQLSuite struct {
 func (suite *SQLSuite) SetupTest() {
 	s, err := New(suite.driver, suite.dsn)
 	suite.Require().NoError(err)
-	suite.SetStore(s)
+	suite.Store = s
+}
+
+func (suite *SQLSuite) TearDownTest() {
+	db := suite.Suite.Store.(*Store).db
+	defer db.Close()
+
+	// wipe
+	for _, t := range []string{"migrations", "assets", "trades", "signed_orders", "quotes"} {
+		_, err := db.Exec("DROP TABLE IF EXISTS " + t)
+		suite.Require().NoError(err)
+	}
 }
 
 func TestSQL(t *testing.T) {
