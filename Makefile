@@ -7,7 +7,11 @@ TARGETS = $(SERVICES) $(LIBS)
 
 include ./rules/rules.mk
 
+.PHONY: docker push start
 docker:
+	$(foreach var,$(wildcard $(SERVICES)), $(MAKE) -C $(var) $@ &&) true
+
+push:
 	$(foreach var,$(wildcard $(SERVICES)), $(MAKE) -C $(var) $@ &&) true
 
 start: ## Start will start the zaidan stack locally in development mode
