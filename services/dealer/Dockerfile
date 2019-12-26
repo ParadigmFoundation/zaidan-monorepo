@@ -4,4 +4,4 @@ COPY . .
 RUN apk add make
 
 RUN make -C services/dealer build
-ENTRYPOINT /src/services/dealer/dealer
+ENTRYPOINT ["/src/services/dealer/dealer"]
