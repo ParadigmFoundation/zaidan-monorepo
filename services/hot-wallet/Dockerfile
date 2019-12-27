@@ -4,4 +4,4 @@ COPY . .
 RUN apk add make
 
 RUN make -C services/hot-wallet build
-ENTRYPOINT /src/services/hot-wallet/hwd
+ENTRYPOINT ["/src/services/hot-wallet/hwd"]
