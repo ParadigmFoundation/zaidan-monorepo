@@ -41,7 +41,7 @@ func configureFlags() {
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	log.Println("Starting")
 
-	ethToolkit := eth.New(ethAddress)
+	eth.Configure(ethAddress)
 	log.Println("Connected to ethereum at", ethAddress)
 
 	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
@@ -51,11 +51,9 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	makerClient :=  pb.NewMakerClient(conn)
 	log.Println("Maker client configured for", makerUrl)
 
-	txWatching := watching.New(ethToolkit, makerClient)
-
+	txWatching := watching.New(makerClient)
 
 	watcherServer := grpc.NewServer(
-		ethToolkit,
 		txWatching,
 	)
 	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {

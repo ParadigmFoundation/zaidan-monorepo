@@ -11,10 +11,9 @@ import (
 )
 
 func TestWatchTransaction(t *testing.T) {
-	ethToolkit := eth.New("wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
+	eth.Configure("wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
 	ws := WatcherServer{
-		EthToolkit: ethToolkit,
-		TxWatching: watching.New(ethToolkit, nil),
+		TxWatching: watching.New(nil),
 	}
 	ws.TxWatching.MakerClient = MockMakerClient{}
 	transaction, err := ws.WatchTransaction(context.Background(), &pb.WatchTransactionRequest{ TxHash: "0x71b044c65962a23ed50a6081177b2ec2711b32d9fb1c9b2c7a4b6d711bf98210", QuoteId: "test"})
