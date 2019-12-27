@@ -15,6 +15,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.1.1
 	github.com/mattn/go-sqlite3 v1.11.0
+	github.com/peterbourgon/ff v1.6.0
 	github.com/stretchr/testify v1.4.0
 	google.golang.org/genproto v0.0.0-20190404172233-64821d5d2107 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect

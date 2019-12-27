@@ -1,21 +1,24 @@
-TARGETS = ./services/* ./lib/go
+all:
+	$(MAKE) build
 
-.PHONY: build
-build:
-	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) build &&) true
+SERVICES = ./services/*
+LIBS     = ./lib/go
+TARGETS = $(SERVICES) $(LIBS)
 
-.PHONY: test
-test:
-	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) test &&) true
+include ./rules/rules.mk
 
-.PHONY:lint
-lint:
-	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) lint &&) true
+.PHONY: docker push start
+docker:
+	$(foreach var,$(wildcard $(SERVICES)), $(MAKE) -C $(var) $@ &&) true
 
-.PHONY: ci
-ci:
-	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) ci &&) true
+push:
+	$(foreach var,$(wildcard $(SERVICES)), $(MAKE) -C $(var) $@ &&) true
 
-.PHONY: gen
-gen:
-	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) gen &&) true
+start: ## Start will start the zaidan stack locally in development mode
+	docker-compose \
+		-f ./deploy/docker-compose.yml \
+		-f ./deploy/docker-compose.dev.yml \
+		up
+
+%:
+	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) $@ &&) true
