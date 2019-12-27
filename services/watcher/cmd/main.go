@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
@@ -16,6 +17,7 @@ var (
 	ethAddress string
 	makerUrl   string
 	port       int
+	bugsnagKey string
 
 	cmd = &cobra.Command{
 		Use:   "watcher",
@@ -36,9 +38,11 @@ func configureFlags() {
 	flags.StringVarP(&ethAddress, "eth", "e", "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w", "Ethereum RPC url")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
 	flags.StringVarP(&makerUrl, "maker", "m", "localhost:5002", "Maker gRPC url")
+	flags.StringVarP(&bugsnagKey, "bugsnag", "b", "", "Bugsnag project key")
 }
 
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
+	logging.ConfigureBugsnag(bugsnagKey)
 	log.Println("Starting")
 
 	ethToolkit := eth.New(ethAddress)
