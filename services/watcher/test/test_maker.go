@@ -1,3 +1,5 @@
+// +build maker
+
 package main
 
 import (
@@ -14,7 +16,6 @@ import (
 type MakerServer struct {
 }
 
-
 func (ms *MakerServer) GetQuote(c context.Context, r *pb.GetQuoteRequest) (*pb.GetQuoteResponse, error) {
 	return nil, nil
 }
@@ -28,7 +29,6 @@ func (ms *MakerServer) OrderStatusUpdate(c context.Context, r *pb.OrderStatusUpd
 	return &pb.OrderStatusUpdateResponse{ Status: 1 }, nil
 }
 
-
 func main() {
 	logging.Info("Starting Test Maker Endpoint on port 5002")
 	lis, err := net.Listen("tcp", ":" + strconv.Itoa(5002))
@@ -36,7 +36,7 @@ func main() {
 		logging.FatalString(fmt.Sprintf("failed to listen: %v", err))
 	}
 	s := grpc.NewServer()
-	makerServer := MakerServer{ }
+	makerServer := MakerServer{}
 
 	pb.RegisterMakerServer(s, &makerServer)
 	if err := s.Serve(lis); err != nil {

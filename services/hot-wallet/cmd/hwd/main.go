@@ -29,6 +29,7 @@ func init() {
 	pflag.IntVar(&cfg.maxReqLen, "max-request-length", 16384, "set the max request length (in bytes) used by the order validator")
 	pflag.Uint32Var(&cfg.makerIndex, "maker-index", 0, "set the index of the maker account for 0x orders")
 	pflag.Uint32Var(&cfg.senderIndex, "sender-index", 1, "set the index of the maker account for 0x orders")
+	pflag.Parse()
 }
 
 func main() {
