@@ -1,26 +1,10 @@
-.PHONY = help build gen test ci lint
+DOCKER_CONTEXT = ../..
+DOCKER_IMAGE = obm
 
-build: ## Build the binaries
-	go build -o obm    ./cmd/obm/main.go 
-	go build -o obm-ui ./cmd/obm-ui/main.go
+GO_BINARIES = ./cmd/obm/ ./cmd/obm-ui
+
+include ../../rules/docker.mk
+include ../../rules/golang.mk
 
 clean: ## Clean the build objects
 	rm -r obm obm-ui
-
-gen: ## Generate required files
-	go generate ./...
-
-test: ## Run the tests
-	go test ./... -race
-
-container: ## Build a docker container
-	docker build . -t zaidan-obm
-
-ci: ## Run the CI
-	go test ./... -race
-
-lint:
-	golangci-lint run
-
-help: ## Show this help.
-	@echo -e "$$(grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | sed -e 's/:.*##\s*/:/' -e 's/^\(.\+\):\(.*\)/\\x1b[36m\1\\x1b[m:\2/' | column -c2 -t -s :)"

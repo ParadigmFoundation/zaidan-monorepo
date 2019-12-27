@@ -1,0 +1,20 @@
+version: '3.3'
+
+services:
+  dealer:
+    depends_on:
+      - db
+
+  hwd:
+    restart: always
+    command: ["--eth", "ws://eth:8545"]
+    depends_on:
+      - eth
+
+  db:
+    image: postgres
+
+  eth:
+    image: gcr.io/zaidan-eth-net/0x-snapshot:v3
+    ports:
+      - 8545
