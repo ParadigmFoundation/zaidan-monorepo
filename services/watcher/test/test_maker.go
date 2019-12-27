@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"net"
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"google.golang.org/grpc"
 )
 
@@ -23,22 +24,22 @@ func (ms *MakerServer) CheckQuote(c context.Context, r *pb.CheckQuoteRequest) (*
 }
 
 func (ms *MakerServer) OrderStatusUpdate(c context.Context, r *pb.OrderStatusUpdateRequest) (*pb.OrderStatusUpdateResponse, error) {
-	log.Println("Received update for ", r.QuoteId, " Status: ", r.Status)
+	logging.Info("Received update for ", r.QuoteId, " Status: ", r.Status)
 	return &pb.OrderStatusUpdateResponse{ Status: 1 }, nil
 }
 
 
 func main() {
-	log.Println("Starting Test Maker Endpoint on port 5002")
+	logging.Info("Starting Test Maker Endpoint on port 5002")
 	lis, err := net.Listen("tcp", ":" + strconv.Itoa(5002))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logging.FatalString(fmt.Sprintf("failed to listen: %v", err))
 	}
 	s := grpc.NewServer()
 	makerServer := MakerServer{ }
 
 	pb.RegisterMakerServer(s, &makerServer)
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		logging.FatalString(fmt.Sprintf("failed to serve: %v", err))
 	}
 }

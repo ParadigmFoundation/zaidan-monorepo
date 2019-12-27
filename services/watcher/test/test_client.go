@@ -6,11 +6,11 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"google.golang.org/grpc"
 )
 
@@ -20,7 +20,7 @@ func main() {
 	const address = "localhost:5001"
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		log.Fatalf("did not connect: %v", err)
+		logging.FatalString(fmt.Sprintf("did not connect: %v", err))
 	}
 	defer conn.Close()
 	c := pb.NewWatcherClient(conn)
@@ -28,15 +28,15 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		log.Println("Enter txHash:")
+		logging.Info("Enter txHash:")
 		txHash, _ := reader.ReadString('\n')
 
 		resp, err := c.WatchTransaction(context.Background(), &pb.WatchTransactionRequest{QuoteId: "Random from test_client", TxHash: strings.Replace(txHash, "\n", "", -1)})
 
 		if err != nil {
-			log.Print("Error: ", err)
+			logging.SafeErrorString(fmt.Sprintf("Error: %s", err))
 		} else {
-			log.Print("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), ", txStatus: ", resp.TxStatus, " }")
+			logging.Info("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), ", txStatus: ", resp.TxStatus, " }")
 		}
 	}
 
