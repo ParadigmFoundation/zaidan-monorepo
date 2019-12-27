@@ -19,6 +19,10 @@ steps:
   image: golangci/golangci-lint:v1.21.0
   depends_on: ["clone"]
   volumes:
+  - name: gomod
+    path: /go/pkg/mod
+  - name: gocache
+    path: /root/.cache/go-build
   - name: golint
     path: /root/.cache/golangci-lint
   commands:
