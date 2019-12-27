@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -29,7 +29,7 @@ var (
 func main() {
 	configureFlags()
 	if err := cmd.Execute(); err != nil {
-		log.Fatal(err)
+		logging.Fatal(err)
 	}
 }
 
@@ -43,17 +43,17 @@ func configureFlags() {
 
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	logging.ConfigureBugsnag(bugsnagKey)
-	log.Println("Starting")
+	logging.Info("Starting")
 
 	ethToolkit := eth.New(ethAddress)
-	log.Println("Connected to ethereum at", ethAddress)
+	logging.Info("Connected to ethereum at", ethAddress)
 
 	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
 	if err != nil {
-		log.Fatal("failed to connect maker client" + err.Error())
+		logging.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
 	}
 	makerClient :=  pb.NewMakerClient(conn)
-	log.Println("Maker client configured for", makerUrl)
+	logging.Info("Maker client configured for", makerUrl)
 
 	txWatching := watching.New(ethToolkit, makerClient)
 
@@ -63,6 +63,6 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 		txWatching,
 	)
 	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logging.Fatal(fmt.Errorf("failed to listen: %v", err))
 	}
 }

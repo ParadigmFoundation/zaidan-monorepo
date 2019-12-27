@@ -2,10 +2,11 @@ package watching
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"sync"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -80,21 +81,21 @@ func (txW *TxWatching) startWatchingBlocks() {
 
 		select {
 			case errors := <- txW.EthToolkit.BlockHeadersSubscription.Err(): {
-				log.Println("Subscription error! ", errors)
-				log.Println("Attempting to reconnect")
+				logging.SafeError(fmt.Errorf("subscription error: %v", errors))
+				logging.Info("Attempting to reconnect")
 				txW.EthToolkit.Reset()
 			}
 			case headers, ok := <- txW.EthToolkit.BlockHeaders: {
 				txW.Lock()
 
 				if !ok {
-					log.Fatal("Headers channel failure.")
+					logging.FatalString("Headers channel failure.")
 				}
 
 				block, err := txW.EthToolkit.Client.BlockByNumber(bg, headers.Number)
 				if err != nil {
-					log.Println("Error getting block number:", headers.Number.String(), err)
-					log.Println("Attempting to reconnect")
+					logging.SafeError(fmt.Errorf("error getting block number %s: %v", headers.Number.String(), err))
+					logging.Info("Attempting to reconnect")
 					txW.EthToolkit.Reset()
 					txW.EthToolkit.BlockHeaders <- headers
 					return
@@ -104,12 +105,12 @@ func (txW *TxWatching) startWatchingBlocks() {
 					txHash := blockTx.Hash()
 
 					if watchedTransaction, present := txW.IsWatched(txHash); present {
-						log.Println("Found", txHash.String(), "in Block #", block.Number().String())
+						logging.Info("Found", txHash.String(), "in Block #", block.Number().String())
 						txW.delete(txHash)
 
 						receipt, err := txW.EthToolkit.Client.TransactionReceipt(bg, txHash)
 						if err != nil {
-							log.Println("Failure getting receipt for watched transaction", txHash.String(), ":", err)
+							logging.SafeError(fmt.Errorf("failure getting receipt for watched transaction %s: %v", txHash.String(), err))
 						}
 
 						_, err = txW.MakerClient.OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
@@ -117,16 +118,14 @@ func (txW *TxWatching) startWatchingBlocks() {
 							Status:  uint32(receipt.Status),
 						})
 						if err != nil {
-							log.Println("Failure calling maker for transaction ", txHash.String(), ":", err)
+							logging.SafeError(fmt.Errorf("failure calling maker for transaction %s: %v", txHash.String(), err))
 						}
-						//TODO: Can we resolve/escalate the previous two errors for some intervention
 					}
 				}
 
 				txW.Unlock()
 			}
 		}
-
 	}
 }
 
