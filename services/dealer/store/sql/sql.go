@@ -1,9 +1,10 @@
 package sql
 
 import (
+	"database/sql/driver"
+	"encoding/json"
 	"fmt"
 
-	"github.com/gogo/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/jmoiron/sqlx/reflectx"
@@ -11,6 +12,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/utils"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql/migrations"
 )
@@ -103,11 +105,6 @@ func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
 
 func (s *Store) CreateQuote(q *types.Quote) error {
 	q.QuoteId = uuid.New().String()
-	orderBytes, err := proto.Marshal(q.Order)
-	if err != nil {
-		return err
-	}
-
 	return s.Atomic(func(tx *sqlx.Tx) error {
 		_, err := tx.Exec(
 			`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
@@ -125,14 +122,13 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 			return err
 		}
 
-		_, err = tx.Exec(`INSERT INTO signed_orders(quote_id, order_bytes) VALUES ($1, $2)`, q.QuoteId, orderBytes)
+		_, err = tx.Exec(`INSERT INTO signed_orders(quote_id, order_bytes) VALUES ($1, $2)`, q.QuoteId, q.Order)
 		return err
 	})
 
 }
 
 func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
-	var orderBytes []byte
 	stmt := `
 		SELECT
 		  q.quote_id
@@ -144,36 +140,17 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 		, q.server_time
 		, q.order_hash
 		, q.fill_tx
-		, s.order_bytes
+		, s.order_bytes as "order"
 		FROM quotes q
 		LEFT JOIN signed_orders s
 		ON q.quote_id = s.quote_id
 		WHERE q.quote_id = $1 LIMIT 1
 	`
 	q := types.Quote{}
-	err := s.db.
-		QueryRow(stmt, quoteId).
-		Scan(
-			&q.QuoteId,
-			&q.MakerAssetTicker,
-			&q.TakerAssetTicker,
-			&q.MakerAssetSize,
-			&q.QuoteAssetSize,
-			&q.Expiration,
-			&q.ServerTime,
-			&q.OrderHash,
-			&q.FillTx,
-			&orderBytes,
-		)
+	err := s.db.Get(&q, stmt, quoteId)
 	if err != nil {
 		return nil, err
 	}
-
-	var order types.SignedOrder
-	if err := proto.Unmarshal(orderBytes, &order); err != nil {
-		return nil, err
-	}
-	q.Order = &order
 
 	return &q, nil
 }
@@ -200,3 +177,50 @@ func (s *Store) GetAsset(ticker string) (*types.Asset, error) {
 	}
 	return &asset, nil
 }
+
+func (s *Store) CreateMarket(mkt *types.Market) error {
+	mkt.Id = uuid.New().String()
+	_, err := s.db.Exec(
+		`INSERT INTO markets VALUES($1, $2, $3, $4, $5, $6)`,
+		mkt.Id,
+		mkt.MarketAssetTicker,
+		StringSlice(mkt.TakerAssetTickers),
+		mkt.TradeInfo,
+		mkt.QuoteInfo,
+		MapStringString(mkt.Metadata),
+	)
+	return err
+}
+
+func (s *Store) GetMarket(id string) (*types.Market, error) {
+	stmt := ` SELECT * FROM markets where id = $1 LIMIT 1`
+	mkt := types.Market{}
+	var tickers StringSlice
+	var metadata MapStringString
+
+	err := s.db.QueryRow(stmt, id).Scan(
+		&mkt.Id,
+		&mkt.MarketAssetTicker,
+		&tickers,
+		&mkt.TradeInfo,
+		&mkt.QuoteInfo,
+		&metadata,
+	)
+	if err != nil {
+		return nil, err
+	}
+	mkt.TakerAssetTickers = tickers
+	mkt.Metadata = metadata
+
+	return &mkt, nil
+}
+
+type StringSlice []string
+
+func (ss StringSlice) Value() (driver.Value, error) { return json.Marshal(ss) }
+func (ss *StringSlice) Scan(v interface{}) error    { return json.Unmarshal(utils.AnyToBytes(v), ss) }
+
+type MapStringString map[string]string
+
+func (mss MapStringString) Value() (driver.Value, error) { return json.Marshal(mss) }
+func (mss *MapStringString) Scan(v interface{}) error    { return json.Unmarshal(utils.AnyToBytes(v), mss) }

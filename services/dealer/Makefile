@@ -1,5 +1,6 @@
 DOCKER_CONTEXT = ../..
 DOCKER_IMAGE = dealer
+CGO_ENABLED=1
 
 GO_BINARIES = ./cmd/dealer/
 
