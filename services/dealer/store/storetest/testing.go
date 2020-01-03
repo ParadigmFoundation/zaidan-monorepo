@@ -111,6 +111,15 @@ func (suite *Suite) TestAssets() {
 			"\nexpected: %s\ngot:      %s", obj, found)
 	})
 
+	suite.Run("FoundByAddress", func() {
+		found, err := suite.Store.GetAssetByAddress(obj.Address)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found)
+	})
+
 	suite.Run("NotFound", func() {
 		found, err := suite.Store.GetAsset("XXX/YYY")
 		suite.Assert().Error(err)
