@@ -190,13 +190,20 @@ func (s *Store) CreateAsset(a *types.Asset) error {
 	return err
 }
 
-func (s *Store) GetAsset(ticker string) (*types.Asset, error) {
-	stmt := `
-	SELECT * FROM assets WHERE ticker = $1 LIMIT 1
-	`
+func (s *Store) GetAssetBy(key, value string) (*types.Asset, error) {
+	stmt := "SELECT * FROM assets WHERE " + key + " = $1 LIMIT 1"
 	asset := types.Asset{}
-	if err := s.db.Get(&asset, stmt, ticker); err != nil {
+	if err := s.db.Get(&asset, stmt, value); err != nil {
 		return nil, err
 	}
 	return &asset, nil
+
+}
+
+func (s *Store) GetAsset(ticker string) (*types.Asset, error) {
+	return s.GetAssetBy("ticker", ticker)
+}
+
+func (s *Store) GetAssetByAddress(addr string) (*types.Asset, error) {
+	return s.GetAssetBy("address", addr)
 }
