@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/ParadigmFoundation/zaidan-monorepo/lib/go v0.0.0-00010101000000-000000000000
+	github.com/ParadigmFoundation/zaidan-monorepo/services/dealer v0.0.0-00010101000000-000000000000 // indirect
 	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0
 	github.com/bitbandi/go-hitbtc v0.0.0-20190201230334-2adae5a2f724
 	github.com/bitly/go-simplejson v0.5.0 // indirect
@@ -21,3 +22,5 @@ require (
 )
 
 replace github.com/ParadigmFoundation/zaidan-monorepo/lib/go => ../../lib/go
+
+replace github.com/ParadigmFoundation/zaidan-monorepo/services/dealer => ../dealer

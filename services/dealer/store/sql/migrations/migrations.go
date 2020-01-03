@@ -66,6 +66,18 @@ func (*SQLMigration) Schema() map[string]string {
 				, PRIMARY KEY (ticker)
 			)
 		`,
+
+		"create-markets-table": `
+			CREATE TABLE markets (
+				  "id"                  VARCHAR(36)
+				, "market_asset_ticker" VARCHAR(10)
+				, "taker_asset_tickers" TEXT
+				, "trade_info"          TEXT
+				, "quote_info"          TEXT
+				, "metadata"            TEXT
+				, PRIMARY KEY (id)
+			)
+		`,
 	}
 }
 
