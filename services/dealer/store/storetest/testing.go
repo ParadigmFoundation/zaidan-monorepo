@@ -111,9 +111,50 @@ func (suite *Suite) TestAssets() {
 			"\nexpected: %s\ngot:      %s", obj, found)
 	})
 
+	suite.Run("FoundByAddress", func() {
+		found, err := suite.Store.GetAssetByAddress(obj.Address)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found)
+	})
+
 	suite.Run("NotFound", func() {
 		found, err := suite.Store.GetAsset("XXX/YYY")
 		suite.Assert().Error(err)
 		suite.Assert().Nil(found)
+	})
+}
+
+func (suite *Suite) TestMarkets() {
+	obj := &types.Market{
+		MarketAssetTicker: "FOO/BAR",
+		TakerAssetTickers: []string{"FOO/BAR", "XXX/YYY"},
+		TradeInfo: &types.TradeInfo{
+			ChainId:  123,
+			GasPrice: "210000",
+			GasLimit: "12000000000",
+		},
+		QuoteInfo: &types.QuoteInfo{
+			MinSize: "100000000000000",
+			MaxSize: "10000000000000000000000000",
+		},
+		Metadata: map[string]string{
+			"this": "is",
+			"a":    "test",
+		},
+	}
+	suite.Require().NoError(
+		suite.Store.CreateMarket(obj),
+	)
+
+	suite.Run("found", func() {
+		found, err := suite.Store.GetMarket(obj.Id)
+		suite.Require().NoError(err)
+		suite.Require().NotNil(found)
+
+		suite.Assert().True(proto.Equal(obj, found),
+			"\nexpected: %s\ngot:      %s", obj, found)
 	})
 }
