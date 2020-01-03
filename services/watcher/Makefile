@@ -1,13 +1,8 @@
-.PHONY: build test ci
+DOCKER_IMAGE = watcher
+DOCKER_CONTEXT = ../..
 
-build:
-	go build -o watcher cmd/main.go
+GO_BINARIES  = ./cmd/watcher
 
-test:
-	go test ./... -race
-
-lint:
-	golangci-lint run
-
-ci:
-	go test -race ./...
+include ../../rules/docker.mk
+include ../../rules/golang.mk
+include ../../rules/rules.mk
