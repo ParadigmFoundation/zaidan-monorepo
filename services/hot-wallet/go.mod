@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/0xProject/0x-mesh v0.0.0-20191212004844-e881b7dcd31a
 	github.com/ParadigmFoundation/zaidan-monorepo/lib/go v0.0.0-00010101000000-000000000000
+	github.com/ParadigmFoundation/zaidan-monorepo/services/dealer v0.0.0-00010101000000-000000000000 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/albrow/stringset v2.1.0+incompatible // indirect
 	github.com/benbjohnson/clock v1.0.0 // indirect
@@ -25,3 +26,5 @@ require (
 )
 
 replace github.com/ParadigmFoundation/zaidan-monorepo/lib/go => ../../lib/go
+
+replace github.com/ParadigmFoundation/zaidan-monorepo/services/dealer => ../dealer
