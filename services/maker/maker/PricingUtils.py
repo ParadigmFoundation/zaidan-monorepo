@@ -1,4 +1,5 @@
 from TestDealerCache import TestDealerCache
+from RedisInterface import RedisInterface
 import math
 
 asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')], 'implied_pref': ('COINBASE', 'ZRX/USD')},
@@ -10,8 +11,11 @@ asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINA
 EXCHANGE_FEES = {'BINANCE':.00075, 'COINBASE':.002, 'GEMINI':.001}
 PREMIUM = .001
 cache = TestDealerCache()
+redis_interface = RedisInterface()
 
 def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
+    pending_maker_size = redis_interface.get_pending_quote_size(maker_asset)
+    pending_taker_size = redis_interface.get_pending_quote_size(taker_asset)
     maker_asset_pricing_data = asset_pricing_data[maker_asset]
     taker_asset_pricing_data = asset_pricing_data[taker_asset]
     order_books = []
