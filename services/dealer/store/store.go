@@ -11,4 +11,7 @@ type Store interface {
 	GetQuote(string) (*types.Quote, error)
 	CreateAsset(*types.Asset) error
 	GetAsset(string) (*types.Asset, error)
+	CreateMarket(*types.Market) error
+	GetMarket(string) (*types.Market, error)
+	GetAssetByAddress(string) (*types.Asset, error)
 }
