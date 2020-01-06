@@ -24,11 +24,11 @@ func Fatal(err error) {
 	os.Exit(1)
 }
 
-func SafeError (err error) {
+func SafeError (err error, bugsnagRawData ...interface{}) {
 	if len(bs.Config.APIKey) == 0 {
 		errorLog.Println(err)
 	} else {
-		err := bs.Notify(err)
+		err := bs.Notify(err, bugsnagRawData...)
 		if err != nil {
 			errorLog.Println(err)
 		}
