@@ -10,8 +10,10 @@ var errorLog = log.New(os.Stderr, "[ERROR] ", log.LstdFlags)
 var infoLog = log.New(os.Stdout, "[INFO] ", log.LstdFlags)
 
 func ConfigureBugsnag (apiKey string) {
+	wd, _ := os.Getwd()
 	bs.Configure(bs.Configuration{
 		APIKey:          apiKey,
+		SourceRoot: 	 wd,
 		// The import paths for the Go packages containing your source files
 		ProjectPackages: []string{"github.com/ParadigmFoundation/zaidan-monorepo"},
 		Logger:          errorLog,
