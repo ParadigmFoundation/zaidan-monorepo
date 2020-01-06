@@ -11,8 +11,8 @@ import (
 
 type market struct {
 	lastUpdate time.Time
-	bids       map[float64]float64
-	asks       map[float64]float64
+	bids       *CappedTree
+	asks       *CappedTree
 }
 
 // these operates as db indexes
@@ -46,8 +46,8 @@ func (s *Store) findOrCreateMarket(name, symbol string) *market {
 	mkt := s.xch[name][symbol]
 	if mkt == nil {
 		mkt = &market{
-			bids: make(map[float64]float64),
-			asks: make(map[float64]float64),
+			bids: NewCappedTree(200, RemoveMin),
+			asks: NewCappedTree(200, RemoveMax),
 		}
 		s.xch[name][symbol] = mkt
 	}
@@ -64,22 +64,22 @@ func (s *Store) doUpdate(name string, update *obm.Update) error {
 	for _, bid := range update.Bids {
 		p, q := bid.Price, bid.Quantity
 		if q == 0 {
-			delete(mkt.bids, p)
+			mkt.bids.Remove(p)
 		} else {
-			mkt.bids[p] = q
+			mkt.bids.Put(p, q)
 		}
 	}
 
 	for _, ask := range update.Asks {
 		p, q := ask.Price, ask.Quantity
 		if q == 0 {
-			delete(mkt.asks, p)
+			mkt.asks.Remove(p)
 		} else {
-			mkt.asks[p] = q
+			mkt.asks.Put(p, q)
 		}
 	}
-	mkt.lastUpdate = time.Now()
 
+	mkt.lastUpdate = time.Now()
 	return nil
 }
 
@@ -90,15 +90,15 @@ func (s *Store) OrderBook(exchange, symbol string) (*grpc.OrderBookResponse, err
 	mkt := s.findOrCreateMarket(exchange, symbol)
 
 	var asks grpc.OrderBookEntriesByPriceAsc
-	for p, q := range mkt.asks {
-		asks = append(asks, &grpc.OrderBookEntry{Price: p, Quantity: q})
-	}
+	mkt.asks.Each(func(key, val float64) {
+		asks = append(asks, &grpc.OrderBookEntry{Price: key, Quantity: val})
+	})
 	sort.Sort(asks)
 
 	var bids grpc.OrderBookEntriesByPriceDesc
-	for p, q := range mkt.bids {
-		bids = append(bids, &grpc.OrderBookEntry{Price: p, Quantity: q})
-	}
+	mkt.bids.Each(func(key, val float64) {
+		bids = append(bids, &grpc.OrderBookEntry{Price: key, Quantity: val})
+	})
 	sort.Sort(bids)
 
 	ob := &grpc.OrderBookResponse{
