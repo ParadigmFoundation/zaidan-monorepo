@@ -41,7 +41,9 @@ func configureFlags() {
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	log.Println("Starting")
 
-	eth.Configure(ethAddress)
+	if err := eth.Configure(ethAddress); err != nil {
+		log.Fatal(err)
+	}
 	log.Println("Connected to ethereum at", ethAddress)
 
 	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())

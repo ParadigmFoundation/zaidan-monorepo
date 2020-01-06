@@ -2,6 +2,7 @@ package eth
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/ethereum/go-ethereum"
@@ -16,23 +17,24 @@ var (
 	BlockHeadersSubscription ethereum.Subscription
 )
 
-func Configure(ethreumUrl string) {
+func Configure(ethreumUrl string) error {
 	client, err := ethclient.Dial(ethreumUrl)
 	if err != nil {
-		log.Fatal("Unable to connect to ethereum:" + err.Error())
+		return fmt.Errorf("unable to connect to ethereum: %v", err.Error())
 	}
 
 	channel := make(chan *types.Header)
 
 	sub, err := client.SubscribeNewHead(context.Background(), channel)
 	if err != nil {
-		log.Fatal("failed to subscribe" + err.Error())
+		return fmt.Errorf("failed to subscribe: %v", err.Error())
 	}
 
 	ethUrl = ethreumUrl
 	Client = client
 	BlockHeaders = channel
 	BlockHeadersSubscription = sub
+	return nil
 }
 
 func Reset() {
