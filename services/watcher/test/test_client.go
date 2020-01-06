@@ -20,7 +20,7 @@ func main() {
 	const address = "localhost:5001"
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
-		logging.FatalString(fmt.Sprintf("did not connect: %v", err))
+		logging.Fatal(fmt.Errorf("did not connect: %v", err))
 	}
 	defer conn.Close()
 	c := pb.NewWatcherClient(conn)
@@ -34,7 +34,7 @@ func main() {
 		resp, err := c.WatchTransaction(context.Background(), &pb.WatchTransactionRequest{QuoteId: "Random from test_client", TxHash: strings.Replace(txHash, "\n", "", -1)})
 
 		if err != nil {
-			logging.SafeErrorString(fmt.Sprintf("Error: %s", err))
+			logging.SafeError(fmt.Errorf("Error: %s", err))
 		} else {
 			logging.Info("Call succeeded: { txHash: ", resp.TxHash, ", quoteId: ", resp.QuoteId, ", isPending: ", fmt.Sprint(resp.IsPending), ", txStatus: ", resp.TxStatus, " }")
 		}

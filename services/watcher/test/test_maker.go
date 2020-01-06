@@ -33,13 +33,13 @@ func main() {
 	logging.Info("Starting Test Maker Endpoint on port 5002")
 	lis, err := net.Listen("tcp", ":" + strconv.Itoa(5002))
 	if err != nil {
-		logging.FatalString(fmt.Sprintf("failed to listen: %v", err))
+		logging.Fatal(fmt.Errorf("failed to listen: %v", err))
 	}
 	s := grpc.NewServer()
 	makerServer := MakerServer{}
 
 	pb.RegisterMakerServer(s, &makerServer)
 	if err := s.Serve(lis); err != nil {
-		logging.FatalString(fmt.Sprintf("failed to serve: %v", err))
+		logging.Fatal(fmt.Errorf("failed to serve: %v", err))
 	}
 }

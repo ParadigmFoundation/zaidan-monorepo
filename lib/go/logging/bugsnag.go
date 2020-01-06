@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"fmt"
 	bs "github.com/bugsnag/bugsnag-go"
 	"log"
 	"os"
@@ -19,17 +18,9 @@ func ConfigureBugsnag (apiKey string) {
 	})
 }
 
-func FatalString(err string) {
-	Fatal(fmt.Errorf(err))
-}
-
 func Fatal(err error) {
 	SafeError(err)
 	os.Exit(1)
-}
-
-func SafeErrorString(err string) {
-	SafeError(fmt.Errorf(err))
 }
 
 func SafeError (err error) {

@@ -89,7 +89,7 @@ func (txW *TxWatching) startWatchingBlocks() {
 				txW.Lock()
 
 				if !ok {
-					logging.FatalString("Headers channel failure.")
+					logging.Fatal(fmt.Errorf("headers channel failure"))
 				}
 
 				block, err := txW.EthToolkit.Client.BlockByNumber(bg, headers.Number)
