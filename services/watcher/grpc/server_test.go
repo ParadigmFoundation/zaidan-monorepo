@@ -11,7 +11,7 @@ import (
 )
 
 func TestWatchTransaction(t *testing.T) {
-	eth.Configure("wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
+	eth.Configure("wss://ropsten.infura.io/ws")
 	ws := WatcherServer{
 		TxWatching: watching.New(nil),
 	}
