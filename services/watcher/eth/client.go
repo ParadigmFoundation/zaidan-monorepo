@@ -2,6 +2,7 @@ package eth
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/ethereum/go-ethereum"
@@ -9,42 +10,46 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-type EthereumToolkit struct {
+var (
 	ethUrl 			   string
 	Client             *ethclient.Client
 	BlockHeaders       chan *types.Header
 	BlockHeadersSubscription ethereum.Subscription
-}
+)
 
-func New(ethUrl string) *EthereumToolkit {
-	client, err := ethclient.Dial(ethUrl)
+func Configure(ethreumUrl string) error {
+	client, err := ethclient.Dial(ethreumUrl)
 	if err != nil {
-		log.Fatal("Unable to connect to ethereum:" + err.Error())
+		return fmt.Errorf("unable to connect to ethereum: %v", err.Error())
 	}
 
 	channel := make(chan *types.Header)
 
 	sub, err := client.SubscribeNewHead(context.Background(), channel)
 	if err != nil {
-		log.Fatal("failed to subscribe" + err.Error())
+		return fmt.Errorf("failed to subscribe: %v", err.Error())
 	}
 
-	return &EthereumToolkit{ ethUrl: ethUrl, Client: client, BlockHeaders: channel, BlockHeadersSubscription: sub }
+	ethUrl = ethreumUrl
+	Client = client
+	BlockHeaders = channel
+	BlockHeadersSubscription = sub
+	return nil
 }
 
-func (etk *EthereumToolkit) Reset() {
-	etk.BlockHeadersSubscription.Unsubscribe()
+func Reset() {
+	BlockHeadersSubscription.Unsubscribe()
 
-	client, err := ethclient.Dial(etk.ethUrl)
+	client, err := ethclient.Dial(ethUrl)
 	if err != nil {
 		log.Fatal("Unable to reconnect to ethereum:" + err.Error())
 	}
-	etk.Client = client
+	Client = client
 
-	sub, err := client.SubscribeNewHead(context.Background(), etk.BlockHeaders)
+	sub, err := client.SubscribeNewHead(context.Background(), BlockHeaders)
 	if err != nil {
 		log.Fatal("failed to subscribe" + err.Error())
 	}
 
-	etk.BlockHeadersSubscription = sub
+	BlockHeadersSubscription = sub
 }
