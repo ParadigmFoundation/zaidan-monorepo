@@ -4,7 +4,7 @@ from services_pb2_grpc import OrderBookManagerStub
 from types_pb2 import OrderBookRequest
 
 # Connect to the OBM server
-channel = grpc.insecure_channel('localhost:8001')
+channel = grpc.insecure_channel('localhost:8000')
 stub = OrderBookManagerStub(channel)
 
 # Build the request
