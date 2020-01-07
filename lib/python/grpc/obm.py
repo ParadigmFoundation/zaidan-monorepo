@@ -8,7 +8,7 @@ channel = grpc.insecure_channel('localhost:8000')
 stub = OrderBookManagerStub(channel)
 
 # Build the request
-req = OrderBookRequest(exchange = "coinbase", symbol = "ETH/USD")
+req = OrderBookRequest(exchange = "binance", symbol = "BTC/USDT")
 
 # Call the server
 response = stub.OrderBook(req)
