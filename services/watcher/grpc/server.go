@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
 	"strings"
@@ -44,10 +45,13 @@ func (s *WatcherServer) Listen(port string) error {
 func (s *WatcherServer) Stop() { s.grpc.GracefulStop() }
 
 func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransactionRequest) (*pb.WatchTransactionResponse, error) {
-	log.Printf("Received: %v", in.TxHash)
-	txHash := common.HexToHash(strings.TrimSpace(in.TxHash))
-	//TODO: validate transaction hash
+	trimmed := strings.TrimSpace(in.TxHash)
+	txHash := common.HexToHash(trimmed)
+	if !strings.EqualFold(txHash.String(), trimmed) || len(txHash.String()) != 66 {
+		return nil, errors.New("invalid txHash")
+	}
 
+	log.Printf("Received: %v", in.TxHash)
 	s.TxWatching.Lock()
 	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
