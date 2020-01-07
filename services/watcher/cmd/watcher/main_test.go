@@ -16,7 +16,7 @@ func TestCommandConfig(t *testing.T) {
 
 	flags := cmd.PersistentFlags()
 	assert.NotNil(t, flags.Lookup("eth"))
-	assert.Equal(t, flags.Lookup("eth").Value.String(), "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w")
+	assert.Equal(t, flags.Lookup("eth").Value.String(), "wss://ropsten.infura.io/ws")
 	assert.NotNil(t, flags.Lookup("port"))
 	assert.Equal(t, flags.Lookup("port").Value.String(), "5001")
 	assert.NotNil(t, flags.ShorthandLookup("p"))
