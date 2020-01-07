@@ -19,8 +19,8 @@ func ConfigureBugsnag (apiKey string) {
 	})
 }
 
-func Fatal(err error) {
-	SafeError(err)
+func Fatal(err error, bugsnagRawData ...interface{}) {
+	SafeError(err, bugsnagRawData...)
 	os.Exit(1)
 }
 
