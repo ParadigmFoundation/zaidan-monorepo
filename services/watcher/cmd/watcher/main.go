@@ -1,10 +1,11 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
@@ -16,6 +17,7 @@ var (
 	ethAddress string
 	makerUrl   string
 	port       int
+	bugsnagKey string
 
 	cmd = &cobra.Command{
 		Use:   "watcher",
@@ -27,7 +29,7 @@ var (
 func main() {
 	configureFlags()
 	if err := cmd.Execute(); err != nil {
-		log.Fatal(err)
+		logging.Fatal(err)
 	}
 }
 
@@ -36,22 +38,24 @@ func configureFlags() {
 	flags.StringVarP(&ethAddress, "eth", "e", "wss://ropsten.infura.io/ws", "Ethereum RPC url")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
 	flags.StringVarP(&makerUrl, "maker", "m", "localhost:5002", "Maker gRPC url")
+	flags.StringVarP(&bugsnagKey, "bugsnag", "b", "", "Bugsnag project key")
 }
 
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
-	log.Println("Starting")
+	logging.ConfigureBugsnag(bugsnagKey)
+	logging.Info("Starting")
 
 	if err := eth.Configure(ethAddress); err != nil {
-		log.Fatal(err)
+		logging.Fatal(err)
 	}
-	log.Println("Connected to ethereum at", ethAddress)
+	logging.Info("Connected to ethereum at", ethAddress)
 
 	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
 	if err != nil {
-		log.Fatal("failed to connect maker client" + err.Error())
+		logging.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
 	}
 	makerClient :=  pb.NewMakerClient(conn)
-	log.Println("Maker client configured for", makerUrl)
+	logging.Info("Maker client configured for", makerUrl)
 
 	txWatching := watching.New(makerClient)
 
@@ -59,6 +63,6 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 		txWatching,
 	)
 	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logging.Fatal(fmt.Errorf("failed to listen: %v", err))
 	}
 }

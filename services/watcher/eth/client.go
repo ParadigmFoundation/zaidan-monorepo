@@ -3,8 +3,7 @@ package eth
 import (
 	"context"
 	"fmt"
-	"log"
-
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -42,13 +41,13 @@ func Reset() {
 
 	client, err := ethclient.Dial(ethUrl)
 	if err != nil {
-		log.Fatal("Unable to reconnect to ethereum:" + err.Error())
+		logging.Fatal(fmt.Errorf("unable to reconnect to ethereum: %v", err))
 	}
 	Client = client
 
 	sub, err := client.SubscribeNewHead(context.Background(), BlockHeaders)
 	if err != nil {
-		log.Fatal("failed to subscribe" + err.Error())
+		logging.Fatal(fmt.Errorf("failed to subscribe: %v", err))
 	}
 
 	BlockHeadersSubscription = sub
