@@ -111,7 +111,8 @@ func main() {
 
 	svr := &server{types.NewHotWalletClient(conn)}
 	mux := http.NewServeMux()
-	mux.HandleFunc("/balance", svr.getBalance)
+	mux.HandleFunc("/balance/ether", svr.getEtherBalance)
+	mux.HandleFunc("/balance/token", svr.getTokenBalance)
 	mux.HandleFunc("/allowance", svr.getAllowance)
 	mux.HandleFunc("/transfer", svr.transfer)
 
