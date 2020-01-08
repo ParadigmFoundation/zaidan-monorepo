@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"errors"
 	"log"
 	"net"
 	"strings"
@@ -14,14 +15,12 @@ import (
 )
 
 type WatcherServer struct {
-	EthToolkit *eth.EthereumToolkit
 	TxWatching *watching.TxWatching
 	grpc *grpc.Server
 }
 
-func NewServer(ethToolkit *eth.EthereumToolkit, txWatching *watching.TxWatching) *WatcherServer {
+func NewServer(txWatching *watching.TxWatching) *WatcherServer {
 	watcherServer := &WatcherServer{
-		EthToolkit: ethToolkit,
 		TxWatching: txWatching,
 		grpc:  grpc.NewServer(),
 	}
@@ -44,10 +43,13 @@ func (s *WatcherServer) Listen(port string) error {
 func (s *WatcherServer) Stop() { s.grpc.GracefulStop() }
 
 func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransactionRequest) (*pb.WatchTransactionResponse, error) {
-	log.Printf("Received: %v", in.TxHash)
-	txHash := common.HexToHash(strings.TrimSpace(in.TxHash))
-	//TODO: validate transaction hash
+	trimmed := strings.TrimSpace(in.TxHash)
+	txHash := common.HexToHash(trimmed)
+	if !strings.EqualFold(txHash.String(), trimmed) || len(txHash.String()) != 66 {
+		return nil, errors.New("invalid txHash")
+	}
 
+	log.Printf("Received: %v", in.TxHash)
 	s.TxWatching.Lock()
 	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
@@ -78,7 +80,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 }
 
 func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
-	_, isPending, err:= s.EthToolkit.Client.TransactionByHash(c, txHash)
+	_, isPending, err:= eth.Client.TransactionByHash(c, txHash)
 	if err != nil {
 		return false, 0, err
 	}
@@ -88,7 +90,7 @@ func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash)
 		return isPending, 0, nil
 	}
 
-	receipt, err := s.EthToolkit.Client.TransactionReceipt(c, txHash)
+	receipt, err := eth.Client.TransactionReceipt(c, txHash)
 	if err != nil {
 		return isPending, 0, err
 	}

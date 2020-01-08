@@ -1919,6 +1919,187 @@ func (m *Asset) GetAddress() string {
 	return ""
 }
 
+type TradeInfo struct {
+	ChainId              uint32   `protobuf:"varint,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
+	GasLimit             string   `protobuf:"bytes,2,opt,name=gas_limit,json=gasLimit,proto3" json:"gas_limit,omitempty"`
+	GasPrice             string   `protobuf:"bytes,3,opt,name=gas_price,json=gasPrice,proto3" json:"gas_price,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TradeInfo) Reset()         { *m = TradeInfo{} }
+func (m *TradeInfo) String() string { return proto.CompactTextString(m) }
+func (*TradeInfo) ProtoMessage()    {}
+func (*TradeInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d938547f84707355, []int{23}
+}
+
+func (m *TradeInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TradeInfo.Unmarshal(m, b)
+}
+func (m *TradeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TradeInfo.Marshal(b, m, deterministic)
+}
+func (m *TradeInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TradeInfo.Merge(m, src)
+}
+func (m *TradeInfo) XXX_Size() int {
+	return xxx_messageInfo_TradeInfo.Size(m)
+}
+func (m *TradeInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_TradeInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TradeInfo proto.InternalMessageInfo
+
+func (m *TradeInfo) GetChainId() uint32 {
+	if m != nil {
+		return m.ChainId
+	}
+	return 0
+}
+
+func (m *TradeInfo) GetGasLimit() string {
+	if m != nil {
+		return m.GasLimit
+	}
+	return ""
+}
+
+func (m *TradeInfo) GetGasPrice() string {
+	if m != nil {
+		return m.GasPrice
+	}
+	return ""
+}
+
+type QuoteInfo struct {
+	MinSize              string   `protobuf:"bytes,1,opt,name=min_size,json=minSize,proto3" json:"min_size,omitempty"`
+	MaxSize              string   `protobuf:"bytes,2,opt,name=max_size,json=maxSize,proto3" json:"max_size,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *QuoteInfo) Reset()         { *m = QuoteInfo{} }
+func (m *QuoteInfo) String() string { return proto.CompactTextString(m) }
+func (*QuoteInfo) ProtoMessage()    {}
+func (*QuoteInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d938547f84707355, []int{24}
+}
+
+func (m *QuoteInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_QuoteInfo.Unmarshal(m, b)
+}
+func (m *QuoteInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_QuoteInfo.Marshal(b, m, deterministic)
+}
+func (m *QuoteInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuoteInfo.Merge(m, src)
+}
+func (m *QuoteInfo) XXX_Size() int {
+	return xxx_messageInfo_QuoteInfo.Size(m)
+}
+func (m *QuoteInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuoteInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QuoteInfo proto.InternalMessageInfo
+
+func (m *QuoteInfo) GetMinSize() string {
+	if m != nil {
+		return m.MinSize
+	}
+	return ""
+}
+
+func (m *QuoteInfo) GetMaxSize() string {
+	if m != nil {
+		return m.MaxSize
+	}
+	return ""
+}
+
+type Market struct {
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	MarketAssetTicker    string            `protobuf:"bytes,2,opt,name=market_asset_ticker,json=marketAssetTicker,proto3" json:"market_asset_ticker,omitempty"`
+	TakerAssetTickers    []string          `protobuf:"bytes,3,rep,name=taker_asset_tickers,json=takerAssetTickers,proto3" json:"taker_asset_tickers,omitempty"`
+	TradeInfo            *TradeInfo        `protobuf:"bytes,4,opt,name=trade_info,json=tradeInfo,proto3" json:"trade_info,omitempty"`
+	QuoteInfo            *QuoteInfo        `protobuf:"bytes,5,opt,name=quote_info,json=quoteInfo,proto3" json:"quote_info,omitempty"`
+	Metadata             map[string]string `protobuf:"bytes,6,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *Market) Reset()         { *m = Market{} }
+func (m *Market) String() string { return proto.CompactTextString(m) }
+func (*Market) ProtoMessage()    {}
+func (*Market) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d938547f84707355, []int{25}
+}
+
+func (m *Market) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Market.Unmarshal(m, b)
+}
+func (m *Market) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Market.Marshal(b, m, deterministic)
+}
+func (m *Market) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Market.Merge(m, src)
+}
+func (m *Market) XXX_Size() int {
+	return xxx_messageInfo_Market.Size(m)
+}
+func (m *Market) XXX_DiscardUnknown() {
+	xxx_messageInfo_Market.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Market proto.InternalMessageInfo
+
+func (m *Market) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *Market) GetMarketAssetTicker() string {
+	if m != nil {
+		return m.MarketAssetTicker
+	}
+	return ""
+}
+
+func (m *Market) GetTakerAssetTickers() []string {
+	if m != nil {
+		return m.TakerAssetTickers
+	}
+	return nil
+}
+
+func (m *Market) GetTradeInfo() *TradeInfo {
+	if m != nil {
+		return m.TradeInfo
+	}
+	return nil
+}
+
+func (m *Market) GetQuoteInfo() *QuoteInfo {
+	if m != nil {
+		return m.QuoteInfo
+	}
+	return nil
+}
+
+func (m *Market) GetMetadata() map[string]string {
+	if m != nil {
+		return m.Metadata
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*OrderBookEntry)(nil), "OrderBookEntry")
 	proto.RegisterType((*OrderBookRequest)(nil), "OrderBookRequest")
@@ -1949,6 +2130,10 @@ func init() {
 	proto.RegisterType((*Quote)(nil), "Quote")
 	proto.RegisterType((*Trade)(nil), "Trade")
 	proto.RegisterType((*Asset)(nil), "Asset")
+	proto.RegisterType((*TradeInfo)(nil), "TradeInfo")
+	proto.RegisterType((*QuoteInfo)(nil), "QuoteInfo")
+	proto.RegisterType((*Market)(nil), "Market")
+	proto.RegisterMapType((map[string]string)(nil), "Market.MetadataEntry")
 }
 
 func init() { proto.RegisterFile("types.proto", fileDescriptor_d938547f84707355) }
