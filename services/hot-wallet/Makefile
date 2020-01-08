@@ -7,5 +7,8 @@ include ../../rules/docker.mk
 include ../../rules/golang.mk
 include ../../rules/rules.mk
 
+ci:
+	ETHEREUM_JSONRPC_URL=http://0x-snapshot:8545 $(MAKE) run-tests
+
 clean: ## Clean the build objects
 	rm -rf hwd
