@@ -20,19 +20,16 @@ type config struct {
 	senderIndex uint32
 }
 
-var cfg = config{}
-
-func init() {
-	pflag.StringVar(&cfg.ethurl, "eth", "http://localhost:8545", "URL to an Ethereum JSONRPC server")
-	pflag.StringVar(&cfg.mnemonic, "mnemonic", "concert load couple harbor equip island argue ramp clarify fence smart topic", "a 12 word seed phrase")
-	pflag.StringVar(&cfg.bind, "bind", "0.0.0.0:42001", "address to bind the hot-wallet gRPC server to")
-	pflag.IntVar(&cfg.maxReqLen, "max-request-length", 16384, "set the max request length (in bytes) used by the order validator")
-	pflag.Uint32Var(&cfg.makerIndex, "maker-index", 0, "set the index of the maker account for 0x orders")
-	pflag.Uint32Var(&cfg.senderIndex, "sender-index", 1, "set the index of the maker account for 0x orders")
-	pflag.Parse()
-}
-
 func main() {
+	var cfg config
+	pflag.StringVarP(&cfg.ethurl, "eth", "e", "http://localhost:8545", "URL to an Ethereum JSONRPC server")
+	pflag.StringVarP(&cfg.mnemonic, "mnemonic", "m", "concert load couple harbor equip island argue ramp clarify fence smart topic", "a 12 word seed phrase")
+	pflag.StringVarP(&cfg.bind, "bind", "b", "0.0.0.0:42001", "address to bind the hot-wallet gRPC server to")
+	pflag.IntVarP(&cfg.maxReqLen, "max-request-length", "l", 16384, "set the max request length (in bytes) used by the order validator")
+	pflag.Uint32VarP(&cfg.makerIndex, "maker-index", "M", 0, "set the index of the maker account for 0x orders")
+	pflag.Uint32VarP(&cfg.senderIndex, "sender-index", "S", 1, "set the index of the maker account for 0x orders")
+	pflag.Parse()
+
 	deriver := eth.NewBaseDeriver()
 	provider, err := eth.NewProvider(cfg.ethurl, cfg.mnemonic, deriver.Base())
 	if err != nil {
@@ -50,8 +47,8 @@ func main() {
 
 	makerAcct, _ := provider.AccountAt(makerPath)
 	senderAcct, _ := provider.AccountAt(senderPath)
-	log.Println("maker address", makerAcct.Address.Hex())
-	log.Println("sender address", senderAcct.Address.Hex())
+	log.Println("maker address:", makerAcct.Address.Hex())
+	log.Println("sender address:", senderAcct.Address.Hex())
 
 	hwcfg := core.HotWalletConfig{
 		OrderValidatorMaxReqLength: cfg.maxReqLen,

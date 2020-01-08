@@ -2,6 +2,9 @@ package zrx
 
 import "github.com/ethereum/go-ethereum/signer/core"
 
+// ZeroExTestChainID is the chain ID of the 0x ganache snapshot network
+const ZeroExTestChainID = 1337
+
 // TypeEIP712Domain is the name of the EIP-712 domain type
 const TypeEIP712Domain = "EIP712Domain"
 

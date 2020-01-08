@@ -35,7 +35,7 @@ func main() {
 
 func configureFlags() {
 	flags := cmd.PersistentFlags()
-	flags.StringVarP(&ethAddress, "eth", "e", "wss://eth-ropsten.ws.alchemyapi.io/ws/nUUajaRKoZM-645b32rSRMwNVhW2EP3w", "Ethereum RPC url")
+	flags.StringVarP(&ethAddress, "eth", "e", "wss://ropsten.infura.io/ws", "Ethereum RPC url")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
 	flags.StringVarP(&makerUrl, "maker", "m", "localhost:5002", "Maker gRPC url")
 	flags.StringVarP(&bugsnagKey, "bugsnag", "b", "", "Bugsnag project key")
@@ -45,7 +45,9 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	logging.ConfigureBugsnag(bugsnagKey)
 	logging.Info("Starting")
 
-	ethToolkit := eth.New(ethAddress)
+	if err := eth.Configure(ethAddress); err != nil {
+		logging.Fatal(err)
+	}
 	logging.Info("Connected to ethereum at", ethAddress)
 
 	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
@@ -55,11 +57,9 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	makerClient :=  pb.NewMakerClient(conn)
 	logging.Info("Maker client configured for", makerUrl)
 
-	txWatching := watching.New(ethToolkit, makerClient)
-
+	txWatching := watching.New(makerClient)
 
 	watcherServer := grpc.NewServer(
-		ethToolkit,
 		txWatching,
 	)
 	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {
