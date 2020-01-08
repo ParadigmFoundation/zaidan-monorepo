@@ -23,14 +23,33 @@ type server struct {
 	client types.HotWalletClient
 }
 
-func (s *server) getBalance(w http.ResponseWriter, req *http.Request) {
+func (s *server) getEtherBalance(w http.ResponseWriter, req *http.Request) {
 	var balreq types.GetBalanceRequest
 	if err := jsonpb.Unmarshal(req.Body, &balreq); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	balres, err := s.client.GetBalance(context.Background(), &balreq)
+	balres, err := s.client.GetEtherBalance(context.Background(), &balreq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := new(jsonpb.Marshaler).Marshal(w, balres); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (s *server) getTokenBalance(w http.ResponseWriter, req *http.Request) {
+	var balreq types.GetBalanceRequest
+	if err := jsonpb.Unmarshal(req.Body, &balreq); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	balres, err := s.client.GetTokenBalance(context.Background(), &balreq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
