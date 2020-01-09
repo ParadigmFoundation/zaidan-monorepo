@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 
@@ -26,9 +25,9 @@ func (hw *HotWallet) GetAllowance(ctx context.Context, req *grpc.GetAllowanceReq
 	}
 
 	return &grpc.GetAllowanceResponse{
-		OwnerAddress: strings.ToLower(owner.Hex()),
-		TokenAddress: strings.ToLower(token.Hex()),
-		ProxyAddress: strings.ToLower(hw.zrxHelper.ContractAddresses.ERC20Proxy.Hex()),
+		OwnerAddress: grpc.NormalizeAddress(owner),
+		TokenAddress: grpc.NormalizeAddress(token),
+		ProxyAddress: grpc.NormalizeAddress(hw.zrxHelper.ContractAddresses.ERC20Proxy),
 		Allowance:    allowance.String(),
 	}, nil
 }
