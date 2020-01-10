@@ -148,6 +148,43 @@ message WatchTransactionResponse {
     uint32 tx_status = 5;
 }
 
+// Used to request an ETH or token balance at the current block
+// This message can be used to request ETH balance if token_address is empty
+message GetBalanceRequest {
+    string owner_address = 1;
+    string token_address = 2;
+}
+
+// The response message for an Ether or ERC-20 token balance
+// If the balance requested is Ether, the token_address will be empty
+message GetBalanceResponse {
+    string owner_address = 1;
+    string token_address = 2;
+    string balance = 3;
+}
+
+message GetAllowanceRequest {
+    string owner_address = 1;
+    string token_address = 2;
+}
+
+message GetAllowanceResponse {
+    string owner_address = 1;
+    string token_address = 2;
+    string proxy_address = 3;
+    string allowance = 4;
+}
+
+message TransferRequest {
+    string to_address = 1;
+    string token_address = 2;
+    string amount = 3;
+}
+
+message TransferResponse {
+    string transaction_hash = 1;
+}
+
 // Dealer
 message Quote {
   string quote_id = 1; // A UUID (v4) that MUST correspond to this offer only
@@ -183,3 +220,23 @@ message Asset {
   uint32 network_id = 4; // The EIP-155 network ID of the active Ethereum network (2)
   string address = 5; // ABIv2 encoded asset data (including address) as used in the 0x system
 }
+
+message TradeInfo {
+  uint32 chain_id = 1; // The EIP-155 chain ID of the active Ethereum network (MUST match the EIP)
+  string gas_limit = 2; // The gas limit that will be used in fillOrder transactions submitted by the dealer
+  string gas_price = 3; // The gas price (in wei) that will be used in fillOrder transactions submitted by the dealer
+}
+
+message QuoteInfo {
+  string min_size = 1; // The minimum supported trade size, in base units of a market's maker asset
+  string max_size = 2; // The maximum supported trade size, in base units of a market's maker asset
+}
+
+message Market {
+  string id = 1; // An implementation-specific market ID string. MUST be unique for each market
+  string market_asset_ticker = 2; // The shorthand ticker of the markets maker asset (provided by the dealer)
+  repeated string taker_asset_tickers = 3; // An array of shorthand tickers for which quotes are supported
+  TradeInfo trade_info = 4; // Information about trade settlement and execution for this market (gas price, etc.)
+  QuoteInfo quote_info = 5; // Information about quotes provided on this market (max/min size, etc.)
+  map<string, string> metadata = 6; //
+} 

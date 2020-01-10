@@ -62,7 +62,7 @@ func testTransferEther(provider *Provider, t *testing.T) {
 	// prep transaction
 	transferAmt, ok := new(big.Int).SetString("10000000000000000000", 10) // 1e19 wei (10 ether)
 	assert.True(t, ok, "should be able to set transfer amount as 10 ether")
-	nonce, err := provider.Nonce(context.Background(), fromAccount)
+	nonce, err := provider.Nonce(context.Background(), fromAccount.Address)
 	require.NoError(t, err, "should be no error getting nonce")
 	expectedNonce, err := provider.eth.NonceAt(context.Background(), fromAccount.Address, nil)
 	require.NoError(t, err, "should be no error getting nonce")
