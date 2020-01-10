@@ -179,6 +179,16 @@ func (pvr *Provider) CanSignWithAddress(addr common.Address) bool {
 	return pvr.hasAccount(accounts.Account{Address: addr})
 }
 
+// GetAccount fetches the account object for a given address, errors if not present
+func (pvr *Provider) GetAccount(addr common.Address) (accounts.Account, error) {
+	for _, acct := range pvr.Accounts() {
+		if acct.Address == addr {
+			return acct, nil
+		}
+	}
+	return accounts.Account{}, fmt.Errorf("unsupported address, no pinned account for: %s", addr.Hex())
+}
+
 // returns false if account not supported by provider
 func (pvr *Provider) hasAccount(acct accounts.Account) bool {
 	for _, account := range pvr.Accounts() {

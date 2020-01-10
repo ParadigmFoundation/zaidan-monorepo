@@ -86,7 +86,7 @@ func (tm *ERC20TokenManager) addToken(address common.Address) error {
 			Signer: tm.opts.Signer,
 
 			// todo(@hrharder): reconsider where this value should come from
-			GasLimit: 1000000,
+			GasLimit: 0,
 		},
 	}
 
