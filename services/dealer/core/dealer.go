@@ -2,11 +2,14 @@ package core
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+
+	"google.golang.org/grpc"
 
 	"github.com/ethereum/go-ethereum/log"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 )
 
@@ -31,19 +34,19 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 	ctx, cancelFunc := context.WithCancel(ctx)
 	logger := log.New(ctx)
 
-	mc, err := grpc.NewMakerClient(ctx, cfg.MakerBindAddress)
+	makerConn, err := grpc.DialContext(ctx, cfg.MakerBindAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	hwc, err := grpc.NewHotWalletClient(ctx, cfg.HotWalletBindAddress)
+	hwConn, err := grpc.DialContext(ctx, cfg.HotWalletBindAddress)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Dealer{
-		makerClient: mc,
-		hwClient:    hwc,
+		makerClient: types.NewMakerClient(makerConn),
+		hwClient:    types.NewHotWalletClient(hwConn),
 		cancelFunc:  cancelFunc,
 		logger:      logger,
 	}, nil
@@ -55,6 +58,14 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) err
 	if err != nil {
 		return err
 	}
+
+	// todo: remove
+	str, err := json.Marshal(res)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(str))
 
 	makerAssetAddress, err := d.getAssetAddress(req.MakerAsset)
 	if err != nil {
@@ -77,8 +88,16 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) err
 
 	order, err := d.hwClient.CreateOrder(ctx, orderReq)
 	if err != nil {
-		return nil, err
+		return err
 	}
+
+	obts, err := json.Marshal(order)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(obts))
+	return nil
 }
 
 func (d *Dealer) getAssetAddress(ticker string) (string, error) {
