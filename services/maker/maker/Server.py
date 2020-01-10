@@ -49,7 +49,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
         except ValueError:
             return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=1)
 
-        if quote['expiration'] > time.time():
+        if quote['expiration'] < time.time():
             return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=2)
 
         redis_interface.fill_quote(request.quote_id)
