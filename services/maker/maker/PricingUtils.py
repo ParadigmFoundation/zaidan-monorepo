@@ -318,3 +318,16 @@ def adjust_for_constant_rate(price, book, asset_side, side_spef):
     if asset_side == 'taker_asset':
         half_book = cache.get_order_book(book[0], book[1], 'bids')
         return price/(half_book[0][0])
+
+def calculate_fee(fee_asset):
+    gas_price = redis_interface.get_gas_price()
+    gas_limit = redis_interface.get_gas_limit()
+    gas_fee = gas_limit * (gas_price * (10 ** -9))
+
+    # fast path: taker token is weth, so no rate conversion necessary
+    if fee_asset == 'ETH':
+        return gas_fee
+    else:
+        pseudo_quote = calculate_quote('ETH', fee_asset, gas_fee, None)
+        return round(pseudo_quote['taker_size'], 15)
+
