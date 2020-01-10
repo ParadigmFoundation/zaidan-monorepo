@@ -25,8 +25,9 @@ type HotWalletConfig struct {
 
 // HotWallet represents a live hot wallet that can interact with the 0x contract system
 type HotWallet struct {
-	provider  *eth.Provider
-	zrxHelper *zrx.ZeroExHelper
+	provider     *eth.Provider
+	zrxHelper    *zrx.ZeroExHelper
+	tokenManager *eth.ERC20TokenManager
 
 	makerAddress  common.Address
 	senderAddress common.Address
@@ -45,9 +46,20 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		return nil, fmt.Errorf("unable to sign with maker or sender address")
 	}
 
+	acct, err := provider.GetAccount(cfg.MakerAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	mgr, err := eth.NewERC20TokenManager(provider, acct, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	hw := &HotWallet{
 		provider:      provider,
 		zrxHelper:     zrxHelper,
+		tokenManager:  mgr,
 		makerAddress:  cfg.MakerAddress,
 		senderAddress: cfg.SenderAddress,
 		logger:        log.New(context.Background()),

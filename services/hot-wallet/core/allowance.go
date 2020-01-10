@@ -31,3 +31,6 @@ func (hw *HotWallet) GetAllowance(ctx context.Context, req *grpc.GetAllowanceReq
 		Allowance:    allowance.String(),
 	}, nil
 }
+
+// SetAllowance implements grpc.HotWalletServer
+// func (hw *HotWallet) SetAllowance(ctx context.Context, req *grpc.SetAllowanceRequest)
