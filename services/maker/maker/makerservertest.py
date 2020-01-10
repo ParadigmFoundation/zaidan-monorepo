@@ -11,11 +11,16 @@ req = GetQuoteRequest(maker_asset='ETH', taker_asset='DAI', maker_size='1')
 
 # Call the server
 response = stub.GetQuote(req)
+id = response.quote_id
 print(response)
 
 req = CheckQuoteRequest(quote_id='a')
 
 response = stub.CheckQuote(req)
 print(response)
-print(response.is_valid)
+
+req = CheckQuoteRequest(quote_id=id)
+
+response = stub.CheckQuote(req)
+print(response)
 
