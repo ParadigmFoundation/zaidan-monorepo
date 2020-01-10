@@ -87,7 +87,7 @@ func (s *server) transfer(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	transferRes, err := s.client.Transfer(context.Background(), &transferReq)
+	transferRes, err := s.client.TransferEther(context.Background(), &transferReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
