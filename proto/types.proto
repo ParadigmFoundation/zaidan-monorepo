@@ -178,9 +178,8 @@ message GetAllowanceResponse {
 
 message SetAllowanceRequest {
     string token_address = 1;
-    string owner_address = 2;
-    string spender_address = 3; // If empty, will set for 0x ERC-20 proxy contract
-    string allowance = 4;
+    string spender_address = 2; // If empty, will set for 0x ERC-20 proxy contract
+    string allowance = 3; // If empty, will set max allowance (2^256 - 1)
 }
 
 message SetAllowanceResponse {
@@ -188,6 +187,7 @@ message SetAllowanceResponse {
     string token_address = 2;
     string spender_address = 3;
     string allowance = 4;
+    string transaction_hash = 5;
 }
 
 message TransferRequest {
