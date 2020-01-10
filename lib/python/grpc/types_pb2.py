@@ -20,48 +20,10 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=_b('Z\004grpc'),
-  serialized_pb=_b('\n\x0btypes.proto\"4\n\x10OrderBookRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x0e\n\x06symbol\x18\x02 \x01(\t\"1\n\x0eOrderBookEntry\x12\r\n\x05price\x18\x01 \x01(\x01\x12\x10\n\x08quantity\x18\x02 \x01(\x01\"\x87\x01\n\x11OrderBookResponse\x12\x12\n\nlastUpdate\x18\x01 \x01(\x03\x12\x10\n\x08\x65xchange\x18\x02 \x01(\t\x12\x0e\n\x06symbol\x18\x03 \x01(\t\x12\x1d\n\x04\x61sks\x18\x04 \x03(\x0b\x32\x0f.OrderBookEntry\x12\x1d\n\x04\x62ids\x18\x05 \x03(\x0b\x32\x0f.OrderBookEntry\"\x86\x01\n\x0fGetQuoteRequest\x12\x0f\n\x07quoteId\x18\x01 \x01(\t\x12\x12\n\ntakerAsset\x18\x02 \x01(\t\x12\x12\n\nmakerAsset\x18\x03 \x01(\t\x12\x11\n\ttakerSize\x18\x04 \x01(\t\x12\x11\n\tmakerSize\x18\x05 \x01(\t\x12\x14\n\x0ctakerAddress\x18\x06 \x01(\t\"\x92\x01\n\x10GetQuoteResponse\x12\x0f\n\x07quoteId\x18\x01 \x01(\t\x12\x12\n\nexpiration\x18\x02 \x01(\t\x12\x12\n\ntakerAsset\x18\x03 \x01(\t\x12\x12\n\nmakerAsset\x18\x04 \x01(\t\x12\x11\n\ttakerSize\x18\x05 \x01(\t\x12\x11\n\tmakerSize\x18\x06 \x01(\t\x12\x0b\n\x03\x66\x65\x65\x18\x07 \x01(\t\"$\n\x11\x43heckQuoteRequest\x12\x0f\n\x07quoteId\x18\x01 \x01(\t\"F\n\x12\x43heckQuoteResponse\x12\x0f\n\x07quoteId\x18\x01 \x01(\t\x12\x0f\n\x07isValid\x18\x02 \x01(\x08\x12\x0e\n\x06status\x18\x03 \x01(\r\";\n\x18OrderStatusUpdateRequest\x12\x0f\n\x07quoteId\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\r\"+\n\x19OrderStatusUpdateResponse\x12\x0e\n\x06status\x18\x01 \x01(\r\"\xfc\x02\n\x05Order\x12\x0f\n\x07\x63hainId\x18\x01 \x01(\x04\x12\x17\n\x0f\x65xchangeAddress\x18\x02 \x01(\t\x12\x14\n\x0cmakerAddress\x18\x03 \x01(\t\x12\x16\n\x0emakerAssetData\x18\x04 \x01(\t\x12\x19\n\x11makerFeeAssetData\x18\x05 \x01(\t\x12\x18\n\x10makerAssetAmount\x18\x06 \x01(\t\x12\x10\n\x08makerFee\x18\x07 \x01(\t\x12\x14\n\x0ctakerAddress\x18\x08 \x01(\t\x12\x16\n\x0etakerAssetData\x18\t \x01(\t\x12\x19\n\x11takerFeeAssetData\x18\n \x01(\t\x12\x18\n\x10takerAssetAmount\x18\x0b \x01(\t\x12\x10\n\x08takerFee\x18\x0c \x01(\t\x12\x15\n\rsenderAddress\x18\r \x01(\t\x12\x1b\n\x13\x66\x65\x65RecipientAddress\x18\x0e \x01(\t\x12\x1d\n\x15\x65xpirationTimeSeconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\"\x95\x03\n\x0bSignedOrder\x12\x0f\n\x07\x63hainId\x18\x01 \x01(\x04\x12\x17\n\x0f\x65xchangeAddress\x18\x02 \x01(\t\x12\x14\n\x0cmakerAddress\x18\x03 \x01(\t\x12\x16\n\x0emakerAssetData\x18\x04 \x01(\t\x12\x19\n\x11makerFeeAssetData\x18\x05 \x01(\t\x12\x18\n\x10makerAssetAmount\x18\x06 \x01(\t\x12\x10\n\x08makerFee\x18\x07 \x01(\t\x12\x14\n\x0ctakerAddress\x18\x08 \x01(\t\x12\x16\n\x0etakerAssetData\x18\t \x01(\t\x12\x19\n\x11takerFeeAssetData\x18\n \x01(\t\x12\x18\n\x10takerAssetAmount\x18\x0b \x01(\t\x12\x10\n\x08takerFee\x18\x0c \x01(\t\x12\x15\n\rsenderAddress\x18\r \x01(\t\x12\x1b\n\x13\x66\x65\x65RecipientAddress\x18\x0e \x01(\t\x12\x1d\n\x15\x65xpirationTimeSeconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\x12\x11\n\tsignature\x18\x11 \x01(\t\")\n\x10SignOrderRequest\x12\x15\n\x05order\x18\x01 \x01(\x0b\x32\x06.Order\"6\n\x11SignOrderResponse\x12!\n\x0bsignedOrder\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\")\n\x10HashOrderRequest\x12\x15\n\x05order\x18\x01 \x01(\x0b\x32\x06.Order\"!\n\x11HashOrderResponse\x12\x0c\n\x04hash\x18\x01 \x01(\x0c\"\xb3\x01\n\x12\x43reateOrderRequest\x12\x14\n\x0ctakerAddress\x18\x01 \x01(\t\x12\x19\n\x11makerAssetAddress\x18\x02 \x01(\t\x12\x19\n\x11takerAssetAddress\x18\x03 \x01(\t\x12\x18\n\x10makerAssetAmount\x18\x04 \x01(\t\x12\x18\n\x10takerAssetAmount\x18\x05 \x01(\t\x12\x1d\n\x15\x65xpirationTimeSeconds\x18\x06 \x01(\t\"2\n\x13\x43reateOrderResponse\x12\x1b\n\x05order\x18\x01 \x01(\x0b\x32\x0c.SignedOrder2F\n\x10OrderBookManager\x12\x32\n\tOrderBook\x12\x11.OrderBookRequest\x1a\x12.OrderBookResponse2\xbb\x01\n\x05Maker\x12/\n\x08GetQuote\x12\x10.GetQuoteRequest\x1a\x11.GetQuoteResponse\x12\x35\n\nCheckQuote\x12\x12.CheckQuoteRequest\x1a\x13.CheckQuoteResponse\x12J\n\x11OrderStatusUpdate\x12\x19.OrderStatusUpdateRequest\x1a\x1a.OrderStatusUpdateResponse2\xad\x01\n\tHotWallet\x12\x32\n\tSignOrder\x12\x11.SignOrderRequest\x1a\x12.SignOrderResponse\x12\x32\n\tHashOrder\x12\x11.HashOrderRequest\x1a\x12.HashOrderResponse\x12\x38\n\x0b\x43reateOrder\x12\x13.CreateOrderRequest\x1a\x14.CreateOrderResponseB\x06Z\x04grpcb\x06proto3')
+  serialized_pb=_b('\n\x0btypes.proto\"1\n\x0eOrderBookEntry\x12\r\n\x05price\x18\x01 \x01(\x01\x12\x10\n\x08quantity\x18\x02 \x01(\x01\"4\n\x10OrderBookRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x0e\n\x06symbol\x18\x02 \x01(\t\"L\n\x17OrderBookUpdatesRequest\x12\"\n\x07request\x18\x01 \x01(\x0b\x32\x11.OrderBookRequest\x12\r\n\x05limit\x18\x02 \x01(\r\"\x88\x01\n\x11OrderBookResponse\x12\x13\n\x0blast_update\x18\x01 \x01(\x03\x12\x10\n\x08\x65xchange\x18\x02 \x01(\t\x12\x0e\n\x06symbol\x18\x03 \x01(\t\x12\x1d\n\x04\x61sks\x18\x04 \x03(\x0b\x32\x0f.OrderBookEntry\x12\x1d\n\x04\x62ids\x18\x05 \x03(\x0b\x32\x0f.OrderBookEntry\"\x8c\x01\n\x0fGetQuoteRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x13\n\x0btaker_asset\x18\x02 \x01(\t\x12\x13\n\x0bmaker_asset\x18\x03 \x01(\t\x12\x12\n\ntaker_size\x18\x04 \x01(\t\x12\x12\n\nmaker_size\x18\x05 \x01(\t\x12\x15\n\rtaker_address\x18\x06 \x01(\t\"\x97\x01\n\x10GetQuoteResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x12\n\nexpiration\x18\x02 \x01(\t\x12\x13\n\x0btaker_asset\x18\x03 \x01(\t\x12\x13\n\x0bmaker_asset\x18\x04 \x01(\t\x12\x12\n\ntaker_size\x18\x05 \x01(\t\x12\x12\n\nmaker_size\x18\x06 \x01(\t\x12\x0b\n\x03\x66\x65\x65\x18\x07 \x01(\t\"%\n\x11\x43heckQuoteRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\"H\n\x12\x43heckQuoteResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x10\n\x08is_valid\x18\x02 \x01(\x08\x12\x0e\n\x06status\x18\x03 \x01(\r\"<\n\x18OrderStatusUpdateRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\r\"+\n\x19OrderStatusUpdateResponse\x12\x0e\n\x06status\x18\x01 \x01(\r\"\x95\x03\n\x05Order\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\x04\x12\x18\n\x10\x65xchange_address\x18\x02 \x01(\t\x12\x15\n\rmaker_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_data\x18\x04 \x01(\t\x12\x1c\n\x14maker_fee_asset_data\x18\x05 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x06 \x01(\t\x12\x11\n\tmaker_fee\x18\x07 \x01(\t\x12\x15\n\rtaker_address\x18\x08 \x01(\t\x12\x18\n\x10taker_asset_data\x18\t \x01(\t\x12\x1c\n\x14taker_fee_asset_data\x18\n \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x0b \x01(\t\x12\x11\n\ttaker_fee\x18\x0c \x01(\t\x12\x16\n\x0esender_address\x18\r \x01(\t\x12\x1d\n\x15\x66\x65\x65_recipient_address\x18\x0e \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\"\xae\x03\n\x0bSignedOrder\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\x04\x12\x18\n\x10\x65xchange_address\x18\x02 \x01(\t\x12\x15\n\rmaker_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_data\x18\x04 \x01(\t\x12\x1c\n\x14maker_fee_asset_data\x18\x05 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x06 \x01(\t\x12\x11\n\tmaker_fee\x18\x07 \x01(\t\x12\x15\n\rtaker_address\x18\x08 \x01(\t\x12\x18\n\x10taker_asset_data\x18\t \x01(\t\x12\x1c\n\x14taker_fee_asset_data\x18\n \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x0b \x01(\t\x12\x11\n\ttaker_fee\x18\x0c \x01(\t\x12\x16\n\x0esender_address\x18\r \x01(\t\x12\x1d\n\x15\x66\x65\x65_recipient_address\x18\x0e \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\x12\x11\n\tsignature\x18\x11 \x01(\t\")\n\x10SignOrderRequest\x12\x15\n\x05order\x18\x01 \x01(\x0b\x32\x06.Order\"6\n\x11SignOrderResponse\x12!\n\x0bsignedOrder\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\")\n\x10HashOrderRequest\x12\x15\n\x05order\x18\x01 \x01(\x0b\x32\x06.Order\"!\n\x11HashOrderResponse\x12\x0c\n\x04hash\x18\x01 \x01(\x0c\"\xbe\x01\n\x12\x43reateOrderRequest\x12\x15\n\rtaker_address\x18\x01 \x01(\t\x12\x1b\n\x13maker_asset_address\x18\x02 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x03 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x04 \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x05 \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x06 \x01(\t\"@\n\x13\x43reateOrderResponse\x12\x1b\n\x05order\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\x12\x0c\n\x04hash\x18\x02 \x01(\x0c\"<\n\x17WatchTransactionRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0f\n\x07tx_hash\x18\x02 \x01(\t\"x\n\x18WatchTransactionResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0f\n\x07tx_hash\x18\x02 \x01(\t\x12\x12\n\nis_pending\x18\x03 \x01(\x08\x12\x12\n\nis_watched\x18\x04 \x01(\x08\x12\x11\n\ttx_status\x18\x05 \x01(\r\"\xf0\x01\n\x05Quote\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x1a\n\x12maker_asset_ticker\x18\x02 \x01(\t\x12\x1a\n\x12taker_asset_ticker\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_size\x18\x04 \x01(\t\x12\x18\n\x10quote_asset_size\x18\x05 \x01(\t\x12\x12\n\nexpiration\x18\x06 \x01(\x03\x12\x13\n\x0bserver_time\x18\x07 \x01(\x03\x12\x12\n\norder_hash\x18\x08 \x01(\t\x12\x1b\n\x05order\x18\t \x01(\x0b\x32\x0c.SignedOrder\x12\x0f\n\x07\x66ill_tx\x18\n \x01(\t\"\x91\x02\n\x05Trade\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x11\n\tmarket_id\x18\x02 \x01(\t\x12\x12\n\norder_hash\x18\x03 \x01(\t\x12\x18\n\x10transaction_hash\x18\x04 \x01(\t\x12\x15\n\rtaker_address\x18\x05 \x01(\t\x12\x11\n\ttimestamp\x18\x06 \x01(\x03\x12\x1a\n\x12maker_asset_ticker\x18\x07 \x01(\t\x12\x1a\n\x12taker_asset_ticker\x18\x08 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\t \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\n \x01(\t\x12\x1b\n\x05order\x18\x0b \x01(\x0b\x32\x0c.SignedOrder\"\\\n\x05\x41sset\x12\x0e\n\x06ticker\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x10\n\x08\x64\x65\x63imals\x18\x03 \x01(\r\x12\x12\n\nnetwork_id\x18\x04 \x01(\r\x12\x0f\n\x07\x61\x64\x64ress\x18\x05 \x01(\t\"C\n\tTradeInfo\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\r\x12\x11\n\tgas_limit\x18\x02 \x01(\t\x12\x11\n\tgas_price\x18\x03 \x01(\t\"/\n\tQuoteInfo\x12\x10\n\x08min_size\x18\x01 \x01(\t\x12\x10\n\x08max_size\x18\x02 \x01(\t\"\xe8\x01\n\x06Market\x12\n\n\x02id\x18\x01 \x01(\t\x12\x1b\n\x13market_asset_ticker\x18\x02 \x01(\t\x12\x1b\n\x13taker_asset_tickers\x18\x03 \x03(\t\x12\x1e\n\ntrade_info\x18\x04 \x01(\x0b\x32\n.TradeInfo\x12\x1e\n\nquote_info\x18\x05 \x01(\x0b\x32\n.QuoteInfo\x12\'\n\x08metadata\x18\x06 \x03(\x0b\x32\x15.Market.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\x42\x06Z\x04grpcb\x06proto3')
 )
 
 
-
-
-_ORDERBOOKREQUEST = _descriptor.Descriptor(
-  name='OrderBookRequest',
-  full_name='OrderBookRequest',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='exchange', full_name='OrderBookRequest.exchange', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='symbol', full_name='OrderBookRequest.symbol', index=1,
-      number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  serialized_options=None,
-  is_extendable=False,
-  syntax='proto3',
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=15,
-  serialized_end=67,
-)
 
 
 _ORDERBOOKENTRY = _descriptor.Descriptor(
@@ -97,8 +59,84 @@ _ORDERBOOKENTRY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=69,
+  serialized_start=15,
+  serialized_end=64,
+)
+
+
+_ORDERBOOKREQUEST = _descriptor.Descriptor(
+  name='OrderBookRequest',
+  full_name='OrderBookRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='exchange', full_name='OrderBookRequest.exchange', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='symbol', full_name='OrderBookRequest.symbol', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=66,
   serialized_end=118,
+)
+
+
+_ORDERBOOKUPDATESREQUEST = _descriptor.Descriptor(
+  name='OrderBookUpdatesRequest',
+  full_name='OrderBookUpdatesRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='request', full_name='OrderBookUpdatesRequest.request', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='limit', full_name='OrderBookUpdatesRequest.limit', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=120,
+  serialized_end=196,
 )
 
 
@@ -110,7 +148,7 @@ _ORDERBOOKRESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='lastUpdate', full_name='OrderBookResponse.lastUpdate', index=0,
+      name='last_update', full_name='OrderBookResponse.last_update', index=0,
       number=1, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -156,8 +194,8 @@ _ORDERBOOKRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=121,
-  serialized_end=256,
+  serialized_start=199,
+  serialized_end=335,
 )
 
 
@@ -169,42 +207,42 @@ _GETQUOTEREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='quoteId', full_name='GetQuoteRequest.quoteId', index=0,
+      name='quote_id', full_name='GetQuoteRequest.quote_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAsset', full_name='GetQuoteRequest.takerAsset', index=1,
+      name='taker_asset', full_name='GetQuoteRequest.taker_asset', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAsset', full_name='GetQuoteRequest.makerAsset', index=2,
+      name='maker_asset', full_name='GetQuoteRequest.maker_asset', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerSize', full_name='GetQuoteRequest.takerSize', index=3,
+      name='taker_size', full_name='GetQuoteRequest.taker_size', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerSize', full_name='GetQuoteRequest.makerSize', index=4,
+      name='maker_size', full_name='GetQuoteRequest.maker_size', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAddress', full_name='GetQuoteRequest.takerAddress', index=5,
+      name='taker_address', full_name='GetQuoteRequest.taker_address', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -222,8 +260,8 @@ _GETQUOTEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=259,
-  serialized_end=393,
+  serialized_start=338,
+  serialized_end=478,
 )
 
 
@@ -235,7 +273,7 @@ _GETQUOTERESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='quoteId', full_name='GetQuoteResponse.quoteId', index=0,
+      name='quote_id', full_name='GetQuoteResponse.quote_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -249,28 +287,28 @@ _GETQUOTERESPONSE = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAsset', full_name='GetQuoteResponse.takerAsset', index=2,
+      name='taker_asset', full_name='GetQuoteResponse.taker_asset', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAsset', full_name='GetQuoteResponse.makerAsset', index=3,
+      name='maker_asset', full_name='GetQuoteResponse.maker_asset', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerSize', full_name='GetQuoteResponse.takerSize', index=4,
+      name='taker_size', full_name='GetQuoteResponse.taker_size', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerSize', full_name='GetQuoteResponse.makerSize', index=5,
+      name='maker_size', full_name='GetQuoteResponse.maker_size', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -295,8 +333,8 @@ _GETQUOTERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=396,
-  serialized_end=542,
+  serialized_start=481,
+  serialized_end=632,
 )
 
 
@@ -308,7 +346,7 @@ _CHECKQUOTEREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='quoteId', full_name='CheckQuoteRequest.quoteId', index=0,
+      name='quote_id', full_name='CheckQuoteRequest.quote_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -326,8 +364,8 @@ _CHECKQUOTEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=544,
-  serialized_end=580,
+  serialized_start=634,
+  serialized_end=671,
 )
 
 
@@ -339,14 +377,14 @@ _CHECKQUOTERESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='quoteId', full_name='CheckQuoteResponse.quoteId', index=0,
+      name='quote_id', full_name='CheckQuoteResponse.quote_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='isValid', full_name='CheckQuoteResponse.isValid', index=1,
+      name='is_valid', full_name='CheckQuoteResponse.is_valid', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
@@ -371,8 +409,8 @@ _CHECKQUOTERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=582,
-  serialized_end=652,
+  serialized_start=673,
+  serialized_end=745,
 )
 
 
@@ -384,7 +422,7 @@ _ORDERSTATUSUPDATEREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='quoteId', full_name='OrderStatusUpdateRequest.quoteId', index=0,
+      name='quote_id', full_name='OrderStatusUpdateRequest.quote_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -409,8 +447,8 @@ _ORDERSTATUSUPDATEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=654,
-  serialized_end=713,
+  serialized_start=747,
+  serialized_end=807,
 )
 
 
@@ -440,8 +478,8 @@ _ORDERSTATUSUPDATERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=715,
-  serialized_end=758,
+  serialized_start=809,
+  serialized_end=852,
 )
 
 
@@ -453,105 +491,105 @@ _ORDER = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chainId', full_name='Order.chainId', index=0,
+      name='chain_id', full_name='Order.chain_id', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='exchangeAddress', full_name='Order.exchangeAddress', index=1,
+      name='exchange_address', full_name='Order.exchange_address', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAddress', full_name='Order.makerAddress', index=2,
+      name='maker_address', full_name='Order.maker_address', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAssetData', full_name='Order.makerAssetData', index=3,
+      name='maker_asset_data', full_name='Order.maker_asset_data', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerFeeAssetData', full_name='Order.makerFeeAssetData', index=4,
+      name='maker_fee_asset_data', full_name='Order.maker_fee_asset_data', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAssetAmount', full_name='Order.makerAssetAmount', index=5,
+      name='maker_asset_amount', full_name='Order.maker_asset_amount', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerFee', full_name='Order.makerFee', index=6,
+      name='maker_fee', full_name='Order.maker_fee', index=6,
       number=7, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAddress', full_name='Order.takerAddress', index=7,
+      name='taker_address', full_name='Order.taker_address', index=7,
       number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAssetData', full_name='Order.takerAssetData', index=8,
+      name='taker_asset_data', full_name='Order.taker_asset_data', index=8,
       number=9, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerFeeAssetData', full_name='Order.takerFeeAssetData', index=9,
+      name='taker_fee_asset_data', full_name='Order.taker_fee_asset_data', index=9,
       number=10, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAssetAmount', full_name='Order.takerAssetAmount', index=10,
+      name='taker_asset_amount', full_name='Order.taker_asset_amount', index=10,
       number=11, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerFee', full_name='Order.takerFee', index=11,
+      name='taker_fee', full_name='Order.taker_fee', index=11,
       number=12, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='senderAddress', full_name='Order.senderAddress', index=12,
+      name='sender_address', full_name='Order.sender_address', index=12,
       number=13, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='feeRecipientAddress', full_name='Order.feeRecipientAddress', index=13,
+      name='fee_recipient_address', full_name='Order.fee_recipient_address', index=13,
       number=14, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='expirationTimeSeconds', full_name='Order.expirationTimeSeconds', index=14,
+      name='expiration_time_seconds', full_name='Order.expiration_time_seconds', index=14,
       number=15, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -576,8 +614,8 @@ _ORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=761,
-  serialized_end=1141,
+  serialized_start=855,
+  serialized_end=1260,
 )
 
 
@@ -589,105 +627,105 @@ _SIGNEDORDER = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='chainId', full_name='SignedOrder.chainId', index=0,
+      name='chain_id', full_name='SignedOrder.chain_id', index=0,
       number=1, type=4, cpp_type=4, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='exchangeAddress', full_name='SignedOrder.exchangeAddress', index=1,
+      name='exchange_address', full_name='SignedOrder.exchange_address', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAddress', full_name='SignedOrder.makerAddress', index=2,
+      name='maker_address', full_name='SignedOrder.maker_address', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAssetData', full_name='SignedOrder.makerAssetData', index=3,
+      name='maker_asset_data', full_name='SignedOrder.maker_asset_data', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerFeeAssetData', full_name='SignedOrder.makerFeeAssetData', index=4,
+      name='maker_fee_asset_data', full_name='SignedOrder.maker_fee_asset_data', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAssetAmount', full_name='SignedOrder.makerAssetAmount', index=5,
+      name='maker_asset_amount', full_name='SignedOrder.maker_asset_amount', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerFee', full_name='SignedOrder.makerFee', index=6,
+      name='maker_fee', full_name='SignedOrder.maker_fee', index=6,
       number=7, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAddress', full_name='SignedOrder.takerAddress', index=7,
+      name='taker_address', full_name='SignedOrder.taker_address', index=7,
       number=8, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAssetData', full_name='SignedOrder.takerAssetData', index=8,
+      name='taker_asset_data', full_name='SignedOrder.taker_asset_data', index=8,
       number=9, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerFeeAssetData', full_name='SignedOrder.takerFeeAssetData', index=9,
+      name='taker_fee_asset_data', full_name='SignedOrder.taker_fee_asset_data', index=9,
       number=10, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAssetAmount', full_name='SignedOrder.takerAssetAmount', index=10,
+      name='taker_asset_amount', full_name='SignedOrder.taker_asset_amount', index=10,
       number=11, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerFee', full_name='SignedOrder.takerFee', index=11,
+      name='taker_fee', full_name='SignedOrder.taker_fee', index=11,
       number=12, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='senderAddress', full_name='SignedOrder.senderAddress', index=12,
+      name='sender_address', full_name='SignedOrder.sender_address', index=12,
       number=13, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='feeRecipientAddress', full_name='SignedOrder.feeRecipientAddress', index=13,
+      name='fee_recipient_address', full_name='SignedOrder.fee_recipient_address', index=13,
       number=14, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='expirationTimeSeconds', full_name='SignedOrder.expirationTimeSeconds', index=14,
+      name='expiration_time_seconds', full_name='SignedOrder.expiration_time_seconds', index=14,
       number=15, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -719,8 +757,8 @@ _SIGNEDORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1144,
-  serialized_end=1549,
+  serialized_start=1263,
+  serialized_end=1693,
 )
 
 
@@ -750,8 +788,8 @@ _SIGNORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1551,
-  serialized_end=1592,
+  serialized_start=1695,
+  serialized_end=1736,
 )
 
 
@@ -781,8 +819,8 @@ _SIGNORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1594,
-  serialized_end=1648,
+  serialized_start=1738,
+  serialized_end=1792,
 )
 
 
@@ -812,8 +850,8 @@ _HASHORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1650,
-  serialized_end=1691,
+  serialized_start=1794,
+  serialized_end=1835,
 )
 
 
@@ -843,8 +881,8 @@ _HASHORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1693,
-  serialized_end=1726,
+  serialized_start=1837,
+  serialized_end=1870,
 )
 
 
@@ -856,42 +894,42 @@ _CREATEORDERREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='takerAddress', full_name='CreateOrderRequest.takerAddress', index=0,
+      name='taker_address', full_name='CreateOrderRequest.taker_address', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAssetAddress', full_name='CreateOrderRequest.makerAssetAddress', index=1,
+      name='maker_asset_address', full_name='CreateOrderRequest.maker_asset_address', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAssetAddress', full_name='CreateOrderRequest.takerAssetAddress', index=2,
+      name='taker_asset_address', full_name='CreateOrderRequest.taker_asset_address', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='makerAssetAmount', full_name='CreateOrderRequest.makerAssetAmount', index=3,
+      name='maker_asset_amount', full_name='CreateOrderRequest.maker_asset_amount', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='takerAssetAmount', full_name='CreateOrderRequest.takerAssetAmount', index=4,
+      name='taker_asset_amount', full_name='CreateOrderRequest.taker_asset_amount', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='expirationTimeSeconds', full_name='CreateOrderRequest.expirationTimeSeconds', index=5,
+      name='expiration_time_seconds', full_name='CreateOrderRequest.expiration_time_seconds', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -909,8 +947,8 @@ _CREATEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1729,
-  serialized_end=1908,
+  serialized_start=1873,
+  serialized_end=2063,
 )
 
 
@@ -928,6 +966,13 @@ _CREATEORDERRESPONSE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='hash', full_name='CreateOrderResponse.hash', index=1,
+      number=2, type=12, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b(""),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -940,18 +985,563 @@ _CREATEORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1910,
-  serialized_end=1960,
+  serialized_start=2065,
+  serialized_end=2129,
 )
 
+
+_WATCHTRANSACTIONREQUEST = _descriptor.Descriptor(
+  name='WatchTransactionRequest',
+  full_name='WatchTransactionRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='quote_id', full_name='WatchTransactionRequest.quote_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tx_hash', full_name='WatchTransactionRequest.tx_hash', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2131,
+  serialized_end=2191,
+)
+
+
+_WATCHTRANSACTIONRESPONSE = _descriptor.Descriptor(
+  name='WatchTransactionResponse',
+  full_name='WatchTransactionResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='quote_id', full_name='WatchTransactionResponse.quote_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tx_hash', full_name='WatchTransactionResponse.tx_hash', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='is_pending', full_name='WatchTransactionResponse.is_pending', index=2,
+      number=3, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='is_watched', full_name='WatchTransactionResponse.is_watched', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='tx_status', full_name='WatchTransactionResponse.tx_status', index=4,
+      number=5, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2193,
+  serialized_end=2313,
+)
+
+
+_QUOTE = _descriptor.Descriptor(
+  name='Quote',
+  full_name='Quote',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='quote_id', full_name='Quote.quote_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='maker_asset_ticker', full_name='Quote.maker_asset_ticker', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='taker_asset_ticker', full_name='Quote.taker_asset_ticker', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='maker_asset_size', full_name='Quote.maker_asset_size', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='quote_asset_size', full_name='Quote.quote_asset_size', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='expiration', full_name='Quote.expiration', index=5,
+      number=6, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='server_time', full_name='Quote.server_time', index=6,
+      number=7, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='order_hash', full_name='Quote.order_hash', index=7,
+      number=8, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='order', full_name='Quote.order', index=8,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='fill_tx', full_name='Quote.fill_tx', index=9,
+      number=10, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2316,
+  serialized_end=2556,
+)
+
+
+_TRADE = _descriptor.Descriptor(
+  name='Trade',
+  full_name='Trade',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='quote_id', full_name='Trade.quote_id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='market_id', full_name='Trade.market_id', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='order_hash', full_name='Trade.order_hash', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='transaction_hash', full_name='Trade.transaction_hash', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='taker_address', full_name='Trade.taker_address', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='timestamp', full_name='Trade.timestamp', index=5,
+      number=6, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='maker_asset_ticker', full_name='Trade.maker_asset_ticker', index=6,
+      number=7, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='taker_asset_ticker', full_name='Trade.taker_asset_ticker', index=7,
+      number=8, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='maker_asset_amount', full_name='Trade.maker_asset_amount', index=8,
+      number=9, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='taker_asset_amount', full_name='Trade.taker_asset_amount', index=9,
+      number=10, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='order', full_name='Trade.order', index=10,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2559,
+  serialized_end=2832,
+)
+
+
+_ASSET = _descriptor.Descriptor(
+  name='Asset',
+  full_name='Asset',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='ticker', full_name='Asset.ticker', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='Asset.name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='decimals', full_name='Asset.decimals', index=2,
+      number=3, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='network_id', full_name='Asset.network_id', index=3,
+      number=4, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='address', full_name='Asset.address', index=4,
+      number=5, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2834,
+  serialized_end=2926,
+)
+
+
+_TRADEINFO = _descriptor.Descriptor(
+  name='TradeInfo',
+  full_name='TradeInfo',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='chain_id', full_name='TradeInfo.chain_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gas_limit', full_name='TradeInfo.gas_limit', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gas_price', full_name='TradeInfo.gas_price', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2928,
+  serialized_end=2995,
+)
+
+
+_QUOTEINFO = _descriptor.Descriptor(
+  name='QuoteInfo',
+  full_name='QuoteInfo',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='min_size', full_name='QuoteInfo.min_size', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='max_size', full_name='QuoteInfo.max_size', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=2997,
+  serialized_end=3044,
+)
+
+
+_MARKET_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='Market.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='Market.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='Market.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3232,
+  serialized_end=3279,
+)
+
+_MARKET = _descriptor.Descriptor(
+  name='Market',
+  full_name='Market',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='Market.id', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='market_asset_ticker', full_name='Market.market_asset_ticker', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='taker_asset_tickers', full_name='Market.taker_asset_tickers', index=2,
+      number=3, type=9, cpp_type=9, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='trade_info', full_name='Market.trade_info', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='quote_info', full_name='Market.quote_info', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='metadata', full_name='Market.metadata', index=5,
+      number=6, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[_MARKET_METADATAENTRY, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=3047,
+  serialized_end=3279,
+)
+
+_ORDERBOOKUPDATESREQUEST.fields_by_name['request'].message_type = _ORDERBOOKREQUEST
 _ORDERBOOKRESPONSE.fields_by_name['asks'].message_type = _ORDERBOOKENTRY
 _ORDERBOOKRESPONSE.fields_by_name['bids'].message_type = _ORDERBOOKENTRY
 _SIGNORDERREQUEST.fields_by_name['order'].message_type = _ORDER
 _SIGNORDERRESPONSE.fields_by_name['signedOrder'].message_type = _SIGNEDORDER
 _HASHORDERREQUEST.fields_by_name['order'].message_type = _ORDER
 _CREATEORDERRESPONSE.fields_by_name['order'].message_type = _SIGNEDORDER
-DESCRIPTOR.message_types_by_name['OrderBookRequest'] = _ORDERBOOKREQUEST
+_QUOTE.fields_by_name['order'].message_type = _SIGNEDORDER
+_TRADE.fields_by_name['order'].message_type = _SIGNEDORDER
+_MARKET_METADATAENTRY.containing_type = _MARKET
+_MARKET.fields_by_name['trade_info'].message_type = _TRADEINFO
+_MARKET.fields_by_name['quote_info'].message_type = _QUOTEINFO
+_MARKET.fields_by_name['metadata'].message_type = _MARKET_METADATAENTRY
 DESCRIPTOR.message_types_by_name['OrderBookEntry'] = _ORDERBOOKENTRY
+DESCRIPTOR.message_types_by_name['OrderBookRequest'] = _ORDERBOOKREQUEST
+DESCRIPTOR.message_types_by_name['OrderBookUpdatesRequest'] = _ORDERBOOKUPDATESREQUEST
 DESCRIPTOR.message_types_by_name['OrderBookResponse'] = _ORDERBOOKRESPONSE
 DESCRIPTOR.message_types_by_name['GetQuoteRequest'] = _GETQUOTEREQUEST
 DESCRIPTOR.message_types_by_name['GetQuoteResponse'] = _GETQUOTERESPONSE
@@ -967,7 +1557,22 @@ DESCRIPTOR.message_types_by_name['HashOrderRequest'] = _HASHORDERREQUEST
 DESCRIPTOR.message_types_by_name['HashOrderResponse'] = _HASHORDERRESPONSE
 DESCRIPTOR.message_types_by_name['CreateOrderRequest'] = _CREATEORDERREQUEST
 DESCRIPTOR.message_types_by_name['CreateOrderResponse'] = _CREATEORDERRESPONSE
+DESCRIPTOR.message_types_by_name['WatchTransactionRequest'] = _WATCHTRANSACTIONREQUEST
+DESCRIPTOR.message_types_by_name['WatchTransactionResponse'] = _WATCHTRANSACTIONRESPONSE
+DESCRIPTOR.message_types_by_name['Quote'] = _QUOTE
+DESCRIPTOR.message_types_by_name['Trade'] = _TRADE
+DESCRIPTOR.message_types_by_name['Asset'] = _ASSET
+DESCRIPTOR.message_types_by_name['TradeInfo'] = _TRADEINFO
+DESCRIPTOR.message_types_by_name['QuoteInfo'] = _QUOTEINFO
+DESCRIPTOR.message_types_by_name['Market'] = _MARKET
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
+
+OrderBookEntry = _reflection.GeneratedProtocolMessageType('OrderBookEntry', (_message.Message,), {
+  'DESCRIPTOR' : _ORDERBOOKENTRY,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:OrderBookEntry)
+  })
+_sym_db.RegisterMessage(OrderBookEntry)
 
 OrderBookRequest = _reflection.GeneratedProtocolMessageType('OrderBookRequest', (_message.Message,), {
   'DESCRIPTOR' : _ORDERBOOKREQUEST,
@@ -976,12 +1581,12 @@ OrderBookRequest = _reflection.GeneratedProtocolMessageType('OrderBookRequest', 
   })
 _sym_db.RegisterMessage(OrderBookRequest)
 
-OrderBookEntry = _reflection.GeneratedProtocolMessageType('OrderBookEntry', (_message.Message,), {
-  'DESCRIPTOR' : _ORDERBOOKENTRY,
+OrderBookUpdatesRequest = _reflection.GeneratedProtocolMessageType('OrderBookUpdatesRequest', (_message.Message,), {
+  'DESCRIPTOR' : _ORDERBOOKUPDATESREQUEST,
   '__module__' : 'types_pb2'
-  # @@protoc_insertion_point(class_scope:OrderBookEntry)
+  # @@protoc_insertion_point(class_scope:OrderBookUpdatesRequest)
   })
-_sym_db.RegisterMessage(OrderBookEntry)
+_sym_db.RegisterMessage(OrderBookUpdatesRequest)
 
 OrderBookResponse = _reflection.GeneratedProtocolMessageType('OrderBookResponse', (_message.Message,), {
   'DESCRIPTOR' : _ORDERBOOKRESPONSE,
@@ -1088,114 +1693,71 @@ CreateOrderResponse = _reflection.GeneratedProtocolMessageType('CreateOrderRespo
   })
 _sym_db.RegisterMessage(CreateOrderResponse)
 
+WatchTransactionRequest = _reflection.GeneratedProtocolMessageType('WatchTransactionRequest', (_message.Message,), {
+  'DESCRIPTOR' : _WATCHTRANSACTIONREQUEST,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:WatchTransactionRequest)
+  })
+_sym_db.RegisterMessage(WatchTransactionRequest)
+
+WatchTransactionResponse = _reflection.GeneratedProtocolMessageType('WatchTransactionResponse', (_message.Message,), {
+  'DESCRIPTOR' : _WATCHTRANSACTIONRESPONSE,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:WatchTransactionResponse)
+  })
+_sym_db.RegisterMessage(WatchTransactionResponse)
+
+Quote = _reflection.GeneratedProtocolMessageType('Quote', (_message.Message,), {
+  'DESCRIPTOR' : _QUOTE,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:Quote)
+  })
+_sym_db.RegisterMessage(Quote)
+
+Trade = _reflection.GeneratedProtocolMessageType('Trade', (_message.Message,), {
+  'DESCRIPTOR' : _TRADE,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:Trade)
+  })
+_sym_db.RegisterMessage(Trade)
+
+Asset = _reflection.GeneratedProtocolMessageType('Asset', (_message.Message,), {
+  'DESCRIPTOR' : _ASSET,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:Asset)
+  })
+_sym_db.RegisterMessage(Asset)
+
+TradeInfo = _reflection.GeneratedProtocolMessageType('TradeInfo', (_message.Message,), {
+  'DESCRIPTOR' : _TRADEINFO,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:TradeInfo)
+  })
+_sym_db.RegisterMessage(TradeInfo)
+
+QuoteInfo = _reflection.GeneratedProtocolMessageType('QuoteInfo', (_message.Message,), {
+  'DESCRIPTOR' : _QUOTEINFO,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:QuoteInfo)
+  })
+_sym_db.RegisterMessage(QuoteInfo)
+
+Market = _reflection.GeneratedProtocolMessageType('Market', (_message.Message,), {
+
+  'MetadataEntry' : _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), {
+    'DESCRIPTOR' : _MARKET_METADATAENTRY,
+    '__module__' : 'types_pb2'
+    # @@protoc_insertion_point(class_scope:Market.MetadataEntry)
+    })
+  ,
+  'DESCRIPTOR' : _MARKET,
+  '__module__' : 'types_pb2'
+  # @@protoc_insertion_point(class_scope:Market)
+  })
+_sym_db.RegisterMessage(Market)
+_sym_db.RegisterMessage(Market.MetadataEntry)
+
 
 DESCRIPTOR._options = None
-
-_ORDERBOOKMANAGER = _descriptor.ServiceDescriptor(
-  name='OrderBookManager',
-  full_name='OrderBookManager',
-  file=DESCRIPTOR,
-  index=0,
-  serialized_options=None,
-  serialized_start=1962,
-  serialized_end=2032,
-  methods=[
-  _descriptor.MethodDescriptor(
-    name='OrderBook',
-    full_name='OrderBookManager.OrderBook',
-    index=0,
-    containing_service=None,
-    input_type=_ORDERBOOKREQUEST,
-    output_type=_ORDERBOOKRESPONSE,
-    serialized_options=None,
-  ),
-])
-_sym_db.RegisterServiceDescriptor(_ORDERBOOKMANAGER)
-
-DESCRIPTOR.services_by_name['OrderBookManager'] = _ORDERBOOKMANAGER
-
-
-_MAKER = _descriptor.ServiceDescriptor(
-  name='Maker',
-  full_name='Maker',
-  file=DESCRIPTOR,
-  index=1,
-  serialized_options=None,
-  serialized_start=2035,
-  serialized_end=2222,
-  methods=[
-  _descriptor.MethodDescriptor(
-    name='GetQuote',
-    full_name='Maker.GetQuote',
-    index=0,
-    containing_service=None,
-    input_type=_GETQUOTEREQUEST,
-    output_type=_GETQUOTERESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='CheckQuote',
-    full_name='Maker.CheckQuote',
-    index=1,
-    containing_service=None,
-    input_type=_CHECKQUOTEREQUEST,
-    output_type=_CHECKQUOTERESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='OrderStatusUpdate',
-    full_name='Maker.OrderStatusUpdate',
-    index=2,
-    containing_service=None,
-    input_type=_ORDERSTATUSUPDATEREQUEST,
-    output_type=_ORDERSTATUSUPDATERESPONSE,
-    serialized_options=None,
-  ),
-])
-_sym_db.RegisterServiceDescriptor(_MAKER)
-
-DESCRIPTOR.services_by_name['Maker'] = _MAKER
-
-
-_HOTWALLET = _descriptor.ServiceDescriptor(
-  name='HotWallet',
-  full_name='HotWallet',
-  file=DESCRIPTOR,
-  index=2,
-  serialized_options=None,
-  serialized_start=2225,
-  serialized_end=2398,
-  methods=[
-  _descriptor.MethodDescriptor(
-    name='SignOrder',
-    full_name='HotWallet.SignOrder',
-    index=0,
-    containing_service=None,
-    input_type=_SIGNORDERREQUEST,
-    output_type=_SIGNORDERRESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='HashOrder',
-    full_name='HotWallet.HashOrder',
-    index=1,
-    containing_service=None,
-    input_type=_HASHORDERREQUEST,
-    output_type=_HASHORDERRESPONSE,
-    serialized_options=None,
-  ),
-  _descriptor.MethodDescriptor(
-    name='CreateOrder',
-    full_name='HotWallet.CreateOrder',
-    index=2,
-    containing_service=None,
-    input_type=_CREATEORDERREQUEST,
-    output_type=_CREATEORDERRESPONSE,
-    serialized_options=None,
-  ),
-])
-_sym_db.RegisterServiceDescriptor(_HOTWALLET)
-
-DESCRIPTOR.services_by_name['HotWallet'] = _HOTWALLET
-
+_MARKET_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)
