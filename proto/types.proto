@@ -149,7 +149,7 @@ message WatchTransactionResponse {
 }
 
 // Used to request an ETH or token balance at the current block
-// This message can be used to request ETH balance if token_address is empty
+// If used for ETH balance, token_address is ignored
 message GetBalanceRequest {
     string owner_address = 1;
     string token_address = 2;
@@ -166,12 +166,27 @@ message GetBalanceResponse {
 message GetAllowanceRequest {
     string owner_address = 1;
     string token_address = 2;
+    string spender_address = 3; // If empty, will check 0x ERC-20 proxy contract
 }
 
 message GetAllowanceResponse {
     string owner_address = 1;
     string token_address = 2;
     string proxy_address = 3;
+    string allowance = 4;
+}
+
+message SetAllowanceRequest {
+    string token_address = 1;
+    string owner_address = 2;
+    string spender_address = 3; // If empty, will set for 0x ERC-20 proxy contract
+    string allowance = 4;
+}
+
+message SetAllowanceResponse {
+    string owner_address = 1;
+    string token_address = 2;
+    string spender_address = 3;
     string allowance = 4;
 }
 
@@ -183,6 +198,7 @@ message TransferRequest {
 
 message TransferResponse {
     string transaction_hash = 1;
+    uint64 submitted_at = 2;
 }
 
 // Dealer
