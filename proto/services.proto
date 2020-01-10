@@ -23,6 +23,7 @@ service HotWallet {
     rpc GetEtherBalance(GetBalanceRequest) returns (GetBalanceResponse);
     rpc TransferEther(TransferRequest) returns (TransferResponse);
     rpc TransferToken(TransferRequest) returns (TransferResponse);
+    rpc SendTransaction(SendTransactionRequest) returns (SendTransactionResponse);
 }
 
 service Watcher {
