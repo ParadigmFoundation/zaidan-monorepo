@@ -2,6 +2,62 @@ from sys import path
 from time import time
 
 from redis import Redis
+import grpc
+import json
+from services_pb2_grpc import OrderBookManagerStub
+from types_pb2 import OrderBookRequest
+from base64 import b64encode, b64decode
+from gzip import compress, decompress
+from json import dumps, loads
+from uuid import uuid4, UUID
+
+
+def is_valid_uuid(uuid_to_test: str, version=4) -> bool:
+    """
+    Check if uuid_to_test is a valid UUID.
+
+    :param uuid_to_test: The UUID being validated.
+    :param version: Optionally specify UUID version (default: 4).
+    """
+    try:
+        uuid_obj = UUID(uuid_to_test, version=version)
+    except ValueError:
+        return False
+
+    return str(uuid_obj) == uuid_to_test
+
+
+def encode_to_bytes(data: object, str_encoding='utf-8') -> bytes:
+    '''
+    Encode and compress structured data to a base-64 encoded bytestring.
+
+    :param data: The structured data to encode and compress.
+    '''
+
+    try:
+        data_str = dumps(data)
+        data_bytes = bytes(data_str, str_encoding)
+        compressed = compress(data_bytes)
+        encoded = b64encode(compressed)
+        return encoded
+    except Exception as error:
+        raise Exception('failed to compress data: {}'.format(error.args))
+
+
+def decode_from_bytes(data: bytes, str_encoding='utf-8') -> object:
+    '''
+    Decode and decompress structured data from a base-64 encoded bytestring.
+
+    :param data: The encoded and compressed structured data as a bytestring.
+    '''
+
+    try:
+        decoded = b64decode(data)
+        decompressed = decompress(decoded)
+        data_str = decompressed.decode(str_encoding)
+        return loads(data_str)
+    except Exception as error:
+        raise Exception('failed to decompress data: {}'.format(error.args))
 
 
 
@@ -84,7 +140,7 @@ class TestDealerCache():
         self.db.set(base_key, compressed_book)
         self.db.set(timestamp_key, str(updated_timestamp))
 
-    def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20) -> list:
+    def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20, env='PROD') -> list:
         '''
         Fetch and decode an order book from the cache by exchage/size/side.
         If the book is out-of-date according to the max_age parameter, an
@@ -95,25 +151,45 @@ class TestDealerCache():
         :param max_age: The maximum age (in seconds) of the book data.
         '''
 
-        # record call time to use for expiration check
-        placeholder_book = {}
-        if symbol == 'ZRX/ETH':
-            placeholder_book['bids'] = [[.0098, 100], [.0097, 200], [.0096, 300]]
-            placeholder_book['asks'] = [[.0102, 100], [.0103, 200], [.0104, 300]]
-        elif symbol == 'ZRX/USD':
-            placeholder_book['bids'] = [[.29, 100], [.28, 200], [.27, 300]]
-            placeholder_book['asks'] = [[.31, 100], [.32, 200], [.33, 300]]
-        elif symbol == 'DAI/USD':
-            placeholder_book['bids'] = [[1.001, 100], [1.002, 200], [1.003, 300]]
-            placeholder_book['asks'] = [[1.003, 100], [1.006, 200], [1.007, 300]]
-        elif symbol == 'ETH/USD':
-            placeholder_book['bids'] = [[99, 100], [98, 200], [97, 300]]
-            placeholder_book['asks'] = [[101, 100], [102, 200], [103, 300]]
-        elif symbol == 'LINK/USD':
-            placeholder_book['bids'] = [[1.99, 100], [1.98, 200], [1.97, 300]]
-            placeholder_book['asks'] = [[2.01, 100], [2.02, 200], [2.03, 300]]
+        if symbol == 'DAI/USD':
+            symbol = 'DAI/USDC'
 
-        return placeholder_book[side]
+        # record call time to use for expiration check
+        if env == 'TEST':
+            placeholder_book = {}
+            if symbol == 'ZRX/ETH':
+                placeholder_book['bids'] = [[.0098, 100], [.0097, 200], [.0096, 300]]
+                placeholder_book['asks'] = [[.0102, 100], [.0103, 200], [.0104, 300]]
+            elif symbol == 'ZRX/USD':
+                placeholder_book['bids'] = [[.29, 100], [.28, 200], [.27, 300]]
+                placeholder_book['asks'] = [[.31, 100], [.32, 200], [.33, 300]]
+            elif symbol == 'DAI/USD':
+                placeholder_book['bids'] = [[1.001, 100], [1.002, 200], [1.003, 300]]
+                placeholder_book['asks'] = [[1.003, 100], [1.006, 200], [1.007, 300]]
+            elif symbol == 'ETH/USD':
+                placeholder_book['bids'] = [[99, 100], [98, 200], [97, 300]]
+                placeholder_book['asks'] = [[101, 100], [102, 200], [103, 300]]
+            elif symbol == 'LINK/USD':
+                placeholder_book['bids'] = [[1.99, 100], [1.98, 200], [1.97, 300]]
+                placeholder_book['asks'] = [[2.01, 100], [2.02, 200], [2.03, 300]]
+
+            return placeholder_book[side]
+
+        else:
+            # Connect to the OBM server
+            channel = grpc.insecure_channel('localhost:8000')
+            stub = OrderBookManagerStub(channel)
+
+            # Build the request
+            req = OrderBookRequest(exchange=exchange.lower(), symbol=symbol)
+
+            # Call the server
+            response = stub.OrderBook(req)
+            if side == 'bids':
+
+                return [[x.price, x.quantity] for x in response.bids]
+            else:
+                return [[x.price, x.quantity] for x in response.asks]
 
     def set_quote(self, quote_id: str, quote: object, status=0) -> None:
         '''
@@ -215,3 +291,4 @@ class TestDealerCache():
         '''
 
         return [mark_id.decode() for mark_id in self.db.hkeys(self.order_marks_key)]
+

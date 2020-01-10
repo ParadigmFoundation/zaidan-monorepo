@@ -1,8 +1,9 @@
 import uuid
+import sys
 import math
 import time
-import maker_pb2
-import maker_pb2_grpc
+import types_pb2
+import services_pb2_grpc
 import grpc
 from concurrent import futures
 from PricingUtils import calculate_quote
@@ -19,45 +20,51 @@ VALIDITY_LENGTH = 15000
 redis_interface = RedisInterface()
 
 
-class MakerServicer(maker_pb2_grpc.MakerServicer):
+class MakerServicer(services_pb2_grpc.MakerServicer):
 
     def GetQuote(self, request, context):
         quote_info = calculate_quote(request.maker_asset, request.taker_asset, request.maker_size, request.taker_size)
         expiry_timestamp = int(math.floor(time.time())) + int(VALIDITY_LENGTH)
 
-        if False not in risk_checks(request.taker_asset, request.maker_asset, quote_info):
-            quote = maker_pb2.GetQuoteResponse(quote_id=uuid.uuid4(), expiration=expiry_timestamp,
-                                               taker_asset=request.taker_asset, maker_asset = request.maker_asset,
-                                               taker_size=quote_info['taker_size'], maker_size=quote_info['maker_size'],
-                                               status=200)
-            redis_interface.add_quote(uuid.uuid4(), {'expiration':expiry_timestamp,
+
+        if False not in risk_checks(request.taker_asset, request.maker_asset, request.taker_size, quote_info):
+            id = str(uuid.uuid4())
+            quote = types_pb2.GetQuoteResponse(quote_id=id, expiration=str(expiry_timestamp),
+                                               taker_asset=request.taker_asset, maker_asset=request.maker_asset,
+                                               taker_size=str(quote_info['taker_size']),
+                                               maker_size=str(quote_info['maker_size']))
+            redis_interface.add_quote(id, {'expiration':expiry_timestamp,
                                        'taker_asset':request.taker_asset, 'maker_asset':request.maker_asset,
                                        'taker_size':quote_info['taker_size'], 'maker_size':quote_info['maker_size']})
             return quote
         else:
-            quote = maker_pb2.GetQuoteResponse(status=400)
+            quote = types_pb2.GetQuoteResponse(status=400)
             return quote
+
+        return quote
 
     def CheckQuote(self, request, context):
         quote = redis_interface.get_quote(request.quote_id)
-        if quote['expration'] > time.time():
-            return maker_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=1)
+        if quote['expiration'] > time.time():
+            return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=1)
 
         redis_interface.fill_quote(request.quote_id)
 
-        return maker_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=True, status=200)
+        return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=True, status=200)
 
     def OrderStatusUpdate(self, request, context):
         order_status_update(request.quote_id, request.status)
-        return maker_pb2.OrderStatusUpdateResponse(status=200)
+        return types_pb2.OrderStatusUpdateResponse(status=200)
 
 
 def serve():
+    print('starting server')
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    maker_pb2_grpc.add_RouteGuideServicer_to_server(
+    services_pb2_grpc.add_MakerServicer_to_server(
         MakerServicer(), server)
     server.add_insecure_port('[::]:50051')
     server.start()
+    print('server started')
     server.wait_for_termination()
 
 

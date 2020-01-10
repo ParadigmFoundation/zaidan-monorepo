@@ -13,6 +13,7 @@ def risk_checks(taker_asset, maker_asset, taker_size_request, sizes):
 
 
     if taker_size_request:
+        taker_size_request = float(taker_size_request)
         reverse_quote = calculate_quote(maker_asset, taker_asset, None, sizes['maker_size'])
         if reverse_quote['taker_size'] < taker_size_request:
             checks['crossed_quote_check'] = False
@@ -20,11 +21,10 @@ def risk_checks(taker_asset, maker_asset, taker_size_request, sizes):
             checks['crossed_quote_check'] = True
     else:
         reverse_quote = calculate_quote(maker_asset, taker_asset, sizes['taker_size'], None)
-        if reverse_quote['maker_size'] > taker_size_request:
+        if reverse_quote['maker_size'] > sizes['maker_size']:
             checks['crossed_quote_check'] = False
         else:
             checks['crossed_quote_check'] = True
-
 
     if pending_maker_quote_size + sizes['maker_size'] < MAX_PENDING_QUOTE_SIZE[maker_asset]:
         checks['pending_quote_size_check'] = True

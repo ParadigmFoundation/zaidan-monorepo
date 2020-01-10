@@ -27,4 +27,4 @@ def test_fully_implied_price():
 #test_fixed_rate_price()
 #test_fully_implied_price()
 
-pricing_utils.calculate_quote('ETH', 'DAI', 1, None)
+print(pricing_utils.calculate_quote('ETH', 'DAI', 1, None))

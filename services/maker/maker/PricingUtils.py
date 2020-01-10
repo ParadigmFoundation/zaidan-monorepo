@@ -14,12 +14,16 @@ cache = TestDealerCache()
 redis_interface = RedisInterface()
 
 def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
-    pending_maker_size = redis_interface.get_pending_quote_size(maker_asset)
-    pending_taker_size = redis_interface.get_pending_quote_size(taker_asset)
+    #pending_maker_size = redis_interface.get_pending_quote_size(maker_asset)
+    #pending_taker_size = redis_interface.get_pending_quote_size(taker_asset)
     maker_asset_pricing_data = asset_pricing_data[maker_asset]
     taker_asset_pricing_data = asset_pricing_data[taker_asset]
     order_books = []
     implied = True
+    if maker_size:
+        maker_size = float(maker_size)
+    if taker_size:
+        taker_size = float(taker_size)
     for market in maker_asset_pricing_data['exchange_books']:
         if maker_asset + '/' + taker_asset == market[1]:
             order_books.append(maker_asset + '/' + taker_asset)
