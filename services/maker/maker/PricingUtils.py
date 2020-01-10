@@ -324,7 +324,6 @@ def calculate_fee(fee_asset):
     gas_limit = redis_interface.get_gas_limit()
     gas_fee = gas_limit * (gas_price * (10 ** -9))
 
-    # fast path: taker token is weth, so no rate conversion necessary
     if fee_asset == 'ETH':
         return gas_fee
     else:

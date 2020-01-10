@@ -13,8 +13,9 @@ req = GetQuoteRequest(maker_asset='ETH', taker_asset='DAI', maker_size='1')
 response = stub.GetQuote(req)
 print(response)
 
-req = CheckQuoteRequest(quote_id=response.quote_id)
+req = CheckQuoteRequest(quote_id='a')
 
 response = stub.CheckQuote(req)
 print(response)
+print(response.is_valid)
 
