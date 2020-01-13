@@ -198,7 +198,7 @@ message TransferRequest {
 
 message TransferResponse {
     string transaction_hash = 1;
-    uint64 submitted_at = 2;
+    int64 submitted_at = 2;
 }
 
 message SendTransactionRequest {
