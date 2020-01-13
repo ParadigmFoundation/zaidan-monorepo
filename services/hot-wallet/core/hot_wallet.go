@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 
@@ -32,6 +33,8 @@ type HotWallet struct {
 	makerAddress  common.Address
 	senderAddress common.Address
 
+	senderTransactor *bind.TransactOpts
+
 	logger log.Logger
 }
 
@@ -56,13 +59,24 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		return nil, err
 	}
 
+	senderAcct, err := provider.GetAccount(cfg.SenderAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	senderKey, err := provider.Wallet().PrivateKey(senderAcct)
+	if err != nil {
+		return nil, err
+	}
+
 	hw := &HotWallet{
-		provider:      provider,
-		zrxHelper:     zrxHelper,
-		tokenManager:  mgr,
-		makerAddress:  cfg.MakerAddress,
-		senderAddress: cfg.SenderAddress,
-		logger:        log.New(context.Background()),
+		provider:         provider,
+		zrxHelper:        zrxHelper,
+		tokenManager:     mgr,
+		makerAddress:     cfg.MakerAddress,
+		senderAddress:    cfg.SenderAddress,
+		senderTransactor: bind.NewKeyedTransactor(senderKey),
+		logger:           log.New(context.Background()),
 	}
 
 	return hw, nil
