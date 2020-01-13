@@ -4,6 +4,8 @@ import (
 	"context"
 	"math/big"
 
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -18,12 +20,7 @@ func (hw *HotWallet) GetAllowance(ctx context.Context, req *grpc.GetAllowanceReq
 	token := common.HexToAddress(req.TokenAddress)
 
 	devUtils := hw.zrxHelper.DevUtils()
-	assetData, err := devUtils.EncodeERC20AssetData(nil, token)
-	if err != nil {
-		return nil, err
-	}
-
-	allowance, err := devUtils.GetAssetProxyAllowance(nil, owner, assetData)
+	allowance, err := devUtils.GetAssetProxyAllowance(nil, owner, zrx.EncodeERC20AssetData(token))
 	if err != nil {
 		return nil, err
 	}
