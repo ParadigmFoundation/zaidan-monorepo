@@ -7,8 +7,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
-
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -41,12 +39,9 @@ func (hw *HotWallet) GetAllowance(ctx context.Context, req *grpc.GetAllowanceReq
 // SetAllowance implements grpc.HotWalletServer
 func (hw *HotWallet) SetAllowance(ctx context.Context, req *grpc.SetAllowanceRequest) (*grpc.SetAllowanceResponse, error) {
 	token := common.HexToAddress(req.TokenAddress)
-	spender := common.HexToAddress(req.SpenderAddress)
+	spender := hw.zrxHelper.ContractAddresses.ERC20Proxy
 
-	if spender == zrx.NULL_ADDRESS {
-		spender = hw.zrxHelper.ContractAddresses.ERC20Proxy
-	}
-
+	// if allowance is not specified, use max allowance, otherwise parse request value
 	allowance := new(big.Int)
 	if req.Allowance == "" {
 		u256 := new(big.Int).Exp(big.NewInt(2), big.NewInt(256), nil)
@@ -65,7 +60,7 @@ func (hw *HotWallet) SetAllowance(ctx context.Context, req *grpc.SetAllowanceReq
 
 	return &grpc.SetAllowanceResponse{
 		OwnerAddress:    grpc.NormalizeAddress(hw.makerAddress),
-		SpenderAddress:  grpc.NormalizeAddress(spender),
+		ProxyAddress:    grpc.NormalizeAddress(spender),
 		TokenAddress:    grpc.NormalizeAddress(token),
 		Allowance:       allowance.String(),
 		TransactionHash: tx.Hash().Hex(),
