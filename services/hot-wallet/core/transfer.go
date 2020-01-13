@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"math/big"
+	"time"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -49,36 +50,21 @@ func (hw *HotWallet) TransferEther(ctx context.Context, req *grpc.TransferReques
 
 // TransferToken implements grpc.HotWalletServer
 func (hw *HotWallet) TransferToken(ctx context.Context, req *grpc.TransferRequest) (*grpc.TransferResponse, error) {
-	// to := common.HexToAddress(req.ToAddress)
-	// token := common.HexToAddress(req.TokenAddress)
-	// amount, ok := new(big.Int).SetString(req.Amount, 10)
-	// if !ok {
-	// 	return nil, status.Error(codes.InvalidArgument, "unable to parse transfer amount")
-	// }
+	to := common.HexToAddress(req.ToAddress)
+	token := common.HexToAddress(req.TokenAddress)
 
-	// nonce, err := hw.provider.Nonce(ctx, hw.makerAddress)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	value, ok := new(big.Int).SetString(req.Amount, 10)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "invalid number value for 'amount'")
+	}
 
-	// gasPrice, err := hw.provider.Client().SuggestGasPrice(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	tx, err := hw.tokenManager.Transfer(token, to, value)
+	if err != nil {
+		return nil, err
+	}
 
-	// account := accounts.Account{Address: hw.makerAddress}
-	// tx, err := hw.provider.SignTx(ctx, account, types.NewTransaction(nonce, to, amount, 21000, gasPrice, nil))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// if err := hw.provider.Client().SendTransaction(ctx, tx); err != nil {
-	// 	return nil, err
-	// }
-
-	// return &grpc.TransferResponse{
-	// 	TransactionHash: tx.Hash().Hex(),
-	// }, nil
-
-	return nil, status.Error(codes.Unimplemented, "method not yet supported")
+	return &grpc.TransferResponse{
+		TransactionHash: tx.Hash().Hex(),
+		SubmittedAt:     time.Now().Unix(),
+	}, nil
 }

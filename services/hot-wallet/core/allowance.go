@@ -58,7 +58,7 @@ func (hw *HotWallet) SetAllowance(ctx context.Context, req *grpc.SetAllowanceReq
 		}
 	}
 
-	tx, err := hw.tokenManager.Approve(ctx, token, spender, allowance)
+	tx, err := hw.tokenManager.Approve(token, spender, allowance)
 	if err != nil {
 		return nil, err
 	}

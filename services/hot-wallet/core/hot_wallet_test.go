@@ -39,6 +39,7 @@ func TestHotWallet(t *testing.T) {
 
 	t.Run("test order creation", func(t *testing.T) { testCreateOrder(hw, t) })
 	t.Run("test ether transfer", func(t *testing.T) { testTransferEther(hw, t) })
+	t.Run("test token transfer", func(t *testing.T) { testTransferToken(hw, t) })
 	t.Run("test send transaction", func(t *testing.T) { testSendTransaction(hw, t) })
 	t.Run("test get/set allowance", func(t *testing.T) { testGetSetAllowance(hw, t) })
 }
