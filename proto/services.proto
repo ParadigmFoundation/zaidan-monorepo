@@ -24,6 +24,7 @@ service HotWallet {
     rpc TransferEther(TransferRequest) returns (TransferResponse);
     rpc TransferToken(TransferRequest) returns (TransferResponse);
     rpc SendTransaction(SendTransactionRequest) returns (SendTransactionResponse);
+    rpc ExecuteZeroExTransaction(ExecuteZeroExTransactionRequest) returns (ExecuteZeroExTransactionResponse);
 }
 
 service Watcher {

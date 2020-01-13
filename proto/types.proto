@@ -177,7 +177,7 @@ message GetAllowanceResponse {
 
 message SetAllowanceRequest {
     string token_address = 1;
-    string allowance = 3; // If empty, will set max allowance (2^256 - 1)
+    string allowance = 2; // If empty, will set max allowance (2^256 - 1)
 }
 
 message SetAllowanceResponse {
@@ -210,6 +210,20 @@ message SendTransactionRequest {
 message SendTransactionResponse {
    string transaction_hash = 1;  // submitted transaction hash
    int64 sent_at = 2;            // UNIX timestamp at which transaction added to mempool
+}
+
+message ExecuteZeroExTransactionRequest {
+    string salt = 1;
+    string expiration_time_seconds = 2;
+    string gas_price = 3;
+    string signer_address = 4;
+    bytes data = 5;
+    bytes signature = 6;
+}
+
+message ExecuteZeroExTransactionResponse {
+    string transaction_hash = 1;
+    int64 submitted_at = 2;
 }
 
 // Dealer
