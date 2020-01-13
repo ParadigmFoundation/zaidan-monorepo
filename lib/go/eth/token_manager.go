@@ -1,7 +1,6 @@
 package eth
 
 import (
-	"context"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts"
@@ -60,13 +59,23 @@ func (tm *ERC20TokenManager) BalanceOf(token common.Address, owner common.Addres
 }
 
 // Approve calls Approve on token for owner, approving spender to spend value
-func (tm *ERC20TokenManager) Approve(ctx context.Context, token common.Address, spender common.Address, value *big.Int) (*types.Transaction, error) {
+func (tm *ERC20TokenManager) Approve(token common.Address, spender common.Address, value *big.Int) (*types.Transaction, error) {
 	session, err := tm.tokenSession(token)
 	if err != nil {
 		return nil, err
 	}
 
 	return session.Approve(spender, value)
+}
+
+// Transfer calls Transfer on token, transfering value to the to address
+func (tm *ERC20TokenManager) Transfer(token common.Address, to common.Address, value *big.Int) (*types.Transaction, error) {
+	session, err := tm.tokenSession(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return session.Transfer(to, value)
 }
 
 // adds a new tracked ERC-20 token session
