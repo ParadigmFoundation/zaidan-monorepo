@@ -13,18 +13,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-type MakerServer struct {
+type OrderStatusServer struct {
 }
 
-func (ms *MakerServer) GetQuote(c context.Context, r *pb.GetQuoteRequest) (*pb.GetQuoteResponse, error) {
-	return nil, nil
-}
-
-func (ms *MakerServer) CheckQuote(c context.Context, r *pb.CheckQuoteRequest) (*pb.CheckQuoteResponse, error) {
-	return nil, nil
-}
-
-func (ms *MakerServer) OrderStatusUpdate(c context.Context, r *pb.OrderStatusUpdateRequest) (*pb.OrderStatusUpdateResponse, error) {
+func (oss *OrderStatusServer) OrderStatusUpdate(c context.Context, r *pb.OrderStatusUpdateRequest) (*pb.OrderStatusUpdateResponse, error) {
 	logging.Info("Received update for ", r.QuoteId, " Status: ", r.Status)
 	return &pb.OrderStatusUpdateResponse{ Status: 1 }, nil
 }
@@ -36,9 +28,9 @@ func main() {
 		logging.Fatal(fmt.Errorf("failed to listen: %v", err))
 	}
 	s := grpc.NewServer()
-	makerServer := MakerServer{}
+	orderStatusServer := OrderStatusServer{}
 
-	pb.RegisterMakerServer(s, &makerServer)
+	pb.RegisterOrderStatusServer(s, &orderStatusServer)
 	if err := s.Serve(lis); err != nil {
 		logging.Fatal(fmt.Errorf("failed to serve: %v", err))
 	}

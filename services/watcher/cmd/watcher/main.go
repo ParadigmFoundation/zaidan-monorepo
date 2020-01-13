@@ -4,13 +4,11 @@ import (
 	"fmt"
 	"strconv"
 
-	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 	"github.com/spf13/cobra"
-	ggrpc "google.golang.org/grpc"
 )
 
 var (
@@ -50,14 +48,9 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	}
 	logging.Info("Connected to ethereum at", ethAddress)
 
-	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
-	if err != nil {
-		logging.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
-	}
-	makerClient :=  pb.NewMakerClient(conn)
-	logging.Info("Maker client configured for", makerUrl)
 
-	txWatching := watching.New(makerClient)
+
+	txWatching := watching.New(makerUrl)
 
 	watcherServer := grpc.NewServer(
 		txWatching,

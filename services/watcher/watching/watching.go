@@ -3,6 +3,7 @@ package watching
 import (
 	"context"
 	"fmt"
+	"google.golang.org/grpc"
 	"sync"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -14,6 +15,7 @@ import (
 type WatchedTransaction struct {
 	TxHash common.Hash
 	QuoteId string
+	UpdateUrls []string
 }
 
 type SafeWatchedTransactions struct {
@@ -22,16 +24,15 @@ type SafeWatchedTransactions struct {
 }
 
 type TxWatching struct {
-	MakerEndpoint           string
-	MakerClient             pb.MakerClient
+	MakerUrl           string
 	safeWatchedTransactions SafeWatchedTransactions
 }
 
 var bg = context.Background()
 
-func New(makerClient pb.MakerClient ) *TxWatching {
+func New(makerUrl string) *TxWatching {
 	watching := TxWatching{
-		MakerClient:             makerClient,
+		MakerUrl: makerUrl,
 		safeWatchedTransactions: SafeWatchedTransactions{ watchedTransactions: make(map[common.Hash]WatchedTransaction) },
 	}
 
@@ -53,10 +54,11 @@ func (txW *TxWatching) IsWatched(txHash common.Hash) (WatchedTransaction, bool) 
 	return value, present
 }
 
-func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
+func (txW *TxWatching) Watch(txHash common.Hash, quoteId string, updateUrls []string) {
 	txW.safeWatchedTransactions.watchedTransactions[txHash] = WatchedTransaction{
 		TxHash:  txHash,
 		QuoteId: quoteId,
+		UpdateUrls: updateUrls,
 	}
 }
 
@@ -111,10 +113,17 @@ func (txW *TxWatching) startWatchingBlocks() {
 							logging.SafeError(fmt.Errorf("failure getting receipt for watched transaction %s: %v", txHash.String(), err))
 						}
 
-						_, err = txW.MakerClient.OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
-							QuoteId: watchedTransaction.QuoteId,
-							Status:  uint32(receipt.Status),
-						})
+						for _, url := range watchedTransaction.UpdateUrls {
+							conn, err := grpc.Dial(url, grpc.WithInsecure())
+							if err != nil {
+								logging.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
+							}
+
+							_, _ = pb.NewOrderStatusClient(conn).OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
+								QuoteId: watchedTransaction.QuoteId,
+								Status:  uint32(receipt.Status),
+							})
+						}
 						if err != nil {
 							logging.SafeError(fmt.Errorf("failure calling maker for transaction %s: %v", txHash.String(), err))
 						}

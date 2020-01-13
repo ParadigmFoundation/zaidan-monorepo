@@ -13,6 +13,8 @@ import (
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 	"github.com/ethereum/go-ethereum/common"
 	"google.golang.org/grpc"
+	grpcCodes "google.golang.org/grpc/codes"
+	grpcStatus "google.golang.org/grpc/status"
 )
 
 type WatcherServer struct {
@@ -46,6 +48,7 @@ func (s *WatcherServer) Stop() { s.grpc.GracefulStop() }
 func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransactionRequest) (*pb.WatchTransactionResponse, error) {
 	trimmed := strings.TrimSpace(in.TxHash)
 	txHash := common.HexToHash(trimmed)
+	updateUrls := in.StatusUrls
 	if !strings.EqualFold(txHash.String(), trimmed) || len(txHash.String()) != 66 {
 		return nil, errors.New("invalid txHash")
 	}
@@ -55,13 +58,13 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
 		logging.SafeError(fmt.Errorf("transaction lookup failure: %s", err.Error()))
-		return nil, err
+		return nil, grpcStatus.Error(grpcCodes.Internal, fmt.Sprintf("transaction lookup failure: %s", err.Error()))
 	}
 
 	_, isWatched := s.TxWatching.IsWatched(txHash)
 	if isPending && !isWatched {
 		logging.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
-		s.TxWatching.Watch(txHash, in.QuoteId)
+		s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
 		isWatched = true
 	} else if !isPending {
 		if isWatched {
@@ -70,10 +73,18 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		}
 
 		logging.Info("Transaction", txHash.String(), "mined and does not need to be watched notifying maker")
-		_, _ = s.TxWatching.MakerClient.OrderStatusUpdate(ctx, &pb.OrderStatusUpdateRequest{
-			QuoteId: in.QuoteId,
-			Status:  status,
-		})
+
+		for _, url := range updateUrls {
+			conn, err := grpc.Dial(url, grpc.WithInsecure())
+			if err != nil {
+				logging.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
+			}
+
+			_, _ = pb.NewOrderStatusClient(conn).OrderStatusUpdate(ctx, &pb.OrderStatusUpdateRequest{
+				QuoteId: in.QuoteId,
+				Status:  status,
+			})
+		}
 	}
 	s.TxWatching.Unlock()
 

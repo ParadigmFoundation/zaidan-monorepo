@@ -138,6 +138,7 @@ message CreateOrderResponse {
 message WatchTransactionRequest {
     string quote_id = 1;
     string tx_hash = 2;
+    repeated string status_urls = 3;
 }
 
 message WatchTransactionResponse {
