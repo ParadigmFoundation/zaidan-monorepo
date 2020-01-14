@@ -33,7 +33,7 @@ func (hw *HotWallet) ExecuteZeroExTransaction(ctx context.Context, req *grpc.Exe
 		Context:  ctx,
 	}
 
-	tx, err := hw.zrxHelper.ExecuteFill(opts, ztx, req.Signature)
+	tx, err := hw.zrxHelper.ExecuteTransaction(opts, ztx, req.Signature)
 	if err != nil {
 		return nil, err
 	}
