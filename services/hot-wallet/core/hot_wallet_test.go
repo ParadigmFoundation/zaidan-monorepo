@@ -27,6 +27,8 @@ func TestHotWallet(t *testing.T) {
 	assert.Equal(t, 1, len(provider.Accounts()))
 	require.NoError(t, provider.Derive(deriver.DeriveNext()))
 	assert.Equal(t, 2, len(provider.Accounts()))
+	require.NoError(t, provider.Derive(deriver.DeriveNext()))
+	assert.Equal(t, 3, len(provider.Accounts()))
 
 	hwCfg := HotWalletConfig{
 		OrderValidatorMaxReqLength: math.MaxInt16,
@@ -42,4 +44,5 @@ func TestHotWallet(t *testing.T) {
 	t.Run("test token transfer", func(t *testing.T) { testTransferToken(hw, t) })
 	t.Run("test send transaction", func(t *testing.T) { testSendTransaction(hw, t) })
 	t.Run("test get/set allowance", func(t *testing.T) { testGetSetAllowance(hw, t) })
+	t.Run("test execute 0x transaction", func(t *testing.T) { testExecuteZrxTransaction(hw, t) })
 }
