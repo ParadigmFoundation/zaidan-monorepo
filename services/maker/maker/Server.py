@@ -5,15 +5,14 @@ import time
 import types_pb2
 import services_pb2_grpc
 import grpc
+import json
 from concurrent import futures
-from PricingUtils import calculate_quote
+from PricingUtils import calculate_quote, format_quote, convert_to_trading_units
 from RiskUtils import risk_checks, order_status_update
 from RedisInterface import RedisInterface
-asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')]},
-                      'LINK': {'exchange_books': [('COINBASE', 'LINK/USD'), ('BINANCE', 'LINK/ETH')]},
-                      'ETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT'), ('GEMINI', 'ETH/USD')]},
-                      'DAI': {'exchange_books': [('COINBASE', 'DAI/USDC')]}
-                      }
+
+with open('asset_address_config.json') as f:
+    asset_address_config = json.load(f)
 
 VALIDITY_LENGTH = 15000
 
@@ -23,25 +22,37 @@ redis_interface = RedisInterface()
 class MakerServicer(services_pb2_grpc.MakerServicer):
 
     def GetQuote(self, request, context):
-        quote_info = calculate_quote(request.maker_asset, request.taker_asset, request.maker_size, request.taker_size)
+
+        maker_asset = asset_address_config[request.maker_asset]
+        taker_asset = asset_address_config[request.taker_asset]
+        print(maker_asset)
+        print(taker_asset)
+
+        trading_maker_size = convert_to_trading_units(maker_asset, request.maker_size)
+        trading_taker_size = convert_to_trading_units(taker_asset, request.taker_size)
+
+        quote_info = calculate_quote(maker_asset,
+                                     taker_asset, trading_maker_size, trading_taker_size)
         expiry_timestamp = int(math.floor(time.time())) + int(VALIDITY_LENGTH)
 
+        if False not in risk_checks(taker_asset, maker_asset, trading_taker_size, quote_info):
+            quote_id = str(uuid.uuid4())
 
-        if False not in risk_checks(request.taker_asset, request.maker_asset, request.taker_size, quote_info):
-            id = str(uuid.uuid4())
-            quote = types_pb2.GetQuoteResponse(quote_id=id, expiration=str(expiry_timestamp),
+            redis_interface.add_quote(quote_id, {'expiration':expiry_timestamp,
+                                       'taker_asset':request.taker_asset, 'maker_asset':request.maker_asset,
+                                       'taker_size':quote_info['taker_size'], 'maker_size':quote_info['maker_size']})
+
+            quote_info = format_quote(taker_asset, maker_asset, quote_info)
+
+            quote = types_pb2.GetQuoteResponse(quote_id=quote_id, expiration=str(expiry_timestamp),
                                                taker_asset=request.taker_asset, maker_asset=request.maker_asset,
                                                taker_size=str(quote_info['taker_size']),
                                                maker_size=str(quote_info['maker_size']))
-            redis_interface.add_quote(id, {'expiration':expiry_timestamp,
-                                       'taker_asset':request.taker_asset, 'maker_asset':request.maker_asset,
-                                       'taker_size':quote_info['taker_size'], 'maker_size':quote_info['maker_size']})
             return quote
         else:
-            quote = types_pb2.GetQuoteResponse(status=400)
-            return quote
+            response = types_pb2.GetQuoteResponse(status=400)
+            return response
 
-        return quote
 
     def CheckQuote(self, request, context):
         try:

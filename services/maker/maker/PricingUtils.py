@@ -2,10 +2,11 @@ from TestDealerCache import TestDealerCache
 from RedisInterface import RedisInterface
 import math
 
-asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')], 'implied_pref': ('COINBASE', 'ZRX/USD')},
-                      'LINK': {'exchange_books': [('COINBASE', 'LINK/USD'), ('BINANCE', 'LINK/ETH')], 'implied_pref': ('COINBASE', 'LINK/USD')},
-                      'ETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT')], 'implied_pref': ('COINBASE', 'ETH/USD')},
-                      'DAI': {'exchange_books': [('COINBASE', 'DAI/USD')], 'implied_pref': ('COINBASE', 'DAI/USD'), 'constant_rate': 'PREF_INSIDE'}
+asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')], 'implied_pref': ('COINBASE', 'ZRX/USD'), 'decimals': 18},
+                      'LINK': {'exchange_books': [('COINBASE', 'LINK/USD'), ('BINANCE', 'LINK/ETH')], 'implied_pref': ('COINBASE', 'LINK/USD'), 'decimals': 18},
+                      'ETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT')], 'implied_pref': ('COINBASE', 'ETH/USD'), 'decimals': 18},
+                      'WETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT')], 'implied_pref': ('COINBASE', 'ETH/USD'), 'decimals': 18},
+                      'DAI': {'exchange_books': [('COINBASE', 'DAI/USD')], 'implied_pref': ('COINBASE', 'DAI/USD'), 'constant_rate': 'PREF_INSIDE', 'decimals': 18}
                       }
 
 EXCHANGE_FEES = {'BINANCE':.00075, 'COINBASE':.002, 'GEMINI':.001}
@@ -19,6 +20,10 @@ def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
     maker_asset_pricing_data = asset_pricing_data[maker_asset]
     taker_asset_pricing_data = asset_pricing_data[taker_asset]
     order_books = []
+    if maker_asset == 'WETH':
+        maker_asset = 'ETH'
+    if taker_asset == 'WETH':
+        taker_asset = 'ETH'
     implied = True
     if maker_size:
         maker_size = float(maker_size)
@@ -329,4 +334,21 @@ def calculate_fee(fee_asset):
     else:
         pseudo_quote = calculate_quote('ETH', fee_asset, gas_fee, None)
         return round(pseudo_quote['taker_size'], 15)
+
+
+def convert_to_base_units(asset, quantity):
+    return round(quantity*10**asset_pricing_data[asset]['decimals'])
+
+
+def format_quote(taker_asset, maker_asset, quote_info):
+    return {'maker_size': convert_to_base_units(maker_asset, quote_info['maker_size']),
+            'taker_size': convert_to_base_units(taker_asset, quote_info['taker_size'])}
+
+
+def convert_to_trading_units(asset, quantity):
+    if quantity:
+        return float(quantity)/(10**asset_pricing_data[asset]['decimals'])
+    else:
+        return quantity
+
 
