@@ -4,14 +4,13 @@ import (
 	"context"
 	"math/big"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
-
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 )
 
 // GetAllowance implements grpc.HotWalletServer
