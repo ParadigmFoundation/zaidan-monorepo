@@ -25,8 +25,6 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
         maker_asset = asset_address_config[request.maker_asset]
         taker_asset = asset_address_config[request.taker_asset]
-        print(maker_asset)
-        print(taker_asset)
 
         trading_maker_size = convert_to_trading_units(maker_asset, request.maker_size)
         trading_taker_size = convert_to_trading_units(taker_asset, request.taker_size)
