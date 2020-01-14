@@ -3,6 +3,7 @@ package log
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -15,7 +16,8 @@ func TestBugSnag(t *testing.T) {
 		"ticker": "BTC/USD",
 		"number": 1,
 	}).WithError(err).Error(err)
-	select {}
+
+	<-time.After(10 * time.Second)
 }
 
 func newError(str string) error {
