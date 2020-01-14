@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"math/big"
+	"time"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,27 +13,16 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 )
 
-// Transfer implements grpc.HotWalletServer
-func (hw *HotWallet) Transfer(ctx context.Context, req *grpc.TransferRequest) (*grpc.TransferResponse, error) {
-	token := common.HexToAddress(req.TokenAddress)
+// TransferEther implements grpc.HotWalletServer
+func (hw *HotWallet) TransferEther(ctx context.Context, req *grpc.TransferRequest) (*grpc.TransferResponse, error) {
 	to := common.HexToAddress(req.ToAddress)
-
 	amount, ok := new(big.Int).SetString(req.Amount, 10)
 	if !ok {
 		return nil, status.Error(codes.InvalidArgument, "unable to parse transfer amount")
 	}
 
-	if token == zrx.NULL_ADDRESS {
-		return hw.transferEther(ctx, to, amount)
-	} else {
-		return nil, status.Error(codes.Unimplemented, "token transfers not supported yet")
-	}
-}
-
-func (hw *HotWallet) transferEther(ctx context.Context, to common.Address, amount *big.Int) (*grpc.TransferResponse, error) {
 	nonce, err := hw.provider.Nonce(ctx, hw.makerAddress)
 	if err != nil {
 		return nil, err
@@ -55,5 +45,26 @@ func (hw *HotWallet) transferEther(ctx context.Context, to common.Address, amoun
 
 	return &grpc.TransferResponse{
 		TransactionHash: tx.Hash().Hex(),
+	}, nil
+}
+
+// TransferToken implements grpc.HotWalletServer
+func (hw *HotWallet) TransferToken(ctx context.Context, req *grpc.TransferRequest) (*grpc.TransferResponse, error) {
+	to := common.HexToAddress(req.ToAddress)
+	token := common.HexToAddress(req.TokenAddress)
+
+	value, ok := new(big.Int).SetString(req.Amount, 10)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "invalid number value for 'amount'")
+	}
+
+	tx, err := hw.tokenManager.Transfer(token, to, value)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.TransferResponse{
+		TransactionHash: tx.Hash().Hex(),
+		SubmittedAt:     time.Now().Unix(),
 	}, nil
 }
