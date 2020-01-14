@@ -4,6 +4,8 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -17,4 +19,9 @@ func TestMaxUint256(t *testing.T) {
 	require.True(t, ok)
 
 	assert.Equal(t, 0, knownMax.Cmp(MAX_UINT256))
+}
+
+func TestNullAddress(t *testing.T) {
+	knownNull := common.HexToAddress("")
+	assert.Equal(t, knownNull, NULL_ADDRESS)
 }
