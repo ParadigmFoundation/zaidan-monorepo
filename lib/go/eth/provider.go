@@ -67,7 +67,7 @@ func (pvr *Provider) AccountAt(path accounts.DerivationPath) (accounts.Account, 
 
 // SignText signs a personal message with account if available.
 func (pvr *Provider) SignText(account accounts.Account, text []byte) ([]byte, error) {
-	if err := pvr.hasAccountOrErr(account); err != nil {
+	if _, err := pvr.GetAccount(account.Address); err != nil {
 		return nil, err
 	}
 
@@ -76,7 +76,7 @@ func (pvr *Provider) SignText(account accounts.Account, text []byte) ([]byte, er
 
 // SignData signs arbitrary typed data of type mimeType with account.
 func (pvr *Provider) SignData(account accounts.Account, mimeType string, data []byte) ([]byte, error) {
-	if err := pvr.hasAccountOrErr(account); err != nil {
+	if _, err := pvr.GetAccount(account.Address); err != nil {
 		return nil, err
 	}
 
@@ -85,7 +85,7 @@ func (pvr *Provider) SignData(account accounts.Account, mimeType string, data []
 
 // SignTx signs a transaction with the specified account.
 func (pvr *Provider) SignTx(ctx context.Context, account accounts.Account, tx *types.Transaction) (*types.Transaction, error) {
-	if err := pvr.hasAccountOrErr(account); err != nil {
+	if _, err := pvr.GetAccount(account.Address); err != nil {
 		return nil, err
 	}
 
@@ -100,11 +100,9 @@ func (pvr *Provider) SignTx(ctx context.Context, account accounts.Account, tx *t
 // Primarily taken from: https://github.com/0xProject/0x-mesh/blob/bd3060d3efaab759913c4de2152c2ef4e5940301/ethereum/signer/sign.go
 // EthSign implements zeroex.Signer
 func (pvr *Provider) EthSign(message []byte, signerAddress common.Address) (*signer.ECSignature, error) {
-	var acct accounts.Account
-	for _, account := range pvr.hw.Accounts() {
-		if account.Address == signerAddress {
-			acct = account
-		}
+	acct, err := pvr.GetAccount(signerAddress)
+	if err != nil {
+		return nil, err
 	}
 
 	if acct.Address != signerAddress {
@@ -176,7 +174,10 @@ func (pvr *Provider) ChainID(ctx context.Context) (id *big.Int, err error) {
 
 // CanSignWithAddress returns true if the provider can sign with the given address
 func (pvr *Provider) CanSignWithAddress(addr common.Address) bool {
-	return pvr.hasAccount(accounts.Account{Address: addr})
+	if _, err := pvr.GetAccount(addr); err != nil {
+		return false
+	}
+	return true
 }
 
 // GetAccount fetches the account object for a given address, errors if not present
@@ -186,42 +187,8 @@ func (pvr *Provider) GetAccount(addr common.Address) (accounts.Account, error) {
 			return acct, nil
 		}
 	}
-	return accounts.Account{}, fmt.Errorf("unsupported address, no pinned account for: %s", addr.Hex())
+	return accounts.Account{}, fmt.Errorf("unsupported address; no pinned account for: %s", addr.Hex())
 }
-
-// returns false if account not supported by provider
-func (pvr *Provider) hasAccount(acct accounts.Account) bool {
-	for _, account := range pvr.Accounts() {
-		if account.Address == acct.Address {
-			return true
-		}
-	}
-	return false
-}
-
-// returns error if account doesn't exist
-func (pvr *Provider) hasAccountOrErr(acct accounts.Account) error {
-	if !pvr.hasAccount(acct) {
-		return fmt.Errorf("unsupported account: %s", acct.Address)
-	}
-	return nil
-}
-
-// returns error if TX nonce does not match what it should
-/*
-func (pvr *Provider) ensureNonce(ctx context.Context, acct accounts.Account, tx *types.Transaction) error {
-	nonce, err := pvr.Nonce(ctx, acct)
-	if err != nil {
-		return err
-	}
-
-	if nonce != tx.Nonce() {
-		return fmt.Errorf("invalid nonce: expected (%d) got (%d)", nonce, tx.Nonce())
-	}
-
-	return nil
-}
-*/
 
 // FROM: https://github.com/ethereum/go-ethereum/blob/master/crypto/signature_nocgo.go
 //

@@ -3,7 +3,6 @@ package eth
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -17,8 +16,9 @@ type ERC20TokenManager struct {
 }
 
 // NewERC20TokenManager creates a new manager with provider, where account is the signer. Adds tokens if provided.
-func NewERC20TokenManager(provider *Provider, account accounts.Account, tokens []common.Address) (*ERC20TokenManager, error) {
-	if err := provider.hasAccountOrErr(account); err != nil {
+func NewERC20TokenManager(provider *Provider, addr common.Address, tokens []common.Address) (*ERC20TokenManager, error) {
+	account, err := provider.GetAccount(addr)
+	if err != nil {
 		return nil, err
 	}
 

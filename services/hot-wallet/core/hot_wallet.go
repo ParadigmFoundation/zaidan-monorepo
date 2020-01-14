@@ -54,7 +54,7 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		return nil, err
 	}
 
-	mgr, err := eth.NewERC20TokenManager(provider, acct, nil)
+	mgr, err := eth.NewERC20TokenManager(provider, acct.Address, nil)
 	if err != nil {
 		return nil, err
 	}
