@@ -23,8 +23,6 @@ def test_fully_implied_price():
     assert pricing_utils.calculate_quote('ZRX', 'LINK', 50, None) == {'maker_size': 50, 'taker_size': 7.7889447236180915}
 
 
-#test_direct_price()
-#test_fixed_rate_price()
-#test_fully_implied_price()
-
-print(pricing_utils.calculate_quote('ETH', 'DAI', 1, None))
+test_direct_price()
+test_fixed_rate_price()
+test_fully_implied_price()

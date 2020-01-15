@@ -27,7 +27,7 @@ class OutOfDateError(DealerCacheError):
     ''' Signifies a record is out-of-date according to specified parameters. '''
 
 
-class TestDealerCache():
+class OBM_Interface():
     '''
     Abstraction over a Redis database for dealer quotes and orders.
     Provides compression/encoding for storing structured data in redis.
@@ -41,6 +41,12 @@ class TestDealerCache():
     unhedged_positions = {}
 
     channel = grpc.insecure_channel(OBM_CHANNEL)
+
+    env = 'LIVE'
+
+    def __int__(self, unit_test=False):
+        if unit_test:
+            self.env = 'PLACEHOLDER'
 
 
     def set_order_book(self, exchange: str, symbol: str, side: str, levels: list) -> None:
@@ -69,7 +75,7 @@ class TestDealerCache():
         self.db.set(base_key, compressed_book)
         self.db.set(timestamp_key, str(updated_timestamp))
 
-    def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20, env='PROD') -> list:
+    def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20) -> list:
         '''
         Fetch and decode an order book from the cache by exchage/size/side.
         If the book is out-of-date according to the max_age parameter, an
@@ -84,7 +90,7 @@ class TestDealerCache():
             symbol = 'DAI/USDC'
 
         # record call time to use for expiration check
-        if env == 'TEST':
+        if self.env == 'PLACEHOLDER':
             placeholder_book = {}
             if symbol == 'ZRX/ETH':
                 placeholder_book['bids'] = [[.0098, 100], [.0097, 200], [.0096, 300]]
@@ -92,7 +98,7 @@ class TestDealerCache():
             elif symbol == 'ZRX/USD':
                 placeholder_book['bids'] = [[.29, 100], [.28, 200], [.27, 300]]
                 placeholder_book['asks'] = [[.31, 100], [.32, 200], [.33, 300]]
-            elif symbol == 'DAI/USD':
+            elif symbol == 'DAI/USDC':
                 placeholder_book['bids'] = [[1.001, 100], [1.002, 200], [1.003, 300]]
                 placeholder_book['asks'] = [[1.003, 100], [1.006, 200], [1.007, 300]]
             elif symbol == 'ETH/USD':
