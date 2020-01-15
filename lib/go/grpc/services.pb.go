@@ -26,34 +26,38 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("services.proto", fileDescriptor_8e16ccb8c5307b32) }
 
 var fileDescriptor_8e16ccb8c5307b32 = []byte{
-	// 423 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0x5f, 0x6e, 0xd3, 0x40,
-	0x10, 0xc6, 0x65, 0x04, 0xfd, 0x33, 0x41, 0xd4, 0xd9, 0xb6, 0xa8, 0x4d, 0xef, 0xb0, 0x46, 0x46,
-	0x48, 0x14, 0x78, 0xc1, 0x51, 0x64, 0x84, 0x54, 0x21, 0x4a, 0x51, 0x24, 0xde, 0x36, 0xce, 0xc4,
-	0x8e, 0x6c, 0xbc, 0x66, 0x77, 0x0c, 0xe4, 0x91, 0xf3, 0x70, 0x04, 0xee, 0xc0, 0x99, 0x50, 0xd6,
-	0xbb, 0xb1, 0x1d, 0xa2, 0x20, 0xde, 0x66, 0xbe, 0x99, 0xdf, 0xe7, 0xf5, 0xce, 0x0e, 0x3c, 0xd2,
-	0xa8, 0xbe, 0x2e, 0x13, 0xd4, 0xbc, 0x52, 0x92, 0xe4, 0xe8, 0x2a, 0x95, 0x32, 0x2d, 0x30, 0x30,
-	0xd9, 0xac, 0x5e, 0x04, 0xf8, 0xb9, 0xa2, 0x95, 0x2d, 0x0e, 0x68, 0x55, 0xb9, 0xce, 0xf0, 0x87,
-	0x07, 0xfe, 0x3b, 0x35, 0x47, 0x15, 0x49, 0x99, 0xdf, 0x88, 0x52, 0xa4, 0xa8, 0x58, 0x08, 0xc7,
-	0x1b, 0x8d, 0x0d, 0xf9, 0x26, 0xbe, 0xc5, 0x2f, 0x35, 0x6a, 0x1a, 0xb1, 0xae, 0xa4, 0x2b, 0x59,
-	0x6a, 0x64, 0xd7, 0x70, 0xf8, 0xb1, 0x9a, 0x0b, 0x42, 0xcd, 0x2e, 0xda, 0xb2, 0x95, 0xf6, 0x80,
-	0x4f, 0xbc, 0xf0, 0x97, 0x07, 0x0f, 0x6e, 0x44, 0x8e, 0x8a, 0x05, 0x70, 0x14, 0x23, 0xbd, 0xaf,
-	0x25, 0x21, 0xf3, 0xb9, 0x0b, 0x1d, 0x3d, 0xec, 0x28, 0xf6, 0xab, 0xcf, 0x00, 0xc6, 0x19, 0x26,
-	0x79, 0x83, 0x30, 0xde, 0x26, 0x0e, 0x3a, 0xed, 0x69, 0x16, 0x7b, 0x0b, 0x43, 0x73, 0x90, 0x0f,
-	0x24, 0xa8, 0xd6, 0xcd, 0x21, 0xd9, 0x25, 0xff, 0x4b, 0x73, 0x26, 0xa3, 0x5d, 0xa5, 0xc6, 0x2b,
-	0xfc, 0x79, 0x0f, 0x8e, 0xdf, 0x48, 0x9a, 0x8a, 0xa2, 0x40, 0x62, 0xcf, 0x61, 0x30, 0x56, 0x28,
-	0x08, 0x0d, 0xc0, 0x4e, 0x79, 0x27, 0x73, 0x6e, 0x67, 0x7d, 0xd1, 0x9e, 0xe9, 0x05, 0x9c, 0xc4,
-	0x48, 0x77, 0x32, 0xc7, 0x32, 0x12, 0x85, 0x28, 0x93, 0xf5, 0xff, 0xc4, 0x48, 0x36, 0x69, 0xff,
-	0xa7, 0xab, 0xf5, 0xd8, 0x09, 0x65, 0xa8, 0xfe, 0x9b, 0x7d, 0x09, 0x0f, 0x63, 0xa4, 0xd7, 0x45,
-	0x21, 0xbf, 0x19, 0xf0, 0x8c, 0x77, 0x53, 0x87, 0x9e, 0x6f, 0xa9, 0x16, 0x0e, 0xe0, 0xe8, 0x4e,
-	0x89, 0x52, 0x2f, 0x50, 0x31, 0x9f, 0xbb, 0xb0, 0x1d, 0x58, 0xab, 0xd8, 0xdb, 0xba, 0x85, 0xc3,
-	0xa9, 0xa0, 0x24, 0x43, 0xc5, 0x62, 0xf0, 0x4d, 0x68, 0x7a, 0x44, 0x42, 0x4b, 0x59, 0xb2, 0x0b,
-	0xbe, 0x2d, 0x39, 0xaf, 0xcb, 0x1d, 0x15, 0xeb, 0xf9, 0xdb, 0x83, 0x93, 0xc9, 0xf7, 0x24, 0x13,
-	0x65, 0x8a, 0xee, 0x09, 0x47, 0xfd, 0x39, 0x5c, 0x71, 0xd7, 0xb0, 0x63, 0x1e, 0x8f, 0x37, 0xc5,
-	0xfe, 0x44, 0xae, 0xcd, 0x6b, 0x6c, 0x0c, 0xce, 0xb7, 0x7b, 0xf6, 0xa3, 0xaf, 0x60, 0x30, 0x5e,
-	0x5f, 0x54, 0xf1, 0x0f, 0xba, 0xd9, 0x53, 0xee, 0xf6, 0x94, 0x4f, 0xd6, 0x7b, 0x1a, 0x1d, 0x7c,
-	0xba, 0x9f, 0xaa, 0x2a, 0x99, 0x1d, 0x18, 0xfd, 0xe9, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x76,
-	0xa3, 0x57, 0x55, 0xdf, 0x03, 0x00, 0x00,
+	// 481 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0xd1, 0x6e, 0xd3, 0x30,
+	0x14, 0x86, 0x55, 0x69, 0x6c, 0xec, 0x14, 0x68, 0xeb, 0x6d, 0xd0, 0x75, 0x37, 0xf0, 0x02, 0x2e,
+	0x2a, 0x20, 0x31, 0xe0, 0x86, 0x96, 0xa8, 0x08, 0x69, 0x42, 0x2c, 0x43, 0x93, 0x76, 0x83, 0xbc,
+	0xf4, 0x2c, 0x9d, 0x1a, 0xec, 0x60, 0x9f, 0x40, 0x77, 0xc9, 0x73, 0xf1, 0x06, 0x5c, 0xf0, 0x4c,
+	0xa8, 0x8e, 0xdd, 0x24, 0x6d, 0x28, 0x70, 0xe7, 0xf3, 0xff, 0xfe, 0x7e, 0x1f, 0x25, 0xc7, 0x86,
+	0x7b, 0x06, 0xf5, 0xd7, 0xeb, 0x08, 0x0d, 0x4f, 0xb5, 0x22, 0xd5, 0x3b, 0x8a, 0x95, 0x8a, 0x13,
+	0xec, 0xdb, 0xea, 0x32, 0xbb, 0xea, 0xe3, 0xe7, 0x94, 0x6e, 0x9c, 0xd9, 0xa4, 0x9b, 0xd4, 0xef,
+	0x1c, 0x7c, 0x6f, 0x40, 0xfb, 0xbd, 0x9e, 0xa0, 0x1e, 0x2a, 0x35, 0x3b, 0x11, 0x52, 0xc4, 0xa8,
+	0xd9, 0x00, 0x76, 0x97, 0x1a, 0xeb, 0xf0, 0xe5, 0xfa, 0x14, 0xbf, 0x64, 0x68, 0xa8, 0xc7, 0xca,
+	0x92, 0x49, 0x95, 0x34, 0xc8, 0x8e, 0x61, 0xe7, 0x63, 0x3a, 0x11, 0x84, 0x86, 0x75, 0x0b, 0xdb,
+	0x49, 0x1b, 0xc0, 0xc7, 0x8d, 0xc1, 0x8f, 0x06, 0xdc, 0x3a, 0x11, 0x33, 0xd4, 0xac, 0x0f, 0xb7,
+	0xc7, 0x48, 0x1f, 0x32, 0x45, 0xc8, 0xda, 0xdc, 0x2f, 0x3d, 0xdd, 0x29, 0x29, 0xee, 0xd4, 0x67,
+	0x00, 0xa3, 0x29, 0x46, 0xb3, 0x1c, 0x61, 0xbc, 0x28, 0x3c, 0xb4, 0x57, 0xd1, 0x1c, 0xf6, 0x0e,
+	0x3a, 0xb6, 0x91, 0x90, 0x04, 0x65, 0x26, 0x6f, 0x92, 0x1d, 0xf2, 0x35, 0xcd, 0x87, 0xf4, 0xea,
+	0xac, 0x3c, 0x6b, 0xf0, 0x73, 0x0b, 0x76, 0xdf, 0x2a, 0x3a, 0x17, 0x49, 0x82, 0xc4, 0x9e, 0x43,
+	0x73, 0xa4, 0x51, 0x10, 0x5a, 0x80, 0xed, 0xf1, 0x52, 0xe5, 0xd3, 0xf6, 0xab, 0xa2, 0xeb, 0xe9,
+	0x25, 0xdc, 0x19, 0x23, 0xbd, 0x4e, 0x12, 0xf5, 0x4d, 0xc8, 0x08, 0xd9, 0x3e, 0x2f, 0x97, 0x9e,
+	0x3d, 0x58, 0x51, 0x0b, 0x38, 0xac, 0xc2, 0x61, 0x2d, 0x1c, 0xd6, 0xc1, 0x2f, 0xa0, 0x35, 0x46,
+	0x3a, 0x53, 0x33, 0x94, 0x43, 0x91, 0x58, 0x9e, 0x2d, 0x8e, 0x71, 0x45, 0xf1, 0x25, 0xcb, 0x5a,
+	0x85, 0x0d, 0x68, 0x8a, 0xfa, 0xbf, 0xd9, 0xa7, 0x70, 0xf7, 0x4c, 0x0b, 0x69, 0xae, 0x50, 0xdb,
+	0x00, 0xd6, 0xe6, 0xbe, 0x2e, 0x7e, 0x79, 0xa1, 0xac, 0x53, 0xb6, 0xe5, 0x7f, 0xa3, 0xde, 0x40,
+	0x2b, 0x44, 0x39, 0xb1, 0xba, 0x88, 0xe8, 0x5a, 0x49, 0xf6, 0x80, 0xaf, 0x28, 0x1e, 0xef, 0xae,
+	0x1b, 0x2e, 0xe5, 0x13, 0x74, 0x83, 0x39, 0x46, 0x19, 0xe1, 0x05, 0x6a, 0x15, 0xcc, 0xcb, 0x71,
+	0x0f, 0xf9, 0x9f, 0x2c, 0x9f, 0xfb, 0x68, 0xc3, 0x0e, 0x37, 0x4c, 0xa7, 0xb0, 0x73, 0x2e, 0x28,
+	0x5a, 0x7c, 0x8c, 0x31, 0xb4, 0xed, 0xb2, 0x7c, 0x46, 0x97, 0xaf, 0x4a, 0x3e, 0xfb, 0xb0, 0xc6,
+	0x71, 0x99, 0xbf, 0x1a, 0xd0, 0x0a, 0xe6, 0xd1, 0x54, 0xc8, 0x18, 0xfd, 0x0d, 0x1f, 0x56, 0xc7,
+	0xf4, 0x88, 0xfb, 0x0d, 0x35, 0xe3, 0x7a, 0x7f, 0x69, 0x56, 0x07, 0xf6, 0xd8, 0x5e, 0xd6, 0x3c,
+	0xe0, 0x60, 0x75, 0xcf, 0x66, 0xf4, 0x15, 0x34, 0x47, 0x8b, 0x51, 0x48, 0xfe, 0x42, 0xe7, 0xcf,
+	0x18, 0xf7, 0xcf, 0x18, 0x0f, 0x16, 0xcf, 0xd8, 0x70, 0xfb, 0x62, 0x2b, 0xd6, 0x69, 0x74, 0xb9,
+	0x6d, 0xf5, 0x27, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0x03, 0x25, 0xc7, 0x27, 0xfe, 0x04, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -324,10 +328,14 @@ var _Maker_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type HotWalletClient interface {
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
+	GetAllowance(ctx context.Context, in *GetAllowanceRequest, opts ...grpc.CallOption) (*GetAllowanceResponse, error)
+	SetAllowance(ctx context.Context, in *SetAllowanceRequest, opts ...grpc.CallOption) (*SetAllowanceResponse, error)
 	GetTokenBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
 	GetEtherBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
-	GetAllowance(ctx context.Context, in *GetAllowanceRequest, opts ...grpc.CallOption) (*GetAllowanceResponse, error)
-	Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error)
+	TransferEther(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error)
+	TransferToken(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error)
+	SendTransaction(ctx context.Context, in *SendTransactionRequest, opts ...grpc.CallOption) (*SendTransactionResponse, error)
+	ExecuteZeroExTransaction(ctx context.Context, in *ExecuteZeroExTransactionRequest, opts ...grpc.CallOption) (*ExecuteZeroExTransactionResponse, error)
 }
 
 type hotWalletClient struct {
@@ -341,6 +349,24 @@ func NewHotWalletClient(cc *grpc.ClientConn) HotWalletClient {
 func (c *hotWalletClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
 	out := new(CreateOrderResponse)
 	err := c.cc.Invoke(ctx, "/HotWallet/CreateOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hotWalletClient) GetAllowance(ctx context.Context, in *GetAllowanceRequest, opts ...grpc.CallOption) (*GetAllowanceResponse, error) {
+	out := new(GetAllowanceResponse)
+	err := c.cc.Invoke(ctx, "/HotWallet/GetAllowance", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hotWalletClient) SetAllowance(ctx context.Context, in *SetAllowanceRequest, opts ...grpc.CallOption) (*SetAllowanceResponse, error) {
+	out := new(SetAllowanceResponse)
+	err := c.cc.Invoke(ctx, "/HotWallet/SetAllowance", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -365,18 +391,36 @@ func (c *hotWalletClient) GetEtherBalance(ctx context.Context, in *GetBalanceReq
 	return out, nil
 }
 
-func (c *hotWalletClient) GetAllowance(ctx context.Context, in *GetAllowanceRequest, opts ...grpc.CallOption) (*GetAllowanceResponse, error) {
-	out := new(GetAllowanceResponse)
-	err := c.cc.Invoke(ctx, "/HotWallet/GetAllowance", in, out, opts...)
+func (c *hotWalletClient) TransferEther(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error) {
+	out := new(TransferResponse)
+	err := c.cc.Invoke(ctx, "/HotWallet/TransferEther", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *hotWalletClient) Transfer(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error) {
+func (c *hotWalletClient) TransferToken(ctx context.Context, in *TransferRequest, opts ...grpc.CallOption) (*TransferResponse, error) {
 	out := new(TransferResponse)
-	err := c.cc.Invoke(ctx, "/HotWallet/Transfer", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/HotWallet/TransferToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hotWalletClient) SendTransaction(ctx context.Context, in *SendTransactionRequest, opts ...grpc.CallOption) (*SendTransactionResponse, error) {
+	out := new(SendTransactionResponse)
+	err := c.cc.Invoke(ctx, "/HotWallet/SendTransaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hotWalletClient) ExecuteZeroExTransaction(ctx context.Context, in *ExecuteZeroExTransactionRequest, opts ...grpc.CallOption) (*ExecuteZeroExTransactionResponse, error) {
+	out := new(ExecuteZeroExTransactionResponse)
+	err := c.cc.Invoke(ctx, "/HotWallet/ExecuteZeroExTransaction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -386,10 +430,14 @@ func (c *hotWalletClient) Transfer(ctx context.Context, in *TransferRequest, opt
 // HotWalletServer is the server API for HotWallet service.
 type HotWalletServer interface {
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
+	GetAllowance(context.Context, *GetAllowanceRequest) (*GetAllowanceResponse, error)
+	SetAllowance(context.Context, *SetAllowanceRequest) (*SetAllowanceResponse, error)
 	GetTokenBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
 	GetEtherBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
-	GetAllowance(context.Context, *GetAllowanceRequest) (*GetAllowanceResponse, error)
-	Transfer(context.Context, *TransferRequest) (*TransferResponse, error)
+	TransferEther(context.Context, *TransferRequest) (*TransferResponse, error)
+	TransferToken(context.Context, *TransferRequest) (*TransferResponse, error)
+	SendTransaction(context.Context, *SendTransactionRequest) (*SendTransactionResponse, error)
+	ExecuteZeroExTransaction(context.Context, *ExecuteZeroExTransactionRequest) (*ExecuteZeroExTransactionResponse, error)
 }
 
 func RegisterHotWalletServer(s *grpc.Server, srv HotWalletServer) {
@@ -410,6 +458,42 @@ func _HotWallet_CreateOrder_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HotWalletServer).CreateOrder(ctx, req.(*CreateOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HotWallet_GetAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllowanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotWalletServer).GetAllowance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/HotWallet/GetAllowance",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotWalletServer).GetAllowance(ctx, req.(*GetAllowanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HotWallet_SetAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAllowanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotWalletServer).SetAllowance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/HotWallet/SetAllowance",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotWalletServer).SetAllowance(ctx, req.(*SetAllowanceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -450,38 +534,74 @@ func _HotWallet_GetEtherBalance_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HotWallet_GetAllowance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllowanceRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(HotWalletServer).GetAllowance(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/HotWallet/GetAllowance",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotWalletServer).GetAllowance(ctx, req.(*GetAllowanceRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _HotWallet_Transfer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _HotWallet_TransferEther_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TransferRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HotWalletServer).Transfer(ctx, in)
+		return srv.(HotWalletServer).TransferEther(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/HotWallet/Transfer",
+		FullMethod: "/HotWallet/TransferEther",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HotWalletServer).Transfer(ctx, req.(*TransferRequest))
+		return srv.(HotWalletServer).TransferEther(ctx, req.(*TransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HotWallet_TransferToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransferRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotWalletServer).TransferToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/HotWallet/TransferToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotWalletServer).TransferToken(ctx, req.(*TransferRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HotWallet_SendTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotWalletServer).SendTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/HotWallet/SendTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotWalletServer).SendTransaction(ctx, req.(*SendTransactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HotWallet_ExecuteZeroExTransaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteZeroExTransactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotWalletServer).ExecuteZeroExTransaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/HotWallet/ExecuteZeroExTransaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotWalletServer).ExecuteZeroExTransaction(ctx, req.(*ExecuteZeroExTransactionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -495,6 +615,14 @@ var _HotWallet_serviceDesc = grpc.ServiceDesc{
 			Handler:    _HotWallet_CreateOrder_Handler,
 		},
 		{
+			MethodName: "GetAllowance",
+			Handler:    _HotWallet_GetAllowance_Handler,
+		},
+		{
+			MethodName: "SetAllowance",
+			Handler:    _HotWallet_SetAllowance_Handler,
+		},
+		{
 			MethodName: "GetTokenBalance",
 			Handler:    _HotWallet_GetTokenBalance_Handler,
 		},
@@ -503,12 +631,20 @@ var _HotWallet_serviceDesc = grpc.ServiceDesc{
 			Handler:    _HotWallet_GetEtherBalance_Handler,
 		},
 		{
-			MethodName: "GetAllowance",
-			Handler:    _HotWallet_GetAllowance_Handler,
+			MethodName: "TransferEther",
+			Handler:    _HotWallet_TransferEther_Handler,
 		},
 		{
-			MethodName: "Transfer",
-			Handler:    _HotWallet_Transfer_Handler,
+			MethodName: "TransferToken",
+			Handler:    _HotWallet_TransferToken_Handler,
+		},
+		{
+			MethodName: "SendTransaction",
+			Handler:    _HotWallet_SendTransaction_Handler,
+		},
+		{
+			MethodName: "ExecuteZeroExTransaction",
+			Handler:    _HotWallet_ExecuteZeroExTransaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

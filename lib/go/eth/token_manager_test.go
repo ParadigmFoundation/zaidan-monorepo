@@ -32,7 +32,7 @@ func TestTokenManager(t *testing.T) {
 	require.NoError(t, err, "should be no error creating test token instance")
 
 	acct := provider.Accounts()[0]
-	manager, err := NewERC20TokenManager(provider, acct, nil)
+	manager, err := NewERC20TokenManager(provider, acct.Address, nil)
 	require.NoError(t, err, "should not have error creating token manager")
 
 	bal, err := manager.BalanceOf(ZERO_EX_TEST_TOKEN_ADDRESS, acct.Address)

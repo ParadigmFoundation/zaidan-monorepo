@@ -19,10 +19,14 @@ service Maker {
 
 service HotWallet {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc GetAllowance(GetAllowanceRequest) returns (GetAllowanceResponse);
+    rpc SetAllowance(SetAllowanceRequest) returns (SetAllowanceResponse);
     rpc GetTokenBalance(GetBalanceRequest) returns (GetBalanceResponse);
     rpc GetEtherBalance(GetBalanceRequest) returns (GetBalanceResponse);
-    rpc GetAllowance(GetAllowanceRequest) returns (GetAllowanceResponse);
-    rpc Transfer(TransferRequest) returns (TransferResponse);
+    rpc TransferEther(TransferRequest) returns (TransferResponse);
+    rpc TransferToken(TransferRequest) returns (TransferResponse);
+    rpc SendTransaction(SendTransactionRequest) returns (SendTransactionResponse);
+    rpc ExecuteZeroExTransaction(ExecuteZeroExTransactionRequest) returns (ExecuteZeroExTransactionResponse);
 }
 
 service Watcher {
