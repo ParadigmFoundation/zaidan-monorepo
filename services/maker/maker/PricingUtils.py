@@ -1,4 +1,4 @@
-from TestDealerCache import TestDealerCache
+from OBMInterface import OBMInterface
 from RedisInterface import RedisInterface
 import math
 
@@ -11,10 +11,13 @@ asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINA
 
 EXCHANGE_FEES = {'BINANCE':.00075, 'COINBASE':.002, 'GEMINI':.001}
 PREMIUM = .001
-cache = TestDealerCache()
+cache = OBMInterface()
 redis_interface = RedisInterface()
 
-def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None):
+def calculate_quote(maker_asset, taker_asset, maker_size=None, taker_size=None, test=None):
+
+    if test:
+        cache.set_env('PLACEHOLDER')
     #pending_maker_size = redis_interface.get_pending_quote_size(maker_asset)
     #pending_taker_size = redis_interface.get_pending_quote_size(taker_asset)
     maker_asset_pricing_data = asset_pricing_data[maker_asset]

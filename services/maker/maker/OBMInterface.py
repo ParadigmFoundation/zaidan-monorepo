@@ -27,7 +27,7 @@ class OutOfDateError(DealerCacheError):
     ''' Signifies a record is out-of-date according to specified parameters. '''
 
 
-class OBM_Interface():
+class OBMInterface():
     '''
     Abstraction over a Redis database for dealer quotes and orders.
     Provides compression/encoding for storing structured data in redis.
@@ -47,6 +47,9 @@ class OBM_Interface():
     def __int__(self, unit_test=False):
         if unit_test:
             self.env = 'PLACEHOLDER'
+
+    def set_env(self, env):
+        self.env = env
 
 
     def set_order_book(self, exchange: str, symbol: str, side: str, levels: list) -> None:
@@ -90,6 +93,7 @@ class OBM_Interface():
             symbol = 'DAI/USDC'
 
         # record call time to use for expiration check
+        print(self.env)
         if self.env == 'PLACEHOLDER':
             placeholder_book = {}
             if symbol == 'ZRX/ETH':
