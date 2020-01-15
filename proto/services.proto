@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option go_package = "grpc";
 
+import "google/protobuf/empty.proto";
+
 import "types.proto";
 
 service OrderBookManager {
@@ -25,4 +27,10 @@ service HotWallet {
 
 service Watcher {
     rpc WatchTransaction(WatchTransactionRequest) returns (WatchTransactionResponse);
+}
+
+service ExchangeManager {
+  rpc CreateOrder(ExchangeCreateOrderRequest) returns (ExchangeOrderResponse);
+  rpc GetOrder(ExchangeOrderRequest) returns (ExchangeOrderResponse);
+  rpc CancelOrder(ExchangeOrderRequest) returns (google.protobuf.Empty);
 }
