@@ -6,6 +6,7 @@ import types_pb2
 import services_pb2_grpc
 import grpc
 import json
+import os
 from concurrent import futures
 from PricingUtils import calculate_quote, format_quote, convert_to_trading_units
 from RiskUtils import risk_checks, order_status_update
@@ -18,6 +19,7 @@ VALIDITY_LENGTH = 15000
 
 redis_interface = RedisInterface()
 
+BIND_ADDRESS = os.environ.get("BIND_ADDRESS", "0.0.0.0:50051")
 
 class MakerServicer(services_pb2_grpc.MakerServicer):
 
@@ -75,7 +77,7 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     services_pb2_grpc.add_MakerServicer_to_server(
         MakerServicer(), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port(BIND_ADDRESS)
     server.start()
     print('server started')
     server.wait_for_termination()
