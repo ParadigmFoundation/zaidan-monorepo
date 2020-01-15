@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
 
@@ -25,11 +26,14 @@ type HotWalletConfig struct {
 
 // HotWallet represents a live hot wallet that can interact with the 0x contract system
 type HotWallet struct {
-	provider  *eth.Provider
-	zrxHelper *zrx.ZeroExHelper
+	provider     *eth.Provider
+	zrxHelper    *zrx.ZeroExHelper
+	tokenManager *eth.ERC20TokenManager
 
 	makerAddress  common.Address
 	senderAddress common.Address
+
+	senderTransactor *bind.TransactOpts
 
 	logger log.Logger
 }
@@ -45,12 +49,34 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		return nil, fmt.Errorf("unable to sign with maker or sender address")
 	}
 
+	acct, err := provider.GetAccount(cfg.MakerAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	mgr, err := eth.NewERC20TokenManager(provider, acct.Address, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	senderAcct, err := provider.GetAccount(cfg.SenderAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	senderKey, err := provider.Wallet().PrivateKey(senderAcct)
+	if err != nil {
+		return nil, err
+	}
+
 	hw := &HotWallet{
-		provider:      provider,
-		zrxHelper:     zrxHelper,
-		makerAddress:  cfg.MakerAddress,
-		senderAddress: cfg.SenderAddress,
-		logger:        log.New(context.Background()),
+		provider:         provider,
+		zrxHelper:        zrxHelper,
+		tokenManager:     mgr,
+		makerAddress:     cfg.MakerAddress,
+		senderAddress:    cfg.SenderAddress,
+		senderTransactor: bind.NewKeyedTransactor(senderKey),
+		logger:           log.New(context.Background()),
 	}
 
 	return hw, nil
