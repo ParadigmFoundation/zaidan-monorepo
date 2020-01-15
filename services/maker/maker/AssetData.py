@@ -1,5 +1,6 @@
 import os
 import json
+
 ASSET_CONFIG_FILE = os.environ.get('ASSET_CONFIG_FILE', 'asset_config.json')
 
 class AssetData():
