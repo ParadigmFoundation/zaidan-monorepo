@@ -40,7 +40,8 @@ class OBMInterface():
     unhedged_position_key = "UNHEDGED_POSITION"
     unhedged_positions = {}
 
-    channel = grpc.insecure_channel(OBM_CHANNEL)
+    obm_channel = grpc.insecure_channel(OBM_CHANNEL)
+    obm_stub = OrderBookManagerStub(obm_channel)
 
     env = 'LIVE'
 
@@ -115,15 +116,12 @@ class OBMInterface():
             return placeholder_book[side]
 
         else:
-            # Connect to the OBM server
-
-            stub = OrderBookManagerStub(self.channel)
 
             # Build the request
             req = OrderBookRequest(exchange=exchange.lower(), symbol=symbol)
 
             # Call the server
-            response = stub.OrderBook(req)
+            response = self.obm_stub.OrderBook(req)
             if side == 'bids':
 
                 return [[x.price, x.quantity] for x in response.bids]
