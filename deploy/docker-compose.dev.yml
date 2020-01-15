@@ -4,17 +4,33 @@ services:
   dealer:
     depends_on:
       - db
+    command: ["--maker", "maker:8000", "--hw", "hwd:8000"]
+    ports:
+      - 8000:8000
 
   hwd:
     restart: always
-    command: ["--eth", "ws://eth:8545"]
+    command: ["--eth", "ws://eth:8545", "--bind", "hwd:8000"]
     depends_on:
       - eth
+
+  obm:
+    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC", "--bind", "0.0.0.0:8001"]
 
   db:
     image: postgres
 
+  maker:
+    environment: 
+      - REDIS_HOST=redis
+      - OBM_CHANNEL=obm:8001
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+
   eth:
     image: gcr.io/zaidan-eth-net/0x-snapshot:v3
     ports:
-      - 8545
+      - 8545:8545
