@@ -35,12 +35,12 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 	ctx, cancelFunc := context.WithCancel(ctx)
 	logger := log.New(ctx)
 
-	makerConn, err := grpc.DialContext(ctx, cfg.MakerBindAddress)
+	makerConn, err := grpc.DialContext(ctx, cfg.MakerBindAddress, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
 
-	hwConn, err := grpc.DialContext(ctx, cfg.HotWalletBindAddress)
+	hwConn, err := grpc.DialContext(ctx, cfg.HotWalletBindAddress, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
