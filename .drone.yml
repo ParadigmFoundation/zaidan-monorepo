@@ -4,7 +4,7 @@ type: docker
 name: default
 
 steps:
-- name: test
+- name: go-test
   image: golang:1.13
   depends_on: ["clone"]
   volumes:
@@ -15,7 +15,7 @@ steps:
   commands:
     - make ci
 
-- name: lint
+- name: go-lint
   image: golangci/golangci-lint:v1.21.0
   depends_on: ["clone"]
   volumes:
@@ -28,6 +28,14 @@ steps:
   commands:
     - make lint
 
+- name: maker-test
+  image: python:stretch
+  depends_on: ["clone"]
+  commands:
+    - cd services/maker
+    - pip install -r requirements.txt
+    - python -m pytest .
+  
 services:
 - name: 0x-snapshot
   pull: always
