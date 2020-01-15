@@ -2,8 +2,9 @@ package core
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+
+	"github.com/gogo/protobuf/jsonpb"
 
 	"google.golang.org/grpc"
 
@@ -59,28 +60,16 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) err
 		return err
 	}
 
-	// todo: remove
-	str, err := json.Marshal(res)
+	str, err := new(jsonpb.Marshaler).MarshalToString(req)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(string(str))
-
-	makerAssetAddress, err := d.getAssetAddress(req.MakerAsset)
-	if err != nil {
-		return err
-	}
-
-	takerAssetAddress, err := d.getAssetAddress(req.TakerAsset)
-	if err != nil {
-		return err
-	}
+	fmt.Println(str)
 
 	orderReq := &types.CreateOrderRequest{
-		TakerAddress:          req.TakerAddress,
-		MakerAssetAddress:     makerAssetAddress,
-		TakerAssetAddress:     takerAssetAddress,
+		TakerAddress:          req.TakerAsset,
+		MakerAssetAddress:     res.MakerAsset,
+		TakerAssetAddress:     res.TakerAsset,
 		MakerAssetAmount:      res.MakerSize,
 		TakerAssetAmount:      res.TakerSize,
 		ExpirationTimeSeconds: res.Expiration,
@@ -91,15 +80,11 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) err
 		return err
 	}
 
-	obts, err := json.Marshal(order)
+	str, err = new(jsonpb.Marshaler).MarshalToString(order)
 	if err != nil {
 		return err
 	}
+	fmt.Println(str)
 
-	fmt.Println(string(obts))
 	return nil
-}
-
-func (d *Dealer) getAssetAddress(ticker string) (string, error) {
-	return "", nil
 }

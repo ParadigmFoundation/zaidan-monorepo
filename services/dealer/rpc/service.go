@@ -1,8 +1,16 @@
 package rpc
 
-type Service struct{}
+import (
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+)
+
+type Service struct {
+	dealer *core.Dealer
+}
 
 // NewService creates a new Dealer JSONRPC service
-func NewService() (*Service, error) {
-	return &Service{}, nil
+func NewService(dealer *core.Dealer) (*Service, error) {
+	return &Service{
+		dealer: dealer,
+	}, nil
 }
