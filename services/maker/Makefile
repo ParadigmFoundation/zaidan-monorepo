@@ -6,3 +6,6 @@ include ../../rules/rules.mk
 
 ci:
 	echo "skipping non-go tests"
+
+lint:
+	echo "not linting for now (FIXME)"
