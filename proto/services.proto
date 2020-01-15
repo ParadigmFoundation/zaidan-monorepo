@@ -36,5 +36,6 @@ service Watcher {
 service ExchangeManager {
   rpc CreateOrder(ExchangeCreateOrderRequest) returns (ExchangeOrderResponse);
   rpc GetOrder(ExchangeOrderRequest) returns (ExchangeOrderResponse);
+  rpc GetOpenOrders(google.protobuf.Empty) returns (ExchangeOrderArrayResponse);
   rpc CancelOrder(ExchangeOrderRequest) returns (google.protobuf.Empty);
 }

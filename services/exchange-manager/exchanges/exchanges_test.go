@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 
@@ -42,10 +43,16 @@ func (suite *ExchangesSuite) TestCRUD() {
 	})
 
 	// READ
+	var totalOrders int
 	suite.Block("GetOrder", func(t *testing.T) {
 		found, err := suite.exchange.GetOrder(ctx, order.Id)
 		require.NoError(t, err)
 		require.NotNil(t, found)
+	})
+	suite.Block("GetTotalOrders", func(t *testing.T) {
+		orders, err := suite.exchange.GetOpenOrders(ctx)
+		require.NoError(t, err)
+		totalOrders = len(orders.Array)
 	})
 
 	// DELETE
@@ -56,5 +63,10 @@ func (suite *ExchangesSuite) TestCRUD() {
 	suite.Block("GetOrder", func(t *testing.T) {
 		_, err := suite.exchange.GetOrder(ctx, order.Id)
 		require.Error(t, err)
+	})
+	suite.Block("GetTotalOrders", func(t *testing.T) {
+		orders, err := suite.exchange.GetOpenOrders(ctx)
+		require.NoError(t, err)
+		assert.Len(t, orders.Array, totalOrders-1)
 	})
 }

@@ -80,9 +80,16 @@ func (srv *Server) GetOrder(ctx context.Context, req *types.ExchangeOrderRequest
 		return nil, err
 	}
 
-	return &types.ExchangeOrderResponse{
-		Order: order,
-	}, nil
+	return order, nil
+}
+
+func (srv *Server) GetOpenOrders(ctx context.Context, _ *empty.Empty) (*types.ExchangeOrderArrayResponse, error) {
+	ex, err := srv.getExchange(req.Exchange)
+	if err != nil {
+		return nil, err
+	}
+
+	return ex.GetOpenOrders(ctx)
 }
 
 func (srv *Server) CancelOrder(ctx context.Context, req *types.ExchangeOrderRequest) (*empty.Empty, error) {
