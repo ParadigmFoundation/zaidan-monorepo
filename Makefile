@@ -20,5 +20,11 @@ start: ## Start will start the zaidan stack locally in development mode
 		-f ./deploy/docker-compose.dev.yml \
 		up
 
+stop: ## Stop will will the zaidan stack locally in development mode
+	docker-compose \
+		-f ./deploy/docker-compose.yml \
+		-f ./deploy/docker-compose.dev.yml \
+		down -v
+
 %:
 	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) $@ &&) true
