@@ -10,9 +10,9 @@ from concurrent import futures
 from PricingUtils import calculate_quote, format_quote, convert_to_trading_units
 from RiskUtils import risk_checks, order_status_update
 from RedisInterface import RedisInterface
+from AssetData import AssetData
 
-with open('asset_address_config.json') as f:
-    asset_address_config = json.load(f)
+asset_data = AssetData()
 
 VALIDITY_LENGTH = 15000
 
@@ -23,8 +23,8 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
     def GetQuote(self, request, context):
 
-        maker_asset = asset_address_config[request.maker_asset]
-        taker_asset = asset_address_config[request.taker_asset]
+        maker_asset = asset_data.get_ticker_with_address(request.maker_asset)
+        taker_asset = asset_data.get_ticker_with_address(request.taker_asset)
 
         trading_maker_size = convert_to_trading_units(maker_asset, request.maker_size)
         trading_taker_size = convert_to_trading_units(taker_asset, request.taker_size)
