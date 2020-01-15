@@ -282,3 +282,30 @@ message Market {
   QuoteInfo quote_info = 5; // Information about quotes provided on this market (max/min size, etc.)
   map<string, string> metadata = 6; //
 } 
+
+// Exchange Manager
+message ExchangeOrder {
+  string id = 1;
+  string price = 2;
+  string symbol = 3;
+  string amount = 4;
+  enum Side {
+    BUY = 0;
+    SELL = 1;
+  }
+  Side side = 5;
+}
+
+message ExchangeCreateOrderRequest {
+  string exchange = 1;
+  ExchangeOrder order = 2;
+}
+
+message ExchangeOrderRequest {
+  string exchange = 1;
+  string id = 2;
+}
+
+message ExchangeOrderResponse {
+  ExchangeOrder order = 1;
+}
