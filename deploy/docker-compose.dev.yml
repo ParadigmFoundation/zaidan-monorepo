@@ -4,6 +4,8 @@ services:
   dealer:
     depends_on:
       - db
+      - maker
+      - hwd
     command: ["--maker", "maker:8000", "--hw", "hwd:8000"]
     ports:
       - 8000:8000
@@ -24,6 +26,8 @@ services:
     environment: 
       - REDIS_HOST=redis
       - OBM_CHANNEL=obm:8001
+    depends_on:
+      - obm
 
   redis:
     image: redis
