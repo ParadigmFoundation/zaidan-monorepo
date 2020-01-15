@@ -17,13 +17,14 @@ services:
       - eth
 
   obm:
-    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC", "--bind", "0.0.0.0:8001"]
+    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC", "--bind", "0.0.0.0:8000"]
 
   maker:
     restart: always
     environment: 
       - REDIS_HOST=redis
-      - OBM_CHANNEL=obm:8001
+      - OBM_CHANNEL=obm:8000
+      - BIND_ADDRESS=maker:8000
     depends_on:
       - obm
       - redis
