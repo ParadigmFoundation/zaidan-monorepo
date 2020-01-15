@@ -4,16 +4,19 @@ services:
   dealer:
     image: gcr.io/zaidan-io/dealer
     ports:
-      - 8000
+      - 8000:8000
 
   obm:
     image: gcr.io/zaidan-io/obm
-    command: ["--exchange", "coinbase:BTC/USD"]
+    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC", "--bind", "0.0.0.0:8001"]
     ports:
-      - 8000
+      - 8001:8001
 
   hwd:
     image: gcr.io/zaidan-io/hwd
+
+  maker:
+    image: gcr.io/zaidan-io/maker
 
   watcher:
     image: gcr.io/zaidan-io/watcher
