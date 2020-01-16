@@ -11,7 +11,6 @@ from common_utils import is_valid_uuid, encode_to_bytes, decode_from_bytes
 import redis
 from os import getenv
 
-
 REDIS_HOST = getenv("REDIS_HOST", default="localhost")
 REDIS_PORT = getenv("REDIS_PORT", default="6379")
 REDIS_PASSWORD = getenv("REDIS_PASSWORD", default=None)
