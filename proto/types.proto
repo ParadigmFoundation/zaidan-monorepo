@@ -44,6 +44,7 @@ message GetQuoteResponse {
     string taker_size = 5;
     string maker_size = 6;
     string fee = 7;
+    int32 status = 8;
 }
 
 message CheckQuoteRequest {
@@ -150,7 +151,7 @@ message WatchTransactionResponse {
 }
 
 // Used to request an ETH or token balance at the current block
-// This message can be used to request ETH balance if token_address is empty
+// If used for ETH balance, token_address is ignored
 message GetBalanceRequest {
     string owner_address = 1;
     string token_address = 2;
@@ -176,6 +177,19 @@ message GetAllowanceResponse {
     string allowance = 4;
 }
 
+message SetAllowanceRequest {
+    string token_address = 1;
+    string allowance = 2; // If empty, will set max allowance (2^256 - 1)
+}
+
+message SetAllowanceResponse {
+    string owner_address = 1;
+    string token_address = 2;
+    string proxy_address = 3;
+    string allowance = 4;
+    string transaction_hash = 5;
+}
+
 message TransferRequest {
     string to_address = 1;
     string token_address = 2;
@@ -184,6 +198,34 @@ message TransferRequest {
 
 message TransferResponse {
     string transaction_hash = 1;
+    int64 submitted_at = 2;
+}
+
+message SendTransactionRequest {
+    string to_address = 1;        // the contract or address to send the transaction to
+    string gas_price = 2;         // gas price for tx in wei (set automatically if null)
+    uint64 gas_limit = 3;         // gas limit for tx in gas units (set automatically if null)
+    string value = 4;             // amount of ETH to include in TX (set to 0 if null)
+    bytes data = 5;               // contract code, call data, or TX payload 
+}
+
+message SendTransactionResponse {
+   string transaction_hash = 1;  // submitted transaction hash
+   int64 sent_at = 2;            // UNIX timestamp at which transaction added to mempool
+}
+
+message ExecuteZeroExTransactionRequest {
+    string salt = 1;
+    string expiration_time_seconds = 2;
+    string gas_price = 3;
+    string signer_address = 4;
+    bytes data = 5;
+    bytes signature = 6;
+}
+
+message ExecuteZeroExTransactionResponse {
+    string transaction_hash = 1;
+    int64 submitted_at = 2;
 }
 
 // Dealer
@@ -241,3 +283,30 @@ message Market {
   QuoteInfo quote_info = 5; // Information about quotes provided on this market (max/min size, etc.)
   map<string, string> metadata = 6; //
 } 
+
+// Exchange Manager
+message ExchangeOrder {
+  string id = 1;
+  string price = 2;
+  string symbol = 3;
+  string amount = 4;
+  enum Side {
+    BUY = 0;
+    SELL = 1;
+  }
+  Side side = 5;
+}
+
+message ExchangeCreateOrderRequest {
+  string exchange = 1;
+  ExchangeOrder order = 2;
+}
+
+message ExchangeOrderRequest {
+  string exchange = 1;
+  string id = 2;
+}
+
+message ExchangeOrderResponse {
+  ExchangeOrder order = 1;
+}

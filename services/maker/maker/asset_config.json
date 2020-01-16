@@ -1,0 +1,64 @@
+{
+  "assets": [
+    {
+      "symbol": "ZRX",
+      "address": "0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c",
+      "decimals": 18,
+      "pricing_data" : {
+        "exchange_books": [
+          {
+            "exchange": "COINBASE",
+            "book": "ZRX/USD"
+          },
+          {
+            "exchange": "BINANCE",
+            "book": "ZRX/ETH"
+          }
+        ],
+        "implied_pref": {
+            "exchange": "COINBASE",
+            "book": "ZRX/USD"
+        }
+      }
+    },
+    {
+      "symbol": "WETH",
+      "address": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082",
+      "decimals": 18,
+      "pricing_data" : {
+        "exchange_books": [
+          {
+            "exchange": "COINBASE",
+            "book": "ETH/USD"
+          },
+          {
+            "exchange": "BINANCE",
+            "book": "ETH/USDT"
+          }
+        ],
+        "implied_pref": {
+            "exchange": "COINBASE",
+            "book": "ETH/USD"
+        }
+      }
+    },
+    {
+      "symbol": "DAI",
+      "address": "0x34d402f14d58e001d8efbe6585051bf9706aa064",
+      "decimals": 18,
+      "pricing_data" : {
+        "exchange_books": [
+          {
+            "exchange": "COINBASE",
+            "book": "DAI/USD"
+          }
+        ],
+        "implied_pref": {
+            "exchange": "COINBASE",
+            "book": "DAI/USD"
+        },
+        "constant_rate": "PREF_INSIDE"
+      }
+    }
+  ]
+}

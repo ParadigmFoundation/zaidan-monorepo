@@ -2,6 +2,8 @@ syntax = "proto3";
 
 option go_package = "grpc";
 
+import "google/protobuf/empty.proto";
+
 import "types.proto";
 
 service OrderBookManager {
@@ -20,12 +22,22 @@ service TransactionStatus {
 
 service HotWallet {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc GetAllowance(GetAllowanceRequest) returns (GetAllowanceResponse);
+    rpc SetAllowance(SetAllowanceRequest) returns (SetAllowanceResponse);
     rpc GetTokenBalance(GetBalanceRequest) returns (GetBalanceResponse);
     rpc GetEtherBalance(GetBalanceRequest) returns (GetBalanceResponse);
-    rpc GetAllowance(GetAllowanceRequest) returns (GetAllowanceResponse);
-    rpc Transfer(TransferRequest) returns (TransferResponse);
+    rpc TransferEther(TransferRequest) returns (TransferResponse);
+    rpc TransferToken(TransferRequest) returns (TransferResponse);
+    rpc SendTransaction(SendTransactionRequest) returns (SendTransactionResponse);
+    rpc ExecuteZeroExTransaction(ExecuteZeroExTransactionRequest) returns (ExecuteZeroExTransactionResponse);
 }
 
 service Watcher {
     rpc WatchTransaction(WatchTransactionRequest) returns (WatchTransactionResponse);
+}
+
+service ExchangeManager {
+  rpc CreateOrder(ExchangeCreateOrderRequest) returns (ExchangeOrderResponse);
+  rpc GetOrder(ExchangeOrderRequest) returns (ExchangeOrderResponse);
+  rpc CancelOrder(ExchangeOrderRequest) returns (google.protobuf.Empty);
 }
