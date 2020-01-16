@@ -23,29 +23,13 @@ class RedisInterface():
     def __init__(self) -> None:
         self.redis_database = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
 
-    def set_pending_quote_size(self, asset: str, size: float) -> None:
+    def _set_pending_quote_size(self, asset: str, size: float) -> None:
         self.redis_database.set(asset + '_pending_quote_size', str(size))
 
-    def get_pending_quote_size(self, asset: str) -> float:
-        result = self.redis_database.get(asset + '_pending_quote_size')
-        if result:
-            return float(result)
-        else:
-            self.set_pending_quote_size(asset + '_pending_quote_size', '0')
-            return 0.0
-
-    def set_pending_order_size(self, asset: str, size: float) -> None:
+    def _set_pending_order_size(self, asset: str, size: float) -> None:
         self.redis_database.set(asset + '_pending_order_size', str(size))
 
-    def get_pending_order_size(self, asset: str) -> float:
-        result = self.redis_database.get(asset + '_pending_order_size')
-        if result:
-            return float(result)
-        else:
-            self.set_pending_order_size(asset + '_pending_order_size', '0')
-            return 0.0
-
-    def set_quote(self, quote_id:str, quote, status=0):
+    def _set_quote(self, quote_id:str, quote, status=0):
 
         if not is_valid_uuid(quote_id):
             raise ValueError("invalid quote ID", quote_id)
@@ -55,7 +39,7 @@ class RedisInterface():
         mark_compressed = encode_to_bytes(order_mark)
         self.redis_database.hset(self.order_marks_key, quote_id, mark_compressed)
 
-    def update_quote_status(self, quote_id, new_status):
+    def _update_quote_status(self, quote_id, new_status):
 
         if not is_valid_uuid(quote_id):
             raise ValueError("invalid quote ID", quote_id)
@@ -66,6 +50,22 @@ class RedisInterface():
         order_mark['status'] = new_status
         new_mark_raw = encode_to_bytes(order_mark)
         self.redis_database.hset(self.order_marks_key, quote_id, new_mark_raw)
+
+    def get_pending_quote_size(self, asset: str) -> float:
+        result = self.redis_database.get(asset + '_pending_quote_size')
+        if result:
+            return float(result)
+        else:
+            self._set_pending_quote_size(asset + '_pending_quote_size', '0')
+            return 0.0
+
+    def get_pending_order_size(self, asset: str) -> float:
+        result = self.redis_database.get(asset + '_pending_order_size')
+        if result:
+            return float(result)
+        else:
+            self._set_pending_order_size(asset + '_pending_order_size', '0')
+            return 0.0
 
     def get_quote(self, quote_id):
 
@@ -79,25 +79,25 @@ class RedisInterface():
 
     def add_quote(self, quote_id, quote):
         curr = self.get_pending_quote_size(quote['maker_asset'])
-        self.set_pending_quote_size(quote['maker_asset'], curr + quote['maker_size'])
-        self.set_quote(quote_id, quote)
+        self._set_pending_quote_size(quote['maker_asset'], curr + quote['maker_size'])
+        self._set_quote(quote_id, quote)
 
     def fill_quote(self, quote_id):
         quote = self.get_quote(quote_id)
         curr = self.get_pending_quote_size(quote['maker_asset'])
-        self.set_pending_quote_size(quote['maker_asset'], curr - quote['maker_size'])
+        self._set_pending_quote_size(quote['maker_asset'], curr - quote['maker_size'])
         curr = self.get_pending_order_size(quote['maker_asset'])
-        self.set_pending_order_size(quote['maker_asset'], curr + quote['maker_size'])
-        self.update_quote_status(quote_id, 1)
+        self._set_pending_order_size(quote['maker_asset'], curr + quote['maker_size'])
+        self._update_quote_status(quote_id, 1)
 
     def filled_order(self, quote_id):
         quote = self.get_quote(quote_id)
         curr = self.get_pending_order_size(quote['maker_asset'])
-        self.set_pending_order_size(quote['maker_asset'], curr - quote['maker_size'])
-        self.update_quote_status(quote_id, 2)
+        self._set_pending_order_size(quote['maker_asset'], curr - quote['maker_size'])
+        self._update_quote_status(quote_id, 2)
 
     def failed_order(self, quote_id):
         quote = self.get_quote(quote_id)
         curr = self.get_pending_order_size(quote['maker_asset'])
-        self.set_pending_order_size(quote['maker_asset'], curr - quote['maker_size'])
-        self.update_quote_status(quote_id, 3)
+        self._set_pending_order_size(quote['maker_asset'], curr - quote['maker_size'])
+        self._update_quote_status(quote_id, 3)
