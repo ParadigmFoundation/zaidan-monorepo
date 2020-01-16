@@ -1,14 +1,31 @@
 package rpc
 
 import (
+	"bytes"
 	"context"
+	"fmt"
+
+	"github.com/gogo/protobuf/jsonpb"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *string, takerSize *string, takerAddress *string, includeOrder *bool) error {
+type getQuoteResponse struct {
+	*grpc.Quote
+}
+
+func (gcr *getQuoteResponse) MarshalJSON() ([]byte, error) {
+	buf := new(bytes.Buffer)
+	if err := new(jsonpb.Marshaler).Marshal(buf, gcr.Quote); err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
+func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *string, takerSize *string, takerAddress *string, includeOrder *bool) (*getQuoteResponse, error) {
 	// var inclOrder bool
 	// if includeOrder == nil {
 	// 	inclOrder = true
@@ -25,9 +42,9 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 
 	var makerAmount, takerAmount string
 	if makerSize == nil && takerSize == nil {
-		return ErrInvalidParameters
+		return nil, ErrInvalidParameters
 	} else if makerSize != nil && takerSize != nil {
-		return ErrInvalidParameters
+		return nil, ErrInvalidParameters
 	} else if makerSize != nil {
 		makerAmount = *makerSize
 	} else if takerSize != nil {
@@ -42,9 +59,18 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		TakerAddress: taker.Hex(),
 	}
 
-	if err := svc.dealer.FetchQuote(context.Background(), req); err != nil {
-		return err
+	quote, err := svc.dealer.FetchQuote(context.Background(), req)
+	if err != nil {
+		return nil, err
 	}
 
-	return ErrTemporaryRestriction
+	res := &getQuoteResponse{quote}
+
+	bts, err := res.MarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println(string(bts))
+	return res, nil
 }

@@ -2,12 +2,11 @@ package core
 
 import (
 	"context"
-	"fmt"
-
-	"github.com/gogo/protobuf/jsonpb"
+	"time"
 
 	"google.golang.org/grpc"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/log"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -18,12 +17,16 @@ import (
 type DealerConfig struct {
 	MakerBindAddress     string
 	HotWalletBindAddress string
+
+	OrderDuration int64 // the number of seconds order should be valid for after initial quote is provided
 }
 
 // Dealer is the core dealer service that interacts with other services
 type Dealer struct {
 	makerClient types.MakerClient
 	hwClient    types.HotWalletClient
+
+	orderDuration int64
 
 	db         store.Store
 	cancelFunc context.CancelFunc
@@ -46,25 +49,21 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 	}
 
 	return &Dealer{
-		makerClient: types.NewMakerClient(makerConn),
-		hwClient:    types.NewHotWalletClient(hwConn),
-		cancelFunc:  cancelFunc,
-		logger:      logger,
+		makerClient:   types.NewMakerClient(makerConn),
+		hwClient:      types.NewHotWalletClient(hwConn),
+		cancelFunc:    cancelFunc,
+		orderDuration: cfg.OrderDuration,
+		logger:        logger,
 	}, nil
 }
 
 // @todo: hrharder - should eventually return types.Quote
-func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) error {
+func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
+	now := time.Now()
 	res, err := d.makerClient.GetQuote(ctx, req)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	str, err := new(jsonpb.Marshaler).MarshalToString(req)
-	if err != nil {
-		return err
-	}
-	fmt.Println(str)
 
 	orderReq := &types.CreateOrderRequest{
 		TakerAddress:          req.TakerAsset,
@@ -72,19 +71,26 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) err
 		TakerAssetAddress:     res.TakerAsset,
 		MakerAssetAmount:      res.MakerSize,
 		TakerAssetAmount:      res.TakerSize,
-		ExpirationTimeSeconds: res.Expiration,
+		ExpirationTimeSeconds: now.Unix() + d.orderDuration,
 	}
 
-	order, err := d.hwClient.CreateOrder(ctx, orderReq)
+	orderRes, err := d.hwClient.CreateOrder(ctx, orderReq)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	str, err = new(jsonpb.Marshaler).MarshalToString(order)
-	if err != nil {
-		return err
+	quote := &types.Quote{
+		QuoteId:           res.QuoteId,
+		MakerAssetAddress: res.MakerAsset,
+		TakerAssetAddress: res.TakerAsset,
+		MakerAssetSize:    res.MakerSize,
+		TakerAssetSize:    res.TakerSize,
+		Expiration:        res.Expiration,
+		ServerTime:        now.UnixNano() / 1e6, // conversion from nanoseconds to milliseconds = ns / 1e6
+		OrderHash:         hexutil.Encode(orderRes.Hash),
+		Order:             orderRes.Order,
+		FillTx:            hexutil.Encode(orderRes.FillTxData),
 	}
-	fmt.Println(str)
 
-	return nil
+	return quote, nil
 }
