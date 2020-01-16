@@ -42,7 +42,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	_ = dealer
 
 	server := gethrpc.NewServer()
 	service, err := rpc.NewService(dealer)
