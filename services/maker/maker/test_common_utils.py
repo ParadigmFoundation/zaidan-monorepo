@@ -1,7 +1,6 @@
+import unittest
 from uuid import uuid4
 from common_utils import is_valid_uuid, encode_to_bytes, decode_from_bytes
-
-import unittest
 
 class CommonUtilsTest(unittest.TestCase):
 
