@@ -20,6 +20,7 @@ require (
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/miguelmota/go-ethereum-hdwallet v0.0.0-20191015012459-abf3d7f7f00c
 	github.com/multiformats/go-multiaddr-dns v0.2.0 // indirect
+	github.com/sirupsen/logrus v1.4.0
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413
 	google.golang.org/grpc v1.23.1
