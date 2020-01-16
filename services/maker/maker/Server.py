@@ -10,7 +10,7 @@ import os
 from concurrent import futures
 from PricingUtils import calculate_quote, format_quote, convert_to_trading_units
 from RiskUtils import risk_checks, order_status_update
-from RedisInterface import RedisInterface
+from redis_interface import RedisInterface
 from AssetData import AssetData
 
 asset_data = AssetData()

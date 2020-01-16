@@ -1,4 +1,4 @@
-from RedisInterface import RedisInterface
+from redis_interface import RedisInterface
 from PricingUtils import calculate_quote
 
 MAX_PENDING_QUOTE_SIZE = {'ZRX': 1000, 'WETH': 10, 'DAI': 1000}

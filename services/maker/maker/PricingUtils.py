@@ -1,5 +1,5 @@
 from OBMInterface import OBMInterface
-from RedisInterface import RedisInterface
+from redis_interface import RedisInterface
 import math
 
 asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')], 'implied_pref': ('COINBASE', 'ZRX/USD'), 'decimals': 18},
