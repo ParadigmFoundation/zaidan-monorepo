@@ -122,7 +122,7 @@ func (g *Gemini) CreateOrder(ctx context.Context, order *types.ExchangeOrder) er
 	return nil
 }
 
-func (g *Gemini) GetOrder(ctx context.Context, id string) (*types.ExchangeOrder, error) {
+func (g *Gemini) GetOrder(ctx context.Context, id string) (*types.ExchangeOrderResponse, error) {
 	req := map[string]interface{}{
 		"order_id": id,
 	}
@@ -135,7 +135,25 @@ func (g *Gemini) GetOrder(ctx context.Context, id string) (*types.ExchangeOrder,
 		return nil, errors.New("Order was cancelled")
 	}
 
-	return &types.ExchangeOrder{}, nil
+	return g.NewOrderResponse(resp)
+}
+
+func (g *Gemini) GetOpenOrders(ctx context.Context) (*types.ExchangeOrderArrayResponse, error) {
+	var resp []*GeminiOrder
+	if err := g.Post(ctx, "orders", nil, &resp); err != nil {
+		return nil, err
+	}
+
+	var orders = &types.ExchangeOrderArrayResponse{}
+	for _, item := range resp {
+		order, err := g.NewOrderResponse(item)
+		if err != nil {
+			return nil, err
+		}
+		orders.Array = append(orders.Array, order)
+	}
+
+	return orders, nil
 }
 
 func (g *Gemini) CancelOrder(ctx context.Context, id string) (*empty.Empty, error) {
@@ -151,4 +169,36 @@ func (g *Gemini) CancelOrder(ctx context.Context, id string) (*empty.Empty, erro
 	return nil, nil
 }
 
+func (g *Gemini) NewOrderResponse(order *GeminiOrder) (*types.ExchangeOrderResponse, error) {
+	infoBytes, err := json.Marshal(order)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &types.ExchangeOrderResponse{
+		Order: &types.ExchangeOrder{
+			Id:     fmt.Sprintf("%d", order.ID),
+			Price:  fmt.Sprintf("%f", order.Price),
+			Symbol: g.fromSymbol(order.Symbol),
+			Amount: fmt.Sprintf("%f", order.OriginalAmount),
+			Side:   SideFromString(order.Side),
+		},
+		Status: &types.ExchangeOrderStatus{
+			Timestamp: order.Timestamp,
+			Filled:    fmt.Sprintf("%f", order.ExecutedAmount),
+			Info:      infoBytes,
+		},
+	}
+	return resp, nil
+}
+
 func (g *Gemini) toSymbol(s string) string { return strings.ToLower(strings.Replace(s, "/", "", 1)) }
+
+func (g *Gemini) fromSymbol(s string) string {
+	if len(s) < 3 {
+		return s
+	}
+
+	sym := s[:3] + "/" + s[3:]
+	return strings.ToUpper(sym)
+}
