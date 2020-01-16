@@ -78,15 +78,6 @@ func (cb *Coinbase) CancelOrder(ctx context.Context, id string) (*empty.Empty, e
 
 // NewOrderResponse converts a coinbase Order type into our type
 func (cb *Coinbase) NewOrderResponse(order *coinbasepro.Order) (*types.ExchangeOrderResponse, error) {
-	// Convert the side
-	var side types.ExchangeOrder_Side
-	switch order.Side {
-	case "buy":
-		side = types.ExchangeOrder_BUY
-	case "sell":
-		side = types.ExchangeOrder_SELL
-	}
-
 	// encode original response
 	infoBytes, err := json.Marshal(order)
 	if err != nil {
@@ -95,10 +86,11 @@ func (cb *Coinbase) NewOrderResponse(order *coinbasepro.Order) (*types.ExchangeO
 
 	return &types.ExchangeOrderResponse{
 		Order: &types.ExchangeOrder{
+			Id:     order.ID,
 			Price:  order.Price,
 			Symbol: cb.toSym(order.ProductID),
 			Amount: order.Size,
-			Side:   side,
+			Side:   SideFromString(order.Side),
 		},
 		Status: &types.ExchangeOrderStatus{
 			Timestamp: order.CreatedAt.Time().Unix(),

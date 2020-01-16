@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -154,7 +153,6 @@ func (g *Gemini) GetOpenOrders(ctx context.Context) (*types.ExchangeOrderArrayRe
 		orders.Array = append(orders.Array, order)
 	}
 
-	log.Printf("orders = %+v\n", orders)
 	return orders, nil
 }
 
@@ -183,6 +181,7 @@ func (g *Gemini) NewOrderResponse(order *GeminiOrder) (*types.ExchangeOrderRespo
 			Price:  fmt.Sprintf("%f", order.Price),
 			Symbol: g.fromSymbol(order.Symbol),
 			Amount: fmt.Sprintf("%f", order.OriginalAmount),
+			Side:   SideFromString(order.Side),
 		},
 		Status: &types.ExchangeOrderStatus{
 			Timestamp: order.Timestamp,
