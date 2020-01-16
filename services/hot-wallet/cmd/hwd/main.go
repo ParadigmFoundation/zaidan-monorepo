@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/spf13/pflag"
 
@@ -15,6 +16,7 @@ type config struct {
 	mnemonic  string
 	bind      string
 	maxReqLen int
+	timeout   int64
 
 	makerIndex  uint32
 	senderIndex uint32
@@ -28,10 +30,11 @@ func main() {
 	pflag.IntVarP(&cfg.maxReqLen, "max-request-length", "l", 16384, "set the max request length (in bytes) used by the order validator")
 	pflag.Uint32VarP(&cfg.makerIndex, "maker-index", "M", 0, "set the index of the maker account for 0x orders")
 	pflag.Uint32VarP(&cfg.senderIndex, "sender-index", "S", 1, "set the index of the maker account for 0x orders")
+	pflag.Int64VarP(&cfg.timeout, "timeout-seconds", "t", 5, "set the timeout for connection to the Ethereum JSONRPC provider")
 	pflag.Parse()
 
 	deriver := eth.NewBaseDeriver()
-	provider, err := eth.NewProvider(cfg.ethurl, cfg.mnemonic, deriver.Base())
+	provider, err := eth.NewProvider(cfg.ethurl, cfg.mnemonic, deriver.Base(), time.Duration(cfg.timeout)*time.Second)
 	if err != nil {
 		log.Fatal(err)
 	}
