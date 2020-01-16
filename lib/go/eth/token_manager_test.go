@@ -2,7 +2,6 @@ package eth
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -25,7 +24,7 @@ func TestTokenManager(t *testing.T) {
 	}
 
 	// setup provider test instance
-	provider, err := NewProvider(cfg.Ethurl, cfg.Mnemonic, hdwallet.DefaultBaseDerivationPath, 1*time.Second)
+	provider, err := NewProvider(cfg.Ethurl, cfg.Mnemonic, hdwallet.DefaultBaseDerivationPath)
 	require.NoError(t, err, "should have no error creating new provider")
 
 	// test token instance

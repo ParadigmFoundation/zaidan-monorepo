@@ -5,14 +5,12 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
-	"time"
 
 	"github.com/0xProject/0x-mesh/ethereum/signer"
 
 	"golang.org/x/crypto/sha3"
 
 	"github.com/btcsuite/btcd/btcec"
-	tcpPortWait "github.com/nuveo/tcp-port-wait"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/common"
@@ -29,17 +27,7 @@ type Provider struct {
 }
 
 // NewProvider creates a new signing provider with a mnemonic and derivation path.
-func NewProvider(ethurl string, mnemonic string, path accounts.DerivationPath, timeout time.Duration) (*Provider, error) {
-	port := &tcpPortWait.Port{timeout}
-	ret, err := port.Check(ethurl)
-	if err != nil {
-		return nil, err
-	}
-
-	if !ret {
-		return nil, fmt.Errorf("unable to connect to Ethereum JSONRPC on: %s", ethurl)
-	}
-
+func NewProvider(ethurl string, mnemonic string, path accounts.DerivationPath) (*Provider, error) {
 	client, err := ethclient.Dial(ethurl)
 	if err != nil {
 		return nil, err
@@ -62,8 +50,8 @@ func NewProvider(ethurl string, mnemonic string, path accounts.DerivationPath, t
 }
 
 // NewProviderWithDefaultPath creates a new provider with the default base derivation path
-func NewProviderWithDefaultPath(ethurl string, mnemonic string, timeout time.Duration) (*Provider, error) {
-	return NewProvider(ethurl, mnemonic, accounts.DefaultBaseDerivationPath, timeout)
+func NewProviderWithDefaultPath(ethurl string, mnemonic string) (*Provider, error) {
+	return NewProvider(ethurl, mnemonic, accounts.DefaultBaseDerivationPath)
 }
 
 // Client returns a pointer to the underlying Ethereum client

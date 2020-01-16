@@ -35,7 +35,7 @@ func TestProvider(t *testing.T) {
 	}
 
 	// setup provider test instance
-	provider, err := NewProvider(cfg.Ethurl, cfg.Mnemonic, TestAccountPath_A, 1*time.Second)
+	provider, err := NewProvider(cfg.Ethurl, cfg.Mnemonic, TestAccountPath_A)
 	require.NoError(t, err, "should have no error creating new provider")
 
 	// run test runners
