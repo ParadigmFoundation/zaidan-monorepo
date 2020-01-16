@@ -44,6 +44,7 @@ message GetQuoteResponse {
     string taker_size = 5;
     string maker_size = 6;
     string fee = 7;
+    int32 status = 8;
 }
 
 message CheckQuoteRequest {

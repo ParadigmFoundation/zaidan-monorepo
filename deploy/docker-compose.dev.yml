@@ -11,10 +11,24 @@ services:
     depends_on:
       - eth
 
+  maker:
+    restart: always
+    depends_on:
+      - obm
+    environment:
+      REDIS_HOST: redis
+    ports:
+      - 50051:50051
+
   db:
     image: postgres
 
   eth:
     image: gcr.io/zaidan-eth-net/0x-snapshot:v3
     ports:
-      - 8545
+      - 8545:8545
+  
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
