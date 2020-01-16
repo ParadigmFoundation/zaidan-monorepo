@@ -14,7 +14,7 @@ service Maker {
   rpc CheckQuote(CheckQuoteRequest) returns (CheckQuoteResponse);
 }
 
-service OrderStatus {
+service TransactionStatus {
     rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse);
 }
 
