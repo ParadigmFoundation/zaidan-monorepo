@@ -82,8 +82,8 @@ func (s *Store) CreateTrade(t *types.Trade) error {
 			:transaction_hash,
 			:taker_address,
 			:timestamp,
-			:maker_asset_ticker,
-			:taker_asset_ticker,
+			:maker_asset_address,
+			:taker_asset_address,
 			:maker_asset_amount,
 			:taker_asset_amount
 		);
@@ -109,10 +109,10 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 		_, err := tx.Exec(
 			`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
 			q.QuoteId,
-			q.MakerAssetTicker,
-			q.TakerAssetTicker,
+			q.MakerAssetAddress,
+			q.TakerAssetAddress,
 			q.MakerAssetSize,
-			q.QuoteAssetSize,
+			q.TakerAssetSize,
 			q.Expiration,
 			q.ServerTime,
 			q.OrderHash,
@@ -132,10 +132,10 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 	stmt := `
 		SELECT
 		  q.quote_id
-		, q.maker_asset_ticker
-		, q.taker_asset_ticker
+		, q.maker_asset_address
+		, q.taker_asset_address
 		, q.maker_asset_size
-		, q.quote_asset_size
+		, q.taker_asset_size
 		, q.expiration
 		, q.server_time
 		, q.order_hash
@@ -190,7 +190,7 @@ func (s *Store) CreateMarket(mkt *types.Market) error {
 	_, err := s.db.Exec(
 		`INSERT INTO markets VALUES($1, $2, $3, $4, $5, $6)`,
 		mkt.Id,
-		mkt.MarketAssetTicker,
+		mkt.MakerAssetTicker,
 		StringSlice(mkt.TakerAssetTickers),
 		mkt.TradeInfo,
 		mkt.QuoteInfo,
@@ -207,7 +207,7 @@ func (s *Store) GetMarket(id string) (*types.Market, error) {
 
 	err := s.db.QueryRow(stmt, id).Scan(
 		&mkt.Id,
-		&mkt.MarketAssetTicker,
+		&mkt.MakerAssetTicker,
 		&tickers,
 		&mkt.TradeInfo,
 		&mkt.QuoteInfo,
