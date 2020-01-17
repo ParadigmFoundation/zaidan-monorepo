@@ -13,8 +13,5 @@ services:
   maker:
     image: gcr.io/zaidan-io/maker
 
-  maker:
-    image: gcr.io/zaidan-io/maker
-
   watcher:
     image: gcr.io/zaidan-io/watcher
