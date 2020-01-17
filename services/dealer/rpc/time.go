@@ -21,7 +21,7 @@ func (tr *TimeResponse) MarshalJSON() ([]byte, error) {
 // Time implements the dealer_time method
 func (svc *Service) Time(clientTime *int64) *TimeResponse {
 	ts := time.Now().UnixNano() / 1e6 // conversion to ms
-	diff := new(int64)
+	var diff *int64
 
 	// if client has specified their local timestamp, we calculate the difference
 	if clientTime != nil {
