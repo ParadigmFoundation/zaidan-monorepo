@@ -54,7 +54,7 @@ class OBMInterface():
 
 
     def set_order_book(self, exchange: str, symbol: str, side: str, levels: list) -> None:
-        
+
         updated_timestamp = time()
 
         if side not in ('bid', 'ask'):
@@ -77,7 +77,6 @@ class OBMInterface():
             symbol = 'DAI/USDC'
 
         # record call time to use for expiration check
-        print(self.env)
         if self.env == 'PLACEHOLDER':
             placeholder_book = {}
             if symbol == 'ZRX/ETH':
