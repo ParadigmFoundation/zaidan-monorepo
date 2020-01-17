@@ -1,4 +1,4 @@
-from OBMInterface import OBMInterface
+from obm_interface import OBMInterface
 from redis_interface import RedisInterface
 import math
 
@@ -313,8 +313,6 @@ def _get_price_from_book_quote(half_book, size, side):
             if False not in exchange_exhausted.values():
                 exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
                 size = 0
-
-        total_price = 0
 
         return min(exchange_prices.values())*(1 - PREMIUM)
 
