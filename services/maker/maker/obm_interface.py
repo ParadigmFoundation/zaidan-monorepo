@@ -54,15 +54,7 @@ class OBMInterface():
 
 
     def set_order_book(self, exchange: str, symbol: str, side: str, levels: list) -> None:
-        '''
-        Encode, compress, and set an order book.
-        Will also update the coresponding timestamp key for the book.
-        :param exchange: The name of the exchange to set the book for.
-        :param symbol: The currency pair of the book.
-        :param side: The side of the market book represents (bid or ask).
-        :param levels: The nested list of price levels ([[price_level, qty],]).
-        '''
-
+        
         updated_timestamp = time()
 
         if side not in ('bid', 'ask'):
@@ -80,15 +72,6 @@ class OBMInterface():
         self.db.set(timestamp_key, str(updated_timestamp))
 
     def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20) -> list:
-        '''
-        Fetch and decode an order book from the cache by exchage/size/side.
-        If the book is out-of-date according to the max_age parameter, an
-        OutOfDateError is raised. Set a max_age of 0 to skip the age check.
-        :param exchange: The name of the exchange hosting the market.
-        :param symbol: The currency pair (BASE/QUOTE) of the market to get.
-        :param side: The side (bid or ask) of the book to get.
-        :param max_age: The maximum age (in seconds) of the book data.
-        '''
 
         if symbol == 'DAI/USD':
             symbol = 'DAI/USDC'
