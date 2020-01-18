@@ -7,7 +7,7 @@ class AssetData():
 
     address_to_ticker = {}
 
-    def __init__(self):
+    def __init__(self) -> None:
         with open(ASSET_CONFIG_FILE) as f:
             asset_config_f = json.load(f)
             for asset_data in asset_config_f['assets']:
