@@ -2,6 +2,7 @@ package exchanges
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -40,23 +41,63 @@ func (cb *Coinbase) CreateOrder(ctx context.Context, req *types.ExchangeOrder) e
 	return nil
 }
 
-func (cb *Coinbase) GetOrder(ctx context.Context, id string) (*types.ExchangeOrder, error) {
+func (cb *Coinbase) GetOrder(ctx context.Context, id string) (*types.ExchangeOrderResponse, error) {
 	order, err := cb.client.GetOrder(id)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &types.ExchangeOrder{
-		Price:  order.Price,
-		Symbol: cb.toSym(order.ProductID),
-		Amount: order.Size,
-		//	Side:   types.ExchangeOrder_BUY,
+	return cb.NewOrderResponse(&order)
+}
+
+func (cb *Coinbase) GetOpenOrders(ctx context.Context) (*types.ExchangeOrderArrayResponse, error) {
+	res := &types.ExchangeOrderArrayResponse{}
+
+	cursor := cb.client.ListOrders()
+	for cursor.HasMore {
+		var orders []*coinbasepro.Order
+		if err := cursor.NextPage(&orders); err != nil {
+			return nil, err
+		}
+
+		for _, order := range orders {
+			newOrder, err := cb.NewOrderResponse(order)
+			if err != nil {
+				return nil, err
+			}
+			res.Array = append(res.Array, newOrder)
+		}
 	}
-	return resp, nil
+
+	return res, nil
 }
 
 func (cb *Coinbase) CancelOrder(ctx context.Context, id string) (*empty.Empty, error) {
 	return nil, cb.client.CancelOrder(id)
+}
+
+// NewOrderResponse converts a coinbase Order type into our type
+func (cb *Coinbase) NewOrderResponse(order *coinbasepro.Order) (*types.ExchangeOrderResponse, error) {
+	// encode original response
+	infoBytes, err := json.Marshal(order)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.ExchangeOrderResponse{
+		Order: &types.ExchangeOrder{
+			Id:     order.ID,
+			Price:  order.Price,
+			Symbol: cb.toSym(order.ProductID),
+			Amount: order.Size,
+			Side:   SideFromString(order.Side),
+		},
+		Status: &types.ExchangeOrderStatus{
+			Timestamp: order.CreatedAt.Time().Unix(),
+			Filled:    order.FilledSize,
+			Info:      infoBytes,
+		},
+	}, nil
 }
 
 // fromSym convert a symbol to use coinbase notation, this is:

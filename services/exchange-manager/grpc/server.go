@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -80,9 +81,16 @@ func (srv *Server) GetOrder(ctx context.Context, req *types.ExchangeOrderRequest
 		return nil, err
 	}
 
-	return &types.ExchangeOrderResponse{
-		Order: order,
-	}, nil
+	return order, nil
+}
+
+func (srv *Server) GetOpenOrders(ctx context.Context, req *wrappers.StringValue) (*types.ExchangeOrderArrayResponse, error) {
+	ex, err := srv.getExchange(req.String())
+	if err != nil {
+		return nil, err
+	}
+
+	return ex.GetOpenOrders(ctx)
 }
 
 func (srv *Server) CancelOrder(ctx context.Context, req *types.ExchangeOrderRequest) (*empty.Empty, error) {
