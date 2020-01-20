@@ -1,6 +1,4 @@
-import PricingUtils as pricing_utils
-
-
+import pricing_utils
 
 def test_fixed_rate_price():
     assert pricing_utils.calculate_quote('ETH', 'DAI', 1, None, True) == {'maker_size': 1, 'taker_size': 101.202}
