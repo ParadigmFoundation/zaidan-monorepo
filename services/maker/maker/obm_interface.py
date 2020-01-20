@@ -1,37 +1,21 @@
-from sys import path
 from time import time
-
-from redis import Redis
 import grpc
-import json
 from services_pb2_grpc import OrderBookManagerStub
 from types_pb2 import OrderBookRequest
-from base64 import b64encode, b64decode
-from gzip import compress, decompress
-from json import dumps, loads
-from uuid import uuid4, UUID
 import os
 
 OBM_CHANNEL = os.environ.get('OBM_CHANNEL', 'localhost:8000')
 
-
 class DealerCacheError(Exception):
     ''' Signifies an error encountered while interacting with the cache. '''
-
 
 class NotFoundError(DealerCacheError):
     ''' Signifies an error arising when a requested item does not exist. '''
 
-
 class OutOfDateError(DealerCacheError):
     ''' Signifies a record is out-of-date according to specified parameters. '''
 
-
 class OBMInterface():
-    '''
-    Abstraction over a Redis database for dealer quotes and orders.
-    Provides compression/encoding for storing structured data in redis.
-    '''
 
     # redis key for quotes (order mark) hash table
     order_marks_key = "ORDER_MARKS"
@@ -45,13 +29,12 @@ class OBMInterface():
 
     env = 'LIVE'
 
-    def __int__(self, unit_test=False):
+    def __int__(self, unit_test=False) -> None:
         if unit_test:
             self.env = 'PLACEHOLDER'
 
-    def set_env(self, env):
+    def set_env(self, env) -> None:
         self.env = env
-
 
     def set_order_book(self, exchange: str, symbol: str, side: str, levels: list) -> None:
 
