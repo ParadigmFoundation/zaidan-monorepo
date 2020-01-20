@@ -9,6 +9,7 @@ import (
 
 type Exchange interface {
 	CreateOrder(context.Context, *types.ExchangeOrder) error
-	GetOrder(context.Context, string) (*types.ExchangeOrder, error)
+	GetOrder(context.Context, string) (*types.ExchangeOrderResponse, error)
+	GetOpenOrders(context.Context) (*types.ExchangeOrderArrayResponse, error)
 	CancelOrder(context.Context, string) (*empty.Empty, error)
 }
