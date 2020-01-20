@@ -1,5 +1,4 @@
 import unittest
-
 from obm_interface import OBMInterface
 
 class TestOBMInterface(unittest.TestCase):

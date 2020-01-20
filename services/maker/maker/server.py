@@ -7,7 +7,7 @@ import grpc
 import os
 from concurrent import futures
 from pricing_utils import calculate_quote, format_quote, convert_to_trading_units
-from risk_utils import risk_checks, order_status_update
+from risk_utils import RiskUtils
 from redis_interface import RedisInterface
 from asset_data import AssetData
 
@@ -19,6 +19,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
     asset_data = AssetData()
     redis_interface = RedisInterface()
+    risk_utils = RiskUtils()
 
     def GetQuote(self, request: object, context) -> object:
 
@@ -32,7 +33,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
                                      taker_asset, trading_maker_size, trading_taker_size)
         expiry_timestamp = int(math.floor(time.time())) + int(VALIDITY_LENGTH)
 
-        if False not in risk_checks(taker_asset, maker_asset, trading_taker_size, quote_info):
+        if False not in self.risk_utils.risk_checks(taker_asset, maker_asset, trading_taker_size, quote_info):
             quote_id = str(uuid.uuid4())
 
             self.redis_interface.add_quote(quote_id, {'expiration':expiry_timestamp,
@@ -65,7 +66,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
         return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=True, status=200)
 
     def OrderStatusUpdate(self, request:object, context) -> object:
-        order_status_update(request.quote_id, request.status)
+        self.risk_utils.order_status_update(request.quote_id, request.status)
         return types_pb2.OrderStatusUpdateResponse(status=200)
 
 
