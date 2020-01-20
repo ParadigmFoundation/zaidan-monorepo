@@ -17,13 +17,6 @@ class OutOfDateError(DealerCacheError):
 
 class OBMInterface():
 
-    # redis key for quotes (order mark) hash table
-    order_marks_key = "ORDER_MARKS"
-
-    # redis key for per-symbol un-hedged positions hash table
-    unhedged_position_key = "UNHEDGED_POSITION"
-    unhedged_positions = {}
-
     obm_channel = grpc.insecure_channel(OBM_CHANNEL)
     obm_stub = OrderBookManagerStub(obm_channel)
 
