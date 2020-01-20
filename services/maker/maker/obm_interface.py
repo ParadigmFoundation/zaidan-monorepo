@@ -36,24 +36,6 @@ class OBMInterface():
     def set_env(self, env) -> None:
         self.env = env
 
-    def set_order_book(self, exchange: str, symbol: str, side: str, levels: list) -> None:
-
-        updated_timestamp = time()
-
-        if side not in ('bid', 'ask'):
-            raise ValueError('side must be "bid" or "ask"')
-
-        symbols = symbol.split('/')
-        if len(symbols) != 2:
-            raise ValueError('symbol must be BASE_TICKER/QUOTE_TICKER format')
-
-        base_key = f'{symbol.upper()}_{exchange.lower()}_{side}'
-        timestamp_key = f'{base_key}_timestamp'
-
-        compressed_book = encode_to_bytes(levels)
-        self.db.set(base_key, compressed_book)
-        self.db.set(timestamp_key, str(updated_timestamp))
-
     def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20) -> list:
 
         if symbol == 'DAI/USD':
