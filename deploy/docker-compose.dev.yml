@@ -6,7 +6,6 @@ services:
       - db
       - maker
       - hwd
-    command: ["--maker", "maker:8000", "--hw", "hwd:8000"]
     ports:
       - 8000:8000
 
