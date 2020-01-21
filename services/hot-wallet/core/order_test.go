@@ -4,7 +4,6 @@ import (
 	"context"
 	"math/big"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -24,7 +23,7 @@ func testCreateOrder(hw *HotWallet, t *testing.T) {
 		TakerAssetAddress:     zrxAddresses.ZRXToken.Hex(),
 		MakerAssetAmount:      "1234",
 		TakerAssetAmount:      "5678",
-		ExpirationTimeSeconds: time.Now().UnixNano() / 1e6,
+		ExpirationTimeSeconds: 4242,
 	}
 
 	orderRes, err := hw.CreateOrder(context.Background(), testReq)
