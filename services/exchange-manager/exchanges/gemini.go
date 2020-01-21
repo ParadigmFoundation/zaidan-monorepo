@@ -17,6 +17,11 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 )
 
+const (
+	GeminiURL        = "https://api.gemini.com"
+	GeminiSandboxURL = "https://api.sandbox.gemini.com"
+)
+
 type GeminiConf struct {
 	BaseURL    string
 	Key        string
@@ -34,7 +39,7 @@ func NewGemini(cfg GeminiConf) *Gemini {
 		cfg.APIVersion = "v1"
 	}
 	if cfg.BaseURL == "" {
-		cfg.BaseURL = "https://api.gemini.com"
+		cfg.BaseURL = GeminiURL
 	}
 	if !strings.HasSuffix(cfg.BaseURL, "/") {
 		cfg.BaseURL = cfg.BaseURL + "/"
@@ -167,6 +172,14 @@ func (g *Gemini) CancelOrder(ctx context.Context, id string) (*empty.Empty, erro
 	}
 
 	return nil, nil
+}
+
+func (g *Gemini) GetBalances(ctx context.Context) ([]*GeminiBalance, error) {
+	var resp []*GeminiBalance
+	if err := g.Post(ctx, "balances", nil, &resp); err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
 
 func (g *Gemini) NewOrderResponse(order *GeminiOrder) (*types.ExchangeOrderResponse, error) {

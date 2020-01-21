@@ -25,7 +25,16 @@ func (hw *HotWallet) CreateOrder(ctx context.Context, req *grpc.CreateOrderReque
 		return nil, err
 	}
 
-	return &grpc.CreateOrderResponse{Order: grpc.SignedOrderToProto(signedOrder), Hash: orderHash.Bytes()}, nil
+	txData, err := hw.zrxHelper.GetFillOrderCallData(signedOrder.Order, signedOrder.TakerAssetAmount, signedOrder.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.CreateOrderResponse{
+		Order:      grpc.SignedOrderToProto(signedOrder),
+		Hash:       orderHash.Bytes(),
+		FillTxData: txData,
+	}, nil
 }
 
 func (hw *HotWallet) createAndSignOrder(cfg *grpc.CreateOrderRequest) (*zeroex.SignedOrder, error) {
@@ -41,10 +50,6 @@ func (hw *HotWallet) createAndSignOrder(cfg *grpc.CreateOrderRequest) (*zeroex.S
 	if !ok {
 		return nil, fmt.Errorf(`unable to parse "takerAssetAmount"`)
 	}
-	expirationTimeSeconds, ok := new(big.Int).SetString(cfg.ExpirationTimeSeconds, 10)
-	if !ok {
-		return nil, fmt.Errorf(`unable to parse "expirationTimeSeconds"`)
-	}
 
 	order, err := hw.zrxHelper.CreateOrder(
 		hw.makerAddress,
@@ -59,7 +64,7 @@ func (hw *HotWallet) createAndSignOrder(cfg *grpc.CreateOrderRequest) (*zeroex.S
 		big.NewInt(0),
 		zrx.NULL_ADDRESS,
 		zrx.NULL_ADDRESS,
-		expirationTimeSeconds,
+		big.NewInt(cfg.ExpirationTimeSeconds),
 	)
 	if err != nil {
 		return nil, err
