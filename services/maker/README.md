@@ -2,12 +2,10 @@
 
 The maker service is responsible for pricing and risk management.
 
-## Environment
+## Services/Protobuf Code Generation
 
-To run the maker locally, you must set the `PYTHONPATH` environment as follows.
-
-You can run this command from the root-level of the monorepo.
+Generate the necessary protobuf/gRPC code with the following make target.
 
 ```sh
-export PYTHONPATH=$(pwd)/lib/python
+make gen
 ```

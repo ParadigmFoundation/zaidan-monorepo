@@ -1,7 +1,7 @@
 from time import time
 import grpc
-from libgrpc.services_pb2_grpc import OrderBookManagerStub
-from libgrpc.types_pb2 import OrderBookRequest
+from services_pb2_grpc import OrderBookManagerStub
+from types_pb2 import OrderBookRequest
 import os
 
 OBM_CHANNEL = os.environ.get('OBM_CHANNEL', 'localhost:8000')
