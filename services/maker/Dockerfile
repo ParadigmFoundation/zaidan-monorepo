@@ -3,6 +3,7 @@ FROM python:stretch
 WORKDIR /src
 COPY . .
 
+ENV PYTHONPATH=lib/python
 ENV ASSET_CONFIG_FILE=services/maker/maker/asset_config.json
 
 RUN pip install -r services/maker/requirements.txt
