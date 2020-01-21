@@ -21,6 +21,7 @@ steps:
   environment:
     REDIS_HOST: redis
     ASSET_CONFIG_FILE: maker/asset_config.json
+    PYTHONPATH: lib/python
   commands:
     - cd services/maker
     - pip install -r requirements.txt
