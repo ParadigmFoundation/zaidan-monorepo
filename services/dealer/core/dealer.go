@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/0xProject/0x-mesh/zeroex"
@@ -96,6 +97,22 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	return quote, nil
+}
+
+func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequest) error {
+	res, err := d.hwClient.ValidateOrder(ctx, req)
+	if err != nil {
+		return nil
+	}
+
+	if !res.Valid {
+		return fmt.Errorf("fill failed validation: %s", res.Info)
+	}
+	return nil
+}
+
+func (d *Dealer) ExecuteZeroExTransaction(ctx context.Context, req *types.ExecuteZeroExTransactionRequest) (*types.ExecuteZeroExTransactionResponse, error) {
+	return d.hwClient.ExecuteZeroExTransaction(ctx, req)
 }
 
 func (d *Dealer) GetQuote(quoteId string) (*types.Quote, error) {
