@@ -10,7 +10,7 @@ import (
 func TestTime(t *testing.T) {
 	svc := &Service{}
 
-	delay := 50 * time.Microsecond
+	delay := 100 * time.Microsecond
 	refTime := time.Now().UnixNano() / 1e6
 	time.Sleep(delay)
 	gotTime := svc.Time(&refTime)
