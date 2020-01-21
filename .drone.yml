@@ -21,9 +21,9 @@ steps:
   environment:
     REDIS_HOST: redis
     ASSET_CONFIG_FILE: maker/asset_config.json
-    PYTHONPATH: lib/python:$PYTHONPATH
   commands:
     - cd services/maker
+    - export PYTHONPATH="../../lib/python:$PYTHONPATH"
     - pip install -r requirements.txt
     - python -m pytest .
 
