@@ -6,7 +6,7 @@ import services_pb2_grpc
 import grpc
 import os
 from concurrent import futures
-from pricing_utils import calculate_quote, format_quote, convert_to_trading_units
+from pricing_utils import PricingUtils
 from risk_utils import RiskUtils
 from redis_interface import RedisInterface
 from asset_data import AssetData
@@ -20,16 +20,17 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
     asset_data = AssetData()
     redis_interface = RedisInterface()
     risk_utils = RiskUtils()
+    pricing_utils = PricingUtils()
 
     def GetQuote(self, request: object, context) -> object:
 
         maker_asset = self.asset_data.get_ticker_with_address(request.maker_asset)
         taker_asset = self.asset_data.get_ticker_with_address(request.taker_asset)
 
-        trading_maker_size = convert_to_trading_units(maker_asset, request.maker_size)
-        trading_taker_size = convert_to_trading_units(taker_asset, request.taker_size)
+        trading_maker_size = PricingUtils.convert_to_trading_units(maker_asset, request.maker_size)
+        trading_taker_size = PricingUtils.convert_to_trading_units(taker_asset, request.taker_size)
 
-        quote_info = calculate_quote(maker_asset,
+        quote_info = self.pricing_utils.calculate_quote(maker_asset,
                                      taker_asset, trading_maker_size, trading_taker_size)
         expiry_timestamp = int(math.floor(time.time())) + int(VALIDITY_LENGTH)
 
@@ -40,7 +41,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
                                        'taker_asset':request.taker_asset, 'maker_asset':request.maker_asset,
                                        'taker_size':quote_info['taker_size'], 'maker_size':quote_info['maker_size']})
 
-            quote_info = format_quote(taker_asset, maker_asset, quote_info)
+            quote_info = PricingUtils.format_quote(taker_asset, maker_asset, quote_info)
 
             quote = types_pb2.GetQuoteResponse(quote_id=quote_id, expiration=str(expiry_timestamp),
                                                taker_asset=request.taker_asset, maker_asset=request.maker_asset,
