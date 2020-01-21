@@ -11,5 +11,5 @@ lint:
 	echo "not linting for now (FIXME)" 
 
 gen:
-	python -m grpc_tools.protoc -I../../proto --python_out=. --grpc_python_out=. ../../proto/services.proto
-	python -m grpc_tools.protoc -I../../proto --python_out=. --grpc_python_out=. ../../proto/types.proto
+	python -m grpc_tools.protoc -I../../proto --python_out=./maker --grpc_python_out=./maker ../../proto/services.proto
+	python -m grpc_tools.protoc -I../../proto --python_out=./maker --grpc_python_out=./maker ../../proto/types.proto
