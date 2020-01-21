@@ -297,6 +297,12 @@ message ExchangeOrder {
   Side side = 5;
 }
 
+message ExchangeOrderStatus {
+  int64 timestamp = 1;
+  string filled = 2;
+  bytes info = 3; // the original unparsed order structure as is
+}
+
 message ExchangeCreateOrderRequest {
   string exchange = 1;
   ExchangeOrder order = 2;
@@ -309,4 +315,9 @@ message ExchangeOrderRequest {
 
 message ExchangeOrderResponse {
   ExchangeOrder order = 1;
+  ExchangeOrderStatus status = 2;
+}
+
+message ExchangeOrderArrayResponse {
+  repeated ExchangeOrderResponse array = 1;
 }
