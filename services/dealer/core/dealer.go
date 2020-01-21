@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/0xProject/0x-mesh/zeroex"
+
 	"google.golang.org/grpc"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -89,5 +91,27 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		FillTx:            hexutil.Encode(orderRes.FillTxData),
 	}
 
+	if err := d.db.CreateQuote(quote); err != nil {
+		return nil, err
+	}
+
 	return quote, nil
+}
+
+func (d *Dealer) GetQuote(quoteId string) (*types.Quote, error) {
+	return d.db.GetQuote(quoteId)
+}
+
+func (d *Dealer) GetOrder(quoteId string) (*zeroex.SignedOrder, error) {
+	quote, err := d.GetQuote(quoteId)
+	if err != nil {
+		return nil, err
+	}
+
+	order, err := quote.Order.ToZeroExSignedOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	return order, nil
 }
