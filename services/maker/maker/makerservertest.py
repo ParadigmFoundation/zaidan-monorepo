@@ -1,6 +1,6 @@
 import grpc
-from types_pb2_grpc import MakerStub
-from types_pb2 import GetQuoteRequest, CheckQuoteRequest
+from libgrpc.types_pb2_grpc import MakerStub
+from libgrpc.types_pb2 import GetQuoteRequest, CheckQuoteRequest
 
 # Connect to the OBM server
 channel = grpc.insecure_channel('localhost:50051')
