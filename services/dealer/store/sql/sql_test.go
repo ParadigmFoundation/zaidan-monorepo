@@ -25,7 +25,7 @@ func (suite *SQLSuite) TearDownTest() {
 	defer db.Close()
 
 	// wipe
-	for _, t := range []string{"migrations", "assets", "trades", "signed_orders", "quotes", "markets"} {
+	for _, t := range []string{"migrations", "signed_orders", "quotes", "markets"} {
 		_, err := db.Exec("DROP TABLE IF EXISTS " + t)
 		suite.Require().NoError(err)
 	}

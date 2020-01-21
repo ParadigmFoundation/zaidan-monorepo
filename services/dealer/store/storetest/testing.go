@@ -50,78 +50,7 @@ func (suite *Suite) TestQuotes() {
 	})
 
 	suite.Run("NotFound", func() {
-		found, err := suite.Store.GetTrade(uuid.New().String())
-		suite.Assert().Error(err)
-		suite.Assert().Nil(found)
-	})
-}
-
-func (suite *Suite) TestTrades() {
-	obj := &types.Trade{
-		QuoteId:           "quote-id",
-		MarketId:          "mkt-id",
-		OrderHash:         "order-hash",
-		TransactionHash:   "transaction-hash",
-		TakerAddress:      "taker-address",
-		Timestamp:         time.Now().Unix(),
-		MakerAssetAddress: "m/a/t",
-		TakerAssetAddress: "t/a/t",
-		MakerAssetAmount:  "10000000000000000",
-		TakerAssetAmount:  "99999999999999999",
-	}
-	suite.Require().NoError(
-		suite.Store.CreateTrade(obj),
-	)
-
-	suite.Run("Found", func() {
-		found, err := suite.Store.GetTrade(obj.QuoteId)
-		suite.Require().NoError(err)
-		suite.Require().NotNil(found)
-		suite.Assert().True(proto.Equal(obj, found),
-			"\nexpected: %s\ngot:      %s", obj, found,
-		)
-	})
-
-	suite.Run("NotFound", func() {
-		found, err := suite.Store.GetTrade(uuid.New().String())
-		suite.Assert().Error(err)
-		suite.Assert().Nil(found)
-	})
-}
-
-func (suite *Suite) TestAssets() {
-	obj := &types.Asset{
-		Ticker:    "FOO/BAR",
-		Name:      "Foo to Bar",
-		Decimals:  18,
-		NetworkId: 1,
-		Address:   "0xdeadbeef",
-	}
-
-	suite.Require().NoError(
-		suite.Store.CreateAsset(obj),
-	)
-
-	suite.Run("Found", func() {
-		found, err := suite.Store.GetAsset(obj.Ticker)
-		suite.Require().NoError(err)
-		suite.Require().NotNil(found)
-
-		suite.Assert().True(proto.Equal(obj, found),
-			"\nexpected: %s\ngot:      %s", obj, found)
-	})
-
-	suite.Run("FoundByAddress", func() {
-		found, err := suite.Store.GetAssetByAddress(obj.Address)
-		suite.Require().NoError(err)
-		suite.Require().NotNil(found)
-
-		suite.Assert().True(proto.Equal(obj, found),
-			"\nexpected: %s\ngot:      %s", obj, found)
-	})
-
-	suite.Run("NotFound", func() {
-		found, err := suite.Store.GetAsset("XXX/YYY")
+		found, err := suite.Store.GetQuote(uuid.New().String())
 		suite.Assert().Error(err)
 		suite.Assert().Nil(found)
 	})
@@ -129,8 +58,8 @@ func (suite *Suite) TestAssets() {
 
 func (suite *Suite) TestMarkets() {
 	obj := &types.Market{
-		MakerAssetTicker:  "FOO/BAR",
-		TakerAssetTickers: []string{"FOO/BAR", "XXX/YYY"},
+		MakerAssetAddress:   "0xfoo",
+		TakerAssetAddresses: []string{"0xbar", "0xbuzz"},
 		TradeInfo: &types.TradeInfo{
 			ChainId:  123,
 			GasPrice: "210000",
@@ -150,7 +79,7 @@ func (suite *Suite) TestMarkets() {
 	)
 
 	suite.Run("found", func() {
-		found, err := suite.Store.GetMarket(obj.Id)
+		found, err := suite.Store.GetMarket(obj.MakerAssetAddress)
 		suite.Require().NoError(err)
 		suite.Require().NotNil(found)
 
