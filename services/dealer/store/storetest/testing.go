@@ -18,6 +18,7 @@ type Suite struct {
 
 func (suite *Suite) TestQuotes() {
 	obj := &types.Quote{
+		QuoteId:           uuid.New().String(),
 		MakerAssetAddress: "maker-asset-address",
 		TakerAssetAddress: "taker-asset-address",
 		MakerAssetSize:    "maker-asset-size",
