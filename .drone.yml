@@ -20,6 +20,7 @@ steps:
   depends_on: ["clone"]
   environment:
     REDIS_HOST: redis
+    ASSET_CONFIG_FILE: maker/asset_config.json
   commands:
     - cd services/maker
     - pip install -r requirements.txt
