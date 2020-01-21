@@ -2,33 +2,32 @@ package rpc
 
 import (
 	"encoding/json"
-
-	"github.com/levenlabs/golib/timeutil"
+	"time"
 )
 
-// TimeResponse represents the response from the dealer_time endpoint
-type TimeResponse struct {
-	dealerTime float64
+// timeResponse represents the response from the dealer_time endpoint
+type timeResponse struct {
+	dealerTime int64
 
 	// pointer so the default is null instead of 0
-	diff *float64
+	diff *int64
 }
 
 // MarshalJSON implements json.Marshaller. TimeResponse is marshalled as an array
-func (tr *TimeResponse) MarshalJSON() ([]byte, error) {
+func (tr *timeResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal([]interface{}{tr.dealerTime, tr.diff})
 }
 
 // Time implements the dealer_time method
-func (svc *Service) Time(clientTime *float64) *TimeResponse {
-	ts := timeutil.TimestampNow()
-	diff := new(float64)
+func (svc *Service) Time(clientTime *int64) *timeResponse {
+	ts := time.Now().UnixNano() / 1e6 // conversion to ms
+	var diff *int64
 
 	// if client has specified their local timestamp, we calculate the difference
 	if clientTime != nil {
-		tmp := timeutil.TimestampFromFloat64(*clientTime).Time.Sub(ts.Time).Seconds()
+		tmp := ts - *clientTime
 		diff = &tmp
 	}
 
-	return &TimeResponse{dealerTime: ts.Float64(), diff: diff}
+	return &timeResponse{dealerTime: ts, diff: diff}
 }
