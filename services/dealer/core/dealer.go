@@ -28,9 +28,8 @@ type Dealer struct {
 
 	orderDuration int64
 
-	db         store.Store
-	cancelFunc context.CancelFunc
-	logger     log.Logger
+	db     store.Store
+	logger log.Logger
 }
 
 // NewDealer creates a new Dealer given ctx context and cfg configuration
@@ -51,7 +50,6 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 	return &Dealer{
 		makerClient:   types.NewMakerClient(makerConn),
 		hwClient:      types.NewHotWalletClient(hwConn),
-		cancelFunc:    cancelFunc,
 		orderDuration: cfg.OrderDuration,
 		logger:        logger,
 	}, nil

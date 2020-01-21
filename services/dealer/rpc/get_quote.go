@@ -3,7 +3,6 @@ package rpc
 import (
 	"bytes"
 	"context"
-	"fmt"
 
 	"github.com/gogo/protobuf/jsonpb"
 
@@ -65,12 +64,5 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 	}
 
 	res := &getQuoteResponse{quote}
-
-	bts, err := res.MarshalJSON()
-	if err != nil {
-		return nil, err
-	}
-
-	fmt.Println(string(bts))
 	return res, nil
 }
