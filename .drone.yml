@@ -23,7 +23,6 @@ steps:
     ASSET_CONFIG_FILE: maker/asset_config.json
   commands:
     - cd services/maker
-    - export PYTHONPATH="../../lib/python:$PYTHONPATH"
     - pip install -r requirements.txt
     - python -m pytest .
 
