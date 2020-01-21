@@ -34,7 +34,6 @@ type Dealer struct {
 
 // NewDealer creates a new Dealer given ctx context and cfg configuration
 func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
-	ctx, cancelFunc := context.WithCancel(ctx)
 	logger := log.New(ctx)
 
 	makerConn, err := grpc.DialContext(ctx, cfg.MakerBindAddress, grpc.WithInsecure())
