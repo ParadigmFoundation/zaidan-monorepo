@@ -2583,6 +2583,61 @@ func (m *ExchangeOrder) GetSide() ExchangeOrder_Side {
 	return ExchangeOrder_BUY
 }
 
+type ExchangeOrderStatus struct {
+	Timestamp            int64    `protobuf:"varint,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Filled               string   `protobuf:"bytes,2,opt,name=filled,proto3" json:"filled,omitempty"`
+	Info                 []byte   `protobuf:"bytes,3,opt,name=info,proto3" json:"info,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ExchangeOrderStatus) Reset()         { *m = ExchangeOrderStatus{} }
+func (m *ExchangeOrderStatus) String() string { return proto.CompactTextString(m) }
+func (*ExchangeOrderStatus) ProtoMessage()    {}
+func (*ExchangeOrderStatus) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d938547f84707355, []int{39}
+}
+
+func (m *ExchangeOrderStatus) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ExchangeOrderStatus.Unmarshal(m, b)
+}
+func (m *ExchangeOrderStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ExchangeOrderStatus.Marshal(b, m, deterministic)
+}
+func (m *ExchangeOrderStatus) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExchangeOrderStatus.Merge(m, src)
+}
+func (m *ExchangeOrderStatus) XXX_Size() int {
+	return xxx_messageInfo_ExchangeOrderStatus.Size(m)
+}
+func (m *ExchangeOrderStatus) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExchangeOrderStatus.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExchangeOrderStatus proto.InternalMessageInfo
+
+func (m *ExchangeOrderStatus) GetTimestamp() int64 {
+	if m != nil {
+		return m.Timestamp
+	}
+	return 0
+}
+
+func (m *ExchangeOrderStatus) GetFilled() string {
+	if m != nil {
+		return m.Filled
+	}
+	return ""
+}
+
+func (m *ExchangeOrderStatus) GetInfo() []byte {
+	if m != nil {
+		return m.Info
+	}
+	return nil
+}
+
 type ExchangeCreateOrderRequest struct {
 	Exchange             string         `protobuf:"bytes,1,opt,name=exchange,proto3" json:"exchange,omitempty"`
 	Order                *ExchangeOrder `protobuf:"bytes,2,opt,name=order,proto3" json:"order,omitempty"`
@@ -2595,7 +2650,7 @@ func (m *ExchangeCreateOrderRequest) Reset()         { *m = ExchangeCreateOrderR
 func (m *ExchangeCreateOrderRequest) String() string { return proto.CompactTextString(m) }
 func (*ExchangeCreateOrderRequest) ProtoMessage()    {}
 func (*ExchangeCreateOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{39}
+	return fileDescriptor_d938547f84707355, []int{40}
 }
 
 func (m *ExchangeCreateOrderRequest) XXX_Unmarshal(b []byte) error {
@@ -2642,7 +2697,7 @@ func (m *ExchangeOrderRequest) Reset()         { *m = ExchangeOrderRequest{} }
 func (m *ExchangeOrderRequest) String() string { return proto.CompactTextString(m) }
 func (*ExchangeOrderRequest) ProtoMessage()    {}
 func (*ExchangeOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{40}
+	return fileDescriptor_d938547f84707355, []int{41}
 }
 
 func (m *ExchangeOrderRequest) XXX_Unmarshal(b []byte) error {
@@ -2678,17 +2733,18 @@ func (m *ExchangeOrderRequest) GetId() string {
 }
 
 type ExchangeOrderResponse struct {
-	Order                *ExchangeOrder `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
-	XXX_unrecognized     []byte         `json:"-"`
-	XXX_sizecache        int32          `json:"-"`
+	Order                *ExchangeOrder       `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
+	Status               *ExchangeOrderStatus `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
 func (m *ExchangeOrderResponse) Reset()         { *m = ExchangeOrderResponse{} }
 func (m *ExchangeOrderResponse) String() string { return proto.CompactTextString(m) }
 func (*ExchangeOrderResponse) ProtoMessage()    {}
 func (*ExchangeOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{41}
+	return fileDescriptor_d938547f84707355, []int{42}
 }
 
 func (m *ExchangeOrderResponse) XXX_Unmarshal(b []byte) error {
@@ -2712,6 +2768,52 @@ var xxx_messageInfo_ExchangeOrderResponse proto.InternalMessageInfo
 func (m *ExchangeOrderResponse) GetOrder() *ExchangeOrder {
 	if m != nil {
 		return m.Order
+	}
+	return nil
+}
+
+func (m *ExchangeOrderResponse) GetStatus() *ExchangeOrderStatus {
+	if m != nil {
+		return m.Status
+	}
+	return nil
+}
+
+type ExchangeOrderArrayResponse struct {
+	Array                []*ExchangeOrderResponse `protobuf:"bytes,1,rep,name=array,proto3" json:"array,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
+}
+
+func (m *ExchangeOrderArrayResponse) Reset()         { *m = ExchangeOrderArrayResponse{} }
+func (m *ExchangeOrderArrayResponse) String() string { return proto.CompactTextString(m) }
+func (*ExchangeOrderArrayResponse) ProtoMessage()    {}
+func (*ExchangeOrderArrayResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d938547f84707355, []int{43}
+}
+
+func (m *ExchangeOrderArrayResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ExchangeOrderArrayResponse.Unmarshal(m, b)
+}
+func (m *ExchangeOrderArrayResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ExchangeOrderArrayResponse.Marshal(b, m, deterministic)
+}
+func (m *ExchangeOrderArrayResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ExchangeOrderArrayResponse.Merge(m, src)
+}
+func (m *ExchangeOrderArrayResponse) XXX_Size() int {
+	return xxx_messageInfo_ExchangeOrderArrayResponse.Size(m)
+}
+func (m *ExchangeOrderArrayResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ExchangeOrderArrayResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ExchangeOrderArrayResponse proto.InternalMessageInfo
+
+func (m *ExchangeOrderArrayResponse) GetArray() []*ExchangeOrderResponse {
+	if m != nil {
+		return m.Array
 	}
 	return nil
 }
@@ -2758,9 +2860,11 @@ func init() {
 	proto.RegisterType((*Market)(nil), "Market")
 	proto.RegisterMapType((map[string]string)(nil), "Market.MetadataEntry")
 	proto.RegisterType((*ExchangeOrder)(nil), "ExchangeOrder")
+	proto.RegisterType((*ExchangeOrderStatus)(nil), "ExchangeOrderStatus")
 	proto.RegisterType((*ExchangeCreateOrderRequest)(nil), "ExchangeCreateOrderRequest")
 	proto.RegisterType((*ExchangeOrderRequest)(nil), "ExchangeOrderRequest")
 	proto.RegisterType((*ExchangeOrderResponse)(nil), "ExchangeOrderResponse")
+	proto.RegisterType((*ExchangeOrderArrayResponse)(nil), "ExchangeOrderArrayResponse")
 }
 
 func init() { proto.RegisterFile("types.proto", fileDescriptor_d938547f84707355) }
