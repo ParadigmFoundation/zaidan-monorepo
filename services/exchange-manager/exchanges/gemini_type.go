@@ -29,3 +29,11 @@ type GeminiError struct {
 	Reason  string `json:"reason"`
 	Message string `json:"message"`
 }
+
+type GeminiBalance struct {
+	Currency               string `json:"currency"`
+	Amount                 string `json:"amount"`
+	Available              string `json:"available"`
+	AvailableForWithdrawal string `json:"availableForWithdrawal"`
+	Type                   string `json:"type"`
+}

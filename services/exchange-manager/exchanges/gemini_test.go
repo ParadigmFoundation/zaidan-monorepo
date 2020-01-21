@@ -9,7 +9,7 @@ import (
 
 func TestGemini(t *testing.T) {
 	cfg := GeminiConf{
-		BaseURL: "https://api.sandbox.gemini.com",
+		BaseURL: GeminiSandboxURL,
 		Key:     os.Getenv("EM_GEMINI_TEST_KEY"),
 		Secret:  os.Getenv("EM_GEMINI_TEST_SECRET"),
 	}
