@@ -38,7 +38,7 @@ message GetQuoteRequest {
 
 message GetQuoteResponse {
     string quote_id = 1;
-    string expiration = 2;
+    int64 expiration = 2;
     string taker_asset = 3;
     string maker_asset = 4;
     string taker_size = 5;
@@ -128,12 +128,13 @@ message CreateOrderRequest {
     string taker_asset_address = 3;
     string maker_asset_amount = 4;
     string taker_asset_amount = 5;
-    string expiration_time_seconds = 6;
+    int64 expiration_time_seconds = 6;
 }
 
 message CreateOrderResponse {
     SignedOrder order = 1;
     bytes hash = 2;
+    bytes fill_tx_data = 3;
 }
 
 message WatchTransactionRequest {
@@ -231,10 +232,10 @@ message ExecuteZeroExTransactionResponse {
 // Dealer
 message Quote {
   string quote_id = 1; // A UUID (v4) that MUST correspond to this offer only
-  string maker_asset_ticker = 2; //Shorthand ticker of the quote's maker asset (see quotes)
-  string taker_asset_ticker = 3; // Shorthand ticker of the quote's taker asset (see quotes)
+  string maker_asset_address = 2; // Address of the quote's maker asset (see quotes)
+  string taker_asset_address = 3; // Address of the quote's taker asset (see quotes)
   string maker_asset_size = 4; // The quote's maker asset size provided by the dealer (see quotes)
-  string quote_asset_size = 5; // The quote's taker asset size required by the client (see quotes)
+  string taker_asset_size = 5; // The quote's taker asset size required by the client (see quotes)
   int64 expiration = 6; // The UNIX timestamp after which the quote will be rejected for settlement
   int64 server_time = 7; // The UNIX timestamp at which the server generated the quote. Helpful for clock synchronization
   string order_hash = 8; // The 0x-specific order hash, as defined in the v3 specification
@@ -249,8 +250,8 @@ message Trade {
   string transaction_hash = 4; // The Ethereum transaction hash (transaction ID) of fill
   string taker_address = 5; // The Ethereum address of the taker who requested and filled the quote
   int64 timestamp = 6; // The UNIX timestamp the fill was submitted (or mined) at
-  string maker_asset_ticker = 7; // The ticker of the trade's maker asset
-  string taker_asset_ticker = 8; // The ticker of the trade's taker asset
+  string maker_asset_address = 7; // The address of the trade's maker asset
+  string taker_asset_address = 8; // The address of the trade's taker asset
   string maker_asset_amount = 9; // The amount of the maker asset transacted in the trade
   string taker_asset_amount = 10; // The amount of the taker asset transacted in the trade
   SignedOrder order = 11; // The dealer-signed 0x order that corresponds to this offer
@@ -277,7 +278,7 @@ message QuoteInfo {
 
 message Market {
   string id = 1; // An implementation-specific market ID string. MUST be unique for each market
-  string market_asset_ticker = 2; // The shorthand ticker of the markets maker asset (provided by the dealer)
+  string maker_asset_ticker = 2; // The shorthand ticker of the markets maker asset (provided by the dealer)
   repeated string taker_asset_tickers = 3; // An array of shorthand tickers for which quotes are supported
   TradeInfo trade_info = 4; // Information about trade settlement and execution for this market (gas price, etc.)
   QuoteInfo quote_info = 5; // Information about quotes provided on this market (max/min size, etc.)
@@ -297,6 +298,12 @@ message ExchangeOrder {
   Side side = 5;
 }
 
+message ExchangeOrderStatus {
+  int64 timestamp = 1;
+  string filled = 2;
+  bytes info = 3; // the original unparsed order structure as is
+}
+
 message ExchangeCreateOrderRequest {
   string exchange = 1;
   ExchangeOrder order = 2;
@@ -309,4 +316,9 @@ message ExchangeOrderRequest {
 
 message ExchangeOrderResponse {
   ExchangeOrder order = 1;
+  ExchangeOrderStatus status = 2;
+}
+
+message ExchangeOrderArrayResponse {
+  repeated ExchangeOrderResponse array = 1;
 }

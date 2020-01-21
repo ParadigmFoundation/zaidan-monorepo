@@ -4,6 +4,8 @@ go 1.13
 
 require (
 	github.com/ParadigmFoundation/zaidan-monorepo/lib/go v0.0.0-00010101000000-000000000000
+	github.com/davecgh/go-spew v1.1.1
+	github.com/gogo/protobuf v1.1.1
 	github.com/golang/protobuf v1.3.2
 	github.com/google/uuid v1.0.0
 	github.com/peterbourgon/ff v1.7.0

@@ -23,10 +23,10 @@ func (*SQLMigration) Schema() map[string]string {
 		"create-quotes-table": `
 			CREATE TABLE quotes (
 				  "quote_id"           VARCHAR(100)
-				, "maker_asset_ticker" VARCHAR(100)
-				, "taker_asset_ticker" VARCHAR(100)
+				, "maker_asset_address" VARCHAR(100)
+				, "taker_asset_address" VARCHAR(100)
 				, "maker_asset_size"   TEXT
-				, "quote_asset_size"   TEXT
+				, "taker_asset_size"   TEXT
 				, "expiration"         INTEGER
 				, "server_time"        INTEGER
 				, "order_hash"         VARCHAR(100)
@@ -42,8 +42,8 @@ func (*SQLMigration) Schema() map[string]string {
 				, "transaction_hash"   VARCHAR(100)
 				, "taker_address"      VARCHAR(100)
 				, "timestamp"          INTEGER
-				, "maker_asset_ticker" VARCHAR(10)
-				, "taker_asset_ticker" VARCHAR(10)
+				, "maker_asset_address" VARCHAR(10)
+				, "taker_asset_address" VARCHAR(10)
 				, "maker_asset_amount" TEXT
 				, "taker_asset_amount" TEXT
 				, PRIMARY KEY (quote_id)
@@ -70,7 +70,7 @@ func (*SQLMigration) Schema() map[string]string {
 		"create-markets-table": `
 			CREATE TABLE markets (
 				  "id"                  VARCHAR(36)
-				, "market_asset_ticker" VARCHAR(10)
+				, "maker_asset_ticker" VARCHAR(10)
 				, "taker_asset_tickers" TEXT
 				, "trade_info"          TEXT
 				, "quote_info"          TEXT

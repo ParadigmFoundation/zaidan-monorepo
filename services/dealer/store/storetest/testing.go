@@ -18,13 +18,13 @@ type Suite struct {
 
 func (suite *Suite) TestQuotes() {
 	obj := &types.Quote{
-		MakerAssetTicker: "maker-asset-ticker",
-		TakerAssetTicker: "taker-asset-ticker",
-		MakerAssetSize:   "maker-asset-size",
-		QuoteAssetSize:   "quote-asset-size",
-		Expiration:       time.Now().Add(1 * time.Second).Unix(),
-		ServerTime:       time.Now().Unix(),
-		OrderHash:        "order-hash",
+		MakerAssetAddress: "maker-asset-address",
+		TakerAssetAddress: "taker-asset-address",
+		MakerAssetSize:    "maker-asset-size",
+		TakerAssetSize:    "taker-asset-size",
+		Expiration:        time.Now().Add(1 * time.Second).Unix(),
+		ServerTime:        time.Now().Unix(),
+		OrderHash:         "order-hash",
 		Order: &types.SignedOrder{
 			ChainId:         1,
 			ExchangeAddress: "exchange-address",
@@ -58,16 +58,16 @@ func (suite *Suite) TestQuotes() {
 
 func (suite *Suite) TestTrades() {
 	obj := &types.Trade{
-		QuoteId:          "quote-id",
-		MarketId:         "mkt-id",
-		OrderHash:        "order-hash",
-		TransactionHash:  "transaction-hash",
-		TakerAddress:     "taker-address",
-		Timestamp:        time.Now().Unix(),
-		MakerAssetTicker: "m/a/t",
-		TakerAssetTicker: "t/a/t",
-		MakerAssetAmount: "10000000000000000",
-		TakerAssetAmount: "99999999999999999",
+		QuoteId:           "quote-id",
+		MarketId:          "mkt-id",
+		OrderHash:         "order-hash",
+		TransactionHash:   "transaction-hash",
+		TakerAddress:      "taker-address",
+		Timestamp:         time.Now().Unix(),
+		MakerAssetAddress: "m/a/t",
+		TakerAssetAddress: "t/a/t",
+		MakerAssetAmount:  "10000000000000000",
+		TakerAssetAmount:  "99999999999999999",
 	}
 	suite.Require().NoError(
 		suite.Store.CreateTrade(obj),
@@ -129,7 +129,7 @@ func (suite *Suite) TestAssets() {
 
 func (suite *Suite) TestMarkets() {
 	obj := &types.Market{
-		MarketAssetTicker: "FOO/BAR",
+		MakerAssetTicker:  "FOO/BAR",
 		TakerAssetTickers: []string{"FOO/BAR", "XXX/YYY"},
 		TradeInfo: &types.TradeInfo{
 			ChainId:  123,

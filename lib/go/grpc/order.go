@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/0xProject/0x-mesh/zeroex"
 )
@@ -24,11 +25,11 @@ func OrderToProto(order *zeroex.Order) *Order {
 		ChainId:               order.ChainID.Uint64(),
 		ExchangeAddress:       NormalizeAddress(order.ExchangeAddress),
 		MakerAddress:          NormalizeAddress(order.MakerAddress),
-		MakerAssetData:        common.Bytes2Hex(order.MakerAssetData),
+		MakerAssetData:        hexutil.Encode(order.MakerAssetData),
 		MakerAssetAmount:      order.MakerAssetAmount.String(),
 		MakerFee:              order.MakerFee.String(),
 		TakerAddress:          NormalizeAddress(order.TakerAddress),
-		TakerAssetData:        common.Bytes2Hex(order.TakerAssetData),
+		TakerAssetData:        hexutil.Encode(order.TakerAssetData),
 		TakerAssetAmount:      order.TakerAssetAmount.String(),
 		TakerFee:              order.TakerFee.String(),
 		SenderAddress:         NormalizeAddress(order.SenderAddress),
@@ -44,18 +45,18 @@ func SignedOrderToProto(order *zeroex.SignedOrder) *SignedOrder {
 		ChainId:               order.ChainID.Uint64(),
 		ExchangeAddress:       NormalizeAddress(order.ExchangeAddress),
 		MakerAddress:          NormalizeAddress(order.MakerAddress),
-		MakerAssetData:        common.Bytes2Hex(order.MakerAssetData),
+		MakerAssetData:        hexutil.Encode(order.MakerAssetData),
 		MakerAssetAmount:      order.MakerAssetAmount.String(),
 		MakerFee:              order.MakerFee.String(),
 		TakerAddress:          NormalizeAddress(order.TakerAddress),
-		TakerAssetData:        common.Bytes2Hex(order.TakerAssetData),
+		TakerAssetData:        hexutil.Encode(order.TakerAssetData),
 		TakerAssetAmount:      order.TakerAssetAmount.String(),
 		TakerFee:              order.TakerFee.String(),
 		SenderAddress:         NormalizeAddress(order.SenderAddress),
 		FeeRecipientAddress:   NormalizeAddress(order.FeeRecipientAddress),
 		ExpirationTimeSeconds: order.ExpirationTimeSeconds.String(),
 		Salt:                  order.Salt.String(),
-		Signature:             common.Bytes2Hex(order.Signature),
+		Signature:             hexutil.Encode(order.Signature),
 	}
 }
 
