@@ -106,22 +106,6 @@ message SignedOrder {
     string signature = 17;
 }
 
-message SignOrderRequest {
-    Order order = 1;
-}
-
-message SignOrderResponse {
-    SignedOrder signedOrder = 1;
-}
-
-message HashOrderRequest {
-    Order order = 1;
-}
-
-message HashOrderResponse {
-    bytes hash = 1;
-}
-
 message CreateOrderRequest {
     string taker_address = 1;
     string maker_asset_address = 2;
@@ -226,6 +210,16 @@ message ExecuteZeroExTransactionRequest {
 message ExecuteZeroExTransactionResponse {
     string transaction_hash = 1;
     int64 submitted_at = 2;
+}
+
+message ValidateOrderRequest {
+  SignedOrder order = 1;
+  string taker_asset_amount = 2;
+}
+
+message ValidateOrderResponse {
+  bool valid = 1;
+  string info = 2;
 }
 
 // Dealer
