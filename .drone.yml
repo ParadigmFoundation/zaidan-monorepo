@@ -18,6 +18,8 @@ steps:
 - name: maker-test
   image: python:stretch
   depends_on: ["clone"]
+  environment:
+    REDIS_HOST: redis
   commands:
     - cd services/maker
     - pip install -r requirements.txt
@@ -42,6 +44,9 @@ services:
 - name: 0x-snapshot
   pull: always
   image: gcr.io/zaidan-eth-net/0x-snapshot:v3
+
+- name: redis
+  image: redis
 
 volumes:
 - name: gomod
