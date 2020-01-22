@@ -1,5 +1,15 @@
 import unittest
-from asset_data import AssetData
+import sys
+
+try:
+    sys.path.append('../maker')
+    from asset_data import AssetData
+except:
+    try:
+        sys.path.append('../maker/maker')
+        from asset_data import AssetData
+    except Exception as error:
+        raise Exception('failed to import asset data: {}'.format(error.args))
 
 class TestAssetData(unittest.TestCase):
 

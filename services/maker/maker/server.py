@@ -1,9 +1,9 @@
 import uuid
 import math
 import time
+import grpc
 import types_pb2
 import services_pb2_grpc
-import grpc
 import os
 from concurrent import futures
 from pricing_utils import PricingUtils
