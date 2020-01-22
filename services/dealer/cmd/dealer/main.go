@@ -20,7 +20,7 @@ func main() {
 	var (
 		db          = fs.String("db", "sqlite3", "Database driver [sqlite3|postgres]")
 		dsn         = fs.String("dsn", ":memory:", "Database's Data Source Name (see driver's doc for details)")
-    bind      = fs.String("bind", ":8000", "Server binding address")
+		bind        = fs.String("bind", ":8000", "Server binding address")
 		makerBind   = fs.String("maker", "0.0.0.0:50051", "The port to connect to a maker server over gRPC on")
 		hwBind      = fs.String("hw", "0.0.0.0:42001", "The port to connect to a hot-wallet server over gRPC on")
 		policyBlack = fs.Bool("policy.blacklist", false, "Enable BlackList policy mode")
@@ -67,15 +67,7 @@ func main() {
 		service.WithPolicy(mode, store)
 	}
 
-	if err := server.RegisterName("dealer", service); err != nil {
+	if err := http.ListenAndServe(*bind, service); err != nil {
 		log.Fatal(err)
 	}
-
-	if err := http.ListenAndServe("0.0.0.0:8000", server.WebsocketHandler([]string{"*"})); err != nil {
-		log.Fatal(err)
-	}
-
-  if err := http.ListenAndServe(*bind, service); err != nil {
-    log.Fatal(err)
-  }
 }
