@@ -78,6 +78,12 @@ func (*SQLMigration) Schema() map[string]string {
 				, PRIMARY KEY (id)
 			)
 		`,
+		"create-policy-table": `
+			CREATE TABLE policies (
+				  "entry" VARCHAR(100)
+				, PRIMARY KEY(entry)
+			)
+		`,
 	}
 }
 

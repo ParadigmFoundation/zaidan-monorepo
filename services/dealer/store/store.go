@@ -4,7 +4,13 @@ import (
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 )
 
+type Policy interface {
+	CreatePolicy(string) error
+	HasPolicy(string) (bool, error)
+}
+
 type Store interface {
+	Policy
 	CreateTrade(*types.Trade) error
 	GetTrade(string) (*types.Trade, error)
 	CreateQuote(*types.Quote) error
