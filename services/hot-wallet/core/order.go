@@ -55,9 +55,9 @@ func (hw *HotWallet) CreateOrder(ctx context.Context, req *grpc.CreateOrderReque
 
 	return &grpc.CreateOrderResponse{
 		Order:                 grpc.SignedOrderToProto(signedOrder),
-		OrderHash:             orderHash.Bytes(),
+		OrderHash:             orderHash.Hex(),
 		ZeroExTransaction:     grpc.ZeroExTransactionToProto(zrxTx),
-		ZeroExTransactionHash: zrxTxHash.Bytes(),
+		ZeroExTransactionHash: zrxTxHash.Hex(),
 	}, nil
 }
 
