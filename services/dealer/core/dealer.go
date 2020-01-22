@@ -9,7 +9,6 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/log"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
@@ -90,16 +89,17 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	quote := &types.Quote{
-		QuoteId:           res.QuoteId,
-		MakerAssetAddress: res.MakerAsset,
-		TakerAssetAddress: res.TakerAsset,
-		MakerAssetSize:    res.MakerSize,
-		TakerAssetSize:    res.TakerSize,
-		Expiration:        res.Expiration,
-		ServerTime:        now.UnixNano() / 1e6, // conversion from nanoseconds to milliseconds = ns / 1e6
-		OrderHash:         hexutil.Encode(orderRes.Hash),
-		Order:             orderRes.Order,
-		FillTx:            hexutil.Encode(orderRes.FillTxData),
+		QuoteId:               res.QuoteId,
+		MakerAssetAddress:     res.MakerAsset,
+		TakerAssetAddress:     res.TakerAsset,
+		MakerAssetSize:        res.MakerSize,
+		TakerAssetSize:        res.TakerSize,
+		Expiration:            res.Expiration,
+		ServerTime:            now.UnixNano() / 1e6, // conversion from nanoseconds to milliseconds = ns / 1e6
+		OrderHash:             orderRes.OrderHash,
+		Order:                 orderRes.Order,
+		ZeroExTransaction:     orderRes.ZeroExTransaction,
+		ZeroExTransactionHash: orderRes.ZeroExTransactionHash,
 	}
 
 	if err := d.db.CreateQuote(quote); err != nil {
