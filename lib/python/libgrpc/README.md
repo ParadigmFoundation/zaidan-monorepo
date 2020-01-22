@@ -1,7 +1,24 @@
+# Python gRPC Types & Services (`libgrpc`)
+
+## Generate
+```bash
+make gen
+```
+
+## Start OBM
+
+```bash
+# (from repository root)
+make docker
+docker run -d --rm -p 8000:8000 gcr.io/zaidan-io/obm --bind 0.0.0.0:8000 --exchange binance:BTC/USD
+```
+
+## Usage
+```python
 import grpc
 import json
-from services_pb2_grpc import OrderBookManagerStub
-from types_pb2 import OrderBookRequest
+from libgrpc.services_pb2_grpc import OrderBookManagerStub
+from libgrpc.types_pb2 import OrderBookRequest
 
 # Connect to the OBM server
 channel = grpc.insecure_channel('localhost:8000')
@@ -17,3 +34,5 @@ bid_book = [[x.price, x.quantity] for x in response.bids]
 ask_book = [[x.price, x.quantity] for x in response.asks]
 
 print(json.dumps({"asks":ask_book, "bids":bid_book}))
+
+```
