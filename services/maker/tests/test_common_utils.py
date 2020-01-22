@@ -1,6 +1,16 @@
 import unittest
 from uuid import uuid4
-from common_utils import is_valid_uuid, encode_to_bytes, decode_from_bytes
+import sys
+
+try:
+    sys.path.append('../maker')
+    from common_utils import is_valid_uuid, encode_to_bytes, decode_from_bytes
+except:
+    try:
+        sys.path.append('../maker/maker')
+        from common_utils import is_valid_uuid, encode_to_bytes, decode_from_bytes
+    except Exception as error:
+        raise Exception('failed to import common utils: {}'.format(error.args))
 
 class CommonUtilsTest(unittest.TestCase):
 

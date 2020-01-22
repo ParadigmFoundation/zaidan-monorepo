@@ -1,7 +1,17 @@
 import unittest
 from uuid import uuid4
 from typing import Tuple
-from redis_interface import RedisInterface
+import sys
+
+try:
+    sys.path.append('../maker')
+    from redis_interface import RedisInterface
+except:
+    try:
+        sys.path.append('../maker/maker')
+        from redis_interface import RedisInterface
+    except Exception as error:
+        raise Exception('failed to import redis interface: {}'.format(error.args))
 
 class RedisInterfaceTest(unittest.TestCase):
 

@@ -17,14 +17,14 @@ class OutOfDateError(DealerCacheError):
 
 class OBMInterface():
 
-    obm_channel = grpc.insecure_channel(OBM_CHANNEL)
-    obm_stub = OrderBookManagerStub(obm_channel)
-
     env = 'LIVE'
 
     def __int__(self, unit_test=False) -> None:
         if unit_test:
             self.env = 'PLACEHOLDER'
+        else:
+            self.obm_channel = grpc.insecure_channel(OBM_CHANNEL)
+            self.obm_stub = OrderBookManagerStub(self.obm_channel)
 
     def set_env(self, env) -> None:
         self.env = env

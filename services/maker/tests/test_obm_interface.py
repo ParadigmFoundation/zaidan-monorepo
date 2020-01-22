@@ -1,5 +1,15 @@
 import unittest
-from obm_interface import OBMInterface
+import sys
+
+try:
+    sys.path.append('../maker')
+    from obm_interface import OBMInterface
+except:
+    try:
+        sys.path.append('../maker/maker')
+        from obm_interface import OBMInterface
+    except Exception as error:
+        raise Exception('failed to import obm interface: {}'.format(error.args))
 
 class TestOBMInterface(unittest.TestCase):
 
