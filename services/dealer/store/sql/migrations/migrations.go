@@ -30,7 +30,7 @@ func (*SQLMigration) Schema() map[string]string {
 				, "expiration"         INTEGER
 				, "server_time"        INTEGER
 				, "order_hash"         VARCHAR(100)
-				, "fill_tx"            VARCHAR(100)
+				, "zero_ex_transaction_hash" VARCHAR(100)
 				, PRIMARY KEY (quote_id)
 			)`,
 

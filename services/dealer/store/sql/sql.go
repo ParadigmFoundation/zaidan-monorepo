@@ -116,7 +116,7 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 			q.Expiration,
 			q.ServerTime,
 			q.OrderHash,
-			q.FillTx,
+			q.ZeroExTransactionHash,
 		)
 		if err != nil {
 			return err

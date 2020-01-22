@@ -29,7 +29,7 @@ func (suite *Suite) TestQuotes() {
 			ChainId:         1,
 			ExchangeAddress: "exchange-address",
 		},
-		FillTx: "fill-tx",
+		ZeroExTransactionHash: "tx-hash",
 	}
 
 	suite.Require().NoError(
