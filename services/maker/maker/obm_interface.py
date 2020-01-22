@@ -17,7 +17,7 @@ class OutOfDateError(DealerCacheError):
 
 class OBMInterface():
 
-    def __int__(self, unit_test:bool=False) -> None:
+    def __init__(self, unit_test:bool=False) -> None:
         if unit_test:
             self.env = 'PLACEHOLDER'
         else:
