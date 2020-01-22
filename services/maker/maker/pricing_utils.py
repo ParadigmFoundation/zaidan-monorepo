@@ -55,11 +55,11 @@ class PricingUtils():
                             order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'bids'))
                     if taker_size:
                         price = self._get_price_from_book_base(order_books, taker_size, 'buy')
-                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='taker')
+                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
                         return {'maker_size': taker_size * price, 'taker_size': taker_size}
                     else:
                         price = self._get_price_from_book_quote(order_books, maker_size, 'buy')
-                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='maker')
+                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
                         return {'maker_size': maker_size, 'taker_size': maker_size/price}
                 elif 'constant_rate' in taker_asset_pricing_data.keys():
                     books_to_get = maker_asset_pricing_data['exchange_books']
@@ -69,12 +69,12 @@ class PricingUtils():
                             order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'asks'))
                     if maker_size:
                         price = self._get_price_from_book_base(order_books, maker_size, 'sell')
-                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='maker')
+                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
                         return {'maker_size': maker_size, 'taker_size': maker_size*price}
 
                     else:
                         price = self._get_price_from_book_quote(order_books, taker_size, 'sell')
-                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='taker')
+                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
                         return {'maker_size': taker_size/price, 'taker_size': taker_size}
                 else:
                     if taker_size:
@@ -319,7 +319,7 @@ class PricingUtils():
             return min(exchange_prices.values())*(1 - PREMIUM)
 
 
-    def adjust_for_constant_rate(self, price:float, book:object, asset_side:str, side_spef:str) -> float:
+    def adjust_for_constant_rate(self, price:float, book:object, asset_side:str) -> float:
         if asset_side == 'maker_asset':
             half_book = self.cache.get_order_book(book[0], book[1], 'asks')
             return price/(half_book[0][0])
