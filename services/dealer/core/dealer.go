@@ -20,19 +20,22 @@ import (
 type DealerConfig struct {
 	MakerBindAddress     string
 	HotWalletBindAddress string
+	WatcherBindAddress   string
 
 	OrderDuration int64 // the number of seconds order should be valid for after initial quote is provided
 }
 
 // Dealer is the core dealer service that interacts with other services
 type Dealer struct {
-	makerClient types.MakerClient
-	hwClient    types.HotWalletClient
+	Logger log.Logger
+
+	makerClient   types.MakerClient
+	hwClient      types.HotWalletClient
+	watcherClient types.WatcherClient
 
 	orderDuration int64
 
-	db     store.Store
-	logger log.Logger
+	db store.Store
 }
 
 // NewDealer creates a new Dealer given ctx context and cfg configuration
@@ -49,19 +52,27 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 		return nil, err
 	}
 
+	watcherConn, err := grpc.DialContext(ctx, cfg.WatcherBindAddress, grpc.WithInsecure())
+	if err != nil {
+		return nil, err
+	}
+
 	return &Dealer{
 		makerClient:   types.NewMakerClient(makerConn),
 		hwClient:      types.NewHotWalletClient(hwConn),
+		watcherClient: types.NewWatcherClient(watcherConn),
 		orderDuration: cfg.OrderDuration,
-		logger:        logger,
+		Logger:        logger,
 	}, nil
 }
 
 // @todo: hrharder - should eventually return types.Quote
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
 	now := time.Now()
+	fmt.Println("we here fetch quote 72)")
 	res, err := d.makerClient.GetQuote(ctx, req)
 	if err != nil {
+		fmt.Println("we errored fetch quote 75)")
 		return nil, err
 	}
 
@@ -74,10 +85,13 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		ExpirationTimeSeconds: now.Unix() + d.orderDuration,
 	}
 
+	fmt.Println("we here (fetch 86)")
 	orderRes, err := d.hwClient.CreateOrder(ctx, orderReq)
 	if err != nil {
+		fmt.Println("we errored :( (fetch 89)")
 		return nil, err
 	}
+	fmt.Println("we here (fetch 92)")
 
 	quote := &types.Quote{
 		QuoteId:           res.QuoteId,
@@ -93,9 +107,11 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	if err := d.db.CreateQuote(quote); err != nil {
+		fmt.Println("we errored (fetch 108)")
 		return nil, err
 	}
 
+	fmt.Println(fmt.Sprintf("created order for quote with ID (%s)", res.QuoteId))
 	return quote, nil
 }
 
@@ -113,6 +129,15 @@ func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequ
 
 func (d *Dealer) ExecuteZeroExTransaction(ctx context.Context, req *types.ExecuteZeroExTransactionRequest) (*types.ExecuteZeroExTransactionResponse, error) {
 	return d.hwClient.ExecuteZeroExTransaction(ctx, req)
+}
+
+func (d *Dealer) WatchTransaction(ctx context.Context, quoteId string, txHash string) (*types.WatchTransactionResponse, error) {
+	req := &types.WatchTransactionRequest{
+		QuoteId: quoteId,
+		TxHash:  txHash,
+	}
+
+	return d.watcherClient.WatchTransaction(ctx, req)
 }
 
 func (d *Dealer) GetQuote(quoteId string) (*types.Quote, error) {

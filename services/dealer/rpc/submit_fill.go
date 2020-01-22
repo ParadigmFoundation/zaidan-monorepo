@@ -31,7 +31,7 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 	}
 
 	validateReq := &grpc.ValidateOrderRequest{Order: grpc.SignedOrderToProto(order)}
-	if err := svc.dealer.ValidateOrder(context.Background(), validateReq); err != nil {
+	if err := svc.dealer.ValidateOrder(context.TODO(), validateReq); err != nil {
 		return nil, ErrFillValidationFailed
 	}
 
@@ -54,8 +54,13 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 		Signature:             bSignature,
 	}
 
-	fillRes, err := svc.dealer.ExecuteZeroExTransaction(context.Background(), fillReq)
+	fillRes, err := svc.dealer.ExecuteZeroExTransaction(context.TODO(), fillReq)
 	if err != nil {
+		return nil, err
+	}
+
+	// todo (@hrharder): do we need to do anything with the response value here?
+	if _, err := svc.dealer.WatchTransaction(context.TODO(), quoteId, fillRes.TransactionHash); err != nil {
 		return nil, err
 	}
 

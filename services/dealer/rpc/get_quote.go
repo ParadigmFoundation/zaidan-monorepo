@@ -3,6 +3,7 @@ package rpc
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	"github.com/gogo/protobuf/jsonpb"
 
@@ -39,6 +40,8 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		taker = common.HexToAddress(*takerAddress)
 	}
 
+	fmt.Println("we here (42)")
+
 	var makerAmount, takerAmount string
 	if makerSize == nil && takerSize == nil {
 		return nil, ErrInvalidParameters
@@ -50,6 +53,8 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		takerAmount = *takerSize
 	}
 
+	fmt.Println("we here (55)")
+
 	req := &grpc.GetQuoteRequest{
 		TakerAsset:   takerAsset,
 		MakerAsset:   makerAsset,
@@ -58,10 +63,13 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		TakerAddress: taker.Hex(),
 	}
 
+	fmt.Println("we here (65)")
 	quote, err := svc.dealer.FetchQuote(context.Background(), req)
 	if err != nil {
+		fmt.Println("we errored :( (68)")
 		return nil, err
 	}
+	fmt.Println("we here (71)")
 
 	res := &getQuoteResponse{quote}
 	return res, nil
