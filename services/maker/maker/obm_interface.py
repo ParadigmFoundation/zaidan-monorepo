@@ -19,15 +19,22 @@ class OBMInterface():
 
     env = 'LIVE'
 
-    def __int__(self, unit_test=False) -> None:
+    def __int__(self, unit_test:bool=False) -> None:
         if unit_test:
             self.env = 'PLACEHOLDER'
         else:
-            self.obm_channel = grpc.insecure_channel(OBM_CHANNEL)
-            self.obm_stub = OrderBookManagerStub(self.obm_channel)
+            self.initialize_obm_connection()
+    
+    def initialize_obm_connection(self) -> None:
+        self.obm_channel = grpc.insecure_channel(OBM_CHANNEL)
+        self.obm_stub = OrderBookManagerStub(self.obm_channel)
 
-    def set_env(self, env) -> None:
+    def set_env(self, env:str) -> None:
         self.env = env
+        if self.env == 'PLACEHOLDER':
+            pass
+        else:
+            self.initialize_obm_connection()
 
     def get_order_book(self, exchange: str, symbol: str, side: str, max_age=20) -> list:
 
