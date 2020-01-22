@@ -293,6 +293,14 @@ class PricingUtils():
                 size = 0
         return max(exchange_prices.values()) * (1 + PREMIUM)
 
+    def adjust_for_constant_rate(self, price:float, book:object, asset_side:str) -> float:
+        if asset_side == 'maker_asset':
+            half_book = self.cache.get_order_book(book[0], book[1], 'asks')
+            return price/(half_book[0][0])
+        if asset_side == 'taker_asset':
+            half_book = self.cache.get_order_book(book[0], book[1], 'bids')
+            return price/(half_book[0][0])
+
     def calculate_fee(self, fee_asset:str) -> float:
         gas_price = self.redis_interface.get_gas_price()
         gas_limit = self.redis_interface.get_gas_limit()
