@@ -48,66 +48,19 @@ class PricingUtils():
         if implied:
             if maker_asset_pricing_data['implied_pref'][1].split('/')[1] == taker_asset_pricing_data['implied_pref'][1].split('/')[1]:
                 if 'constant_rate' in maker_asset_pricing_data.keys():
-                    books_to_get = taker_asset_pricing_data['exchange_books']
-                    order_books = {}
-                    for book in books_to_get:
-                        if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
-                            order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'bids'))
-                    if taker_size:
-                        price = self._get_price_from_book_base(order_books, taker_size, 'buy')
-                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='taker')
-                        return {'maker_size': taker_size * price, 'taker_size': taker_size}
-                    else:
-                        price = self._get_price_from_book_quote(order_books, maker_size, 'buy')
-                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset', side_spef='maker')
-                        return {'maker_size': maker_size, 'taker_size': maker_size/price}
+                    return self.constant_rate_maker_asset(taker_asset_pricing_data, maker_asset_pricing_data, taker_size, maker_size)
                 elif 'constant_rate' in taker_asset_pricing_data.keys():
-                    books_to_get = maker_asset_pricing_data['exchange_books']
-                    order_books = {}
-                    for book in books_to_get:
-                        if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
-                            order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'asks'))
-                    if maker_size:
-                        price = self._get_price_from_book_base(order_books, maker_size, 'sell')
-                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='maker')
-                        return {'maker_size': maker_size, 'taker_size': maker_size*price}
-
-                    else:
-                        price = self._get_price_from_book_quote(order_books, taker_size, 'sell')
-                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset', side_spef='taker')
-                        return {'maker_size': taker_size/price, 'taker_size': taker_size}
+                    return self.constant_rate_taker_asset(taker_asset_pricing_data, maker_asset_pricing_data, taker_size, maker_size)
                 else:
                     if taker_size:
-                        imp_book = taker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
-
-                        taker_asset_price = self._get_price_from_book_base(order_books, taker_size, 'buy')
-
-                        imp_book = maker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
-
-                        maker_asset_price = self._get_price_from_book_quote(order_books, taker_size*taker_asset_price, 'sell')
-
-                        return {'maker_size': taker_size*taker_asset_price/maker_asset_price, 'taker_size':taker_size}
+                        return self.implied_standard_taker_size(taker_asset_pricing_data, maker_asset_pricing_data,
+                                                    taker_size)
                     else:
-                        imp_book = maker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
+                        return self.implied_standard_maker_size(taker_asset_pricing_data, maker_asset_pricing_data,
+                                                         maker_size)
+        else:
+            raise Exception
 
-                        maker_asset_price = self._get_price_from_book_base(order_books, maker_size, 'sell')
-
-                        imp_book = taker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
-
-                        taker_asset_price = self._get_price_from_book_quote(order_books, maker_size*maker_asset_price, 'sell')
-
-                        return {'maker_size': maker_size, 'taker_size':maker_size*maker_asset_price/taker_asset_price}
-
-            else:
-                raise Exception
 
     def _get_price_from_book_base(self, half_book:object, size:float, side:str) -> float:
         ''' Return price. '''
@@ -353,3 +306,68 @@ class PricingUtils():
             return float(quantity)/(10**asset_pricing_data[asset]['decimals'])
         else:
             return quantity
+
+    def constant_rate_maker_asset(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, taker_size:float, maker_size:float) -> object:
+        books_to_get = taker_asset_pricing_data['exchange_books']
+        order_books = {}
+        for book in books_to_get:
+            if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
+                order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'bids'))
+        if taker_size:
+            price = self._get_price_from_book_base(order_books, taker_size, 'buy')
+            price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset',
+                                                  side_spef='taker')
+            return {'maker_size': taker_size * price, 'taker_size': taker_size}
+        else:
+            price = self._get_price_from_book_quote(order_books, maker_size, 'buy')
+            price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset',
+                                                  side_spef='maker')
+            return {'maker_size': maker_size, 'taker_size': maker_size / price}
+
+    def constant_rate_taker_asset(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, taker_size:float, maker_size:float) -> object:
+        books_to_get = maker_asset_pricing_data['exchange_books']
+        order_books = {}
+        for book in books_to_get:
+            if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
+                order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'asks'))
+        if maker_size:
+            price = self._get_price_from_book_base(order_books, maker_size, 'sell')
+            price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset',
+                                                  side_spef='maker')
+            return {'maker_size': maker_size, 'taker_size': maker_size * price}
+
+        else:
+            price = self._get_price_from_book_quote(order_books, taker_size, 'sell')
+            price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset',
+                                                  side_spef='taker')
+            return {'maker_size': taker_size / price, 'taker_size': taker_size}
+
+    def implied_standard_taker_size(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, taker_size:float) -> object:
+        imp_book = taker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
+
+        taker_asset_price = self._get_price_from_book_base(order_books, taker_size, 'buy')
+
+        imp_book = maker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
+
+        maker_asset_price = self._get_price_from_book_quote(order_books, taker_size * taker_asset_price, 'sell')
+
+        return {'maker_size': taker_size * taker_asset_price / maker_asset_price, 'taker_size': taker_size}
+
+    def implied_standard_maker_size(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, maker_size:float) -> object:
+        imp_book = maker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
+
+        maker_asset_price = self._get_price_from_book_base(order_books, maker_size, 'sell')
+
+        imp_book = taker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
+
+        taker_asset_price = self._get_price_from_book_quote(order_books, maker_size * maker_asset_price, 'sell')
+
+        return {'maker_size': maker_size, 'taker_size': maker_size * maker_asset_price / taker_asset_price}
