@@ -30,10 +30,34 @@ func (hw *HotWallet) CreateOrder(ctx context.Context, req *grpc.CreateOrderReque
 		return nil, err
 	}
 
+	salt, err := zrx.GeneratePseudoRandomSalt()
+	if err != nil {
+		return nil, err
+	}
+
+	gasPrice, err := hw.provider.Client().SuggestGasPrice(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	zrxTx := &zrx.Transaction{
+		Salt:                  salt,
+		ExpirationTimeSeconds: new(big.Int).Set(signedOrder.ExpirationTimeSeconds),
+		GasPrice:              gasPrice,
+		SignerAddress:         signedOrder.TakerAddress,
+		Data:                  txData,
+	}
+
+	zrxTxHash, err := zrxTx.ComputeHashForChainID(hw.chainId)
+	if err != nil {
+		return nil, err
+	}
+
 	return &grpc.CreateOrderResponse{
-		Order:      grpc.SignedOrderToProto(signedOrder),
-		Hash:       orderHash.Bytes(),
-		FillTxData: txData,
+		Order:                 grpc.SignedOrderToProto(signedOrder),
+		OrderHash:             orderHash.Bytes(),
+		ZeroExTransaction:     grpc.ZeroExTransactionToProto(zrxTx),
+		ZeroExTransactionHash: zrxTxHash.Bytes(),
 	}, nil
 }
 
