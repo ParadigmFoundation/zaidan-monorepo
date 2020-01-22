@@ -39,7 +39,7 @@ type Dealer struct {
 }
 
 // NewDealer creates a new Dealer given ctx context and cfg configuration
-func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
+func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, error) {
 	logger := log.New(ctx)
 
 	makerConn, err := grpc.DialContext(ctx, cfg.MakerBindAddress, grpc.WithInsecure())
@@ -62,6 +62,7 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 		hwClient:      types.NewHotWalletClient(hwConn),
 		watcherClient: types.NewWatcherClient(watcherConn),
 		orderDuration: cfg.OrderDuration,
+		db:            db,
 		Logger:        logger,
 	}, nil
 }
@@ -69,10 +70,8 @@ func NewDealer(ctx context.Context, cfg DealerConfig) (*Dealer, error) {
 // @todo: hrharder - should eventually return types.Quote
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
 	now := time.Now()
-	fmt.Println("we here fetch quote 72)")
 	res, err := d.makerClient.GetQuote(ctx, req)
 	if err != nil {
-		fmt.Println("we errored fetch quote 75)")
 		return nil, err
 	}
 
@@ -85,13 +84,10 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		ExpirationTimeSeconds: now.Unix() + d.orderDuration,
 	}
 
-	fmt.Println("we here (fetch 86)")
 	orderRes, err := d.hwClient.CreateOrder(ctx, orderReq)
 	if err != nil {
-		fmt.Println("we errored :( (fetch 89)")
 		return nil, err
 	}
-	fmt.Println("we here (fetch 92)")
 
 	quote := &types.Quote{
 		QuoteId:           res.QuoteId,
@@ -107,7 +103,6 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	if err := d.db.CreateQuote(quote); err != nil {
-		fmt.Println("we errored (fetch 108)")
 		return nil, err
 	}
 

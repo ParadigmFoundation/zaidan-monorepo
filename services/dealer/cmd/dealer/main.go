@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
-
-	gethrpc "github.com/ethereum/go-ethereum/rpc"
 	"github.com/peterbourgon/ff"
 
+	gethlog "github.com/ethereum/go-ethereum/log"
+	gethrpc "github.com/ethereum/go-ethereum/rpc"
+
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
@@ -32,25 +33,27 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	_ = store
 
 	cfg := core.DealerConfig{
 		MakerBindAddress:     *makerBind,
 		HotWalletBindAddress: *hwBind,
 	}
-	dealer, err := core.NewDealer(context.Background(), cfg)
+	dealer, err := core.NewDealer(context.Background(), store, cfg)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	server := gethrpc.NewServer()
 	service, err := rpc.NewService(dealer)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
+	// setup root logger to log to stdout
+	gethlog.Root().SetHandler(gethlog.StdoutHandler)
+
 	if err := server.RegisterName("dealer", service); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	if err := http.ListenAndServe("0.0.0.0:8000", server.WebsocketHandler([]string{"*"})); err != nil {
