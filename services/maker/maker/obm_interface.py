@@ -19,7 +19,7 @@ class OBMInterface():
 
     env = 'LIVE'
 
-    def __int__(self, unit_test=False) -> None:
+    def __init__(self, unit_test=False) -> None:
         if unit_test:
             self.env = 'PLACEHOLDER'
         else:
