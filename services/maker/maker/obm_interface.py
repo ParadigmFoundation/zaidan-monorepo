@@ -17,12 +17,11 @@ class OutOfDateError(DealerCacheError):
 
 class OBMInterface():
 
-    env = 'LIVE'
-
     def __int__(self, unit_test:bool=False) -> None:
         if unit_test:
             self.env = 'PLACEHOLDER'
         else:
+            self.env = "LIVE"
             self.initialize_obm_connection()
     
     def initialize_obm_connection(self) -> None:
