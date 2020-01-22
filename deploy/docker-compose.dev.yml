@@ -6,9 +6,6 @@ services:
       - db
       - maker
       - hwd
-    environment:
-      - DEALER_DSN="host=192.168.16.2 user=dealer password=password dbname=dealer sslmode=disable"
-      - DEALER_DB=postgres
     ports:
       - 8000:8000
 
