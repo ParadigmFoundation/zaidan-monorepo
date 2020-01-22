@@ -1,6 +1,17 @@
 import unittest
-from risk_utils import RiskUtils
-from redis_interface import RedisInterface
+import sys
+
+try:
+    sys.path.append('../maker')
+    from risk_utils import RiskUtils
+    from redis_interface import RedisInterface
+except:
+    try:
+        sys.path.append('../maker/maker')
+        from risk_utils import RiskUtils
+        from redis_interface import RedisInterface
+    except Exception as error:
+        raise Exception('failed to import risk utils and redis interface: {}'.format(error.args))
 
 class TestRiskUtils(unittest.TestCase):
 
