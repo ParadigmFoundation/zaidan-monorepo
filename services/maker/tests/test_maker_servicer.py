@@ -1,18 +1,16 @@
 import unittest
 import sys
+import grpc
+from concurrent import futures
 
 try:
     sys.path.append('../maker')
-    import grpc
-    from concurrent import futures
     import services_pb2_grpc
     from types_pb2 import GetQuoteRequest, CheckQuoteRequest
     from maker_servicer import MakerServicer
 except:
     try:
         sys.path.append('../maker/maker')
-        import grpc
-        from concurrent import futures
         import services_pb2_grpc
         from types_pb2 import GetQuoteRequest, CheckQuoteRequest
         from maker_servicer import MakerServicer
