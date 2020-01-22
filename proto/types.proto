@@ -117,8 +117,9 @@ message CreateOrderRequest {
 
 message CreateOrderResponse {
     SignedOrder order = 1;
-    bytes hash = 2;
-    bytes fill_tx_data = 3;
+    ZeroExTransaction zero_ex_transaction = 2;
+    string order_hash = 3;
+    string zero_ex_transaction_hash = 4;
 }
 
 message WatchTransactionRequest {
@@ -198,6 +199,14 @@ message SendTransactionResponse {
    int64 sent_at = 2;            // UNIX timestamp at which transaction added to mempool
 }
 
+message ZeroExTransaction {
+  string salt = 1;
+  int64 expiration_time_seconds = 2;
+  string gas_price = 3;
+  string signer_address = 4;
+  string data = 5;
+}
+
 message ExecuteZeroExTransactionRequest {
     string salt = 1;
     string expiration_time_seconds = 2;
@@ -231,9 +240,10 @@ message Quote {
   string taker_asset_size = 5; // The quote's taker asset size required by the client (see quotes)
   int64 expiration = 6; // The UNIX timestamp after which the quote will be rejected for settlement
   int64 server_time = 7; // The UNIX timestamp at which the server generated the quote. Helpful for clock synchronization
-  string order_hash = 8; // The 0x-specific order hash, as defined in the v3 specification
-  SignedOrder order = 9; // The dealer-signed 0x order that corresponds to this offer
-  string fill_tx = 10; // The raw 0x fill transaction data for this quote that the taker may sign (see 6)
+  SignedOrder order = 8; // The dealer-signed 0x order that corresponds to this offer
+  string order_hash = 9; // The 0x-specific order hash, as defined in the v3 specification
+  ZeroExTransaction zero_ex_transaction = 10; // The raw 0x fill transaction data for this quote that the taker may sign (see 6)
+  string zero_ex_transaction_hash = 11;
 }
 
 message Trade {
