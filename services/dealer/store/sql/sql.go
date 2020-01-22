@@ -139,7 +139,7 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 		, q.expiration
 		, q.server_time
 		, q.order_hash
-		, q.fill_tx
+		, q.zero_ex_transaction_hash
 		, s.order_bytes as "order"
 		FROM quotes q
 		LEFT JOIN signed_orders s
