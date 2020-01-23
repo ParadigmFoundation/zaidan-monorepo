@@ -105,7 +105,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		return nil, err
 	}
 
-	d.Logger.WithField("id", res.QuoteId).WithField("taker", req.TakerAddress).Info("created new quote")
+	d.Logger.WithFields(logrus.Fields{"id": res.QuoteId, "taker": req.TakerAddress).Info("created new quote")
 	return quote, nil
 }
 
