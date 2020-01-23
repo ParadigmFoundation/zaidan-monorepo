@@ -2,6 +2,7 @@ package rpc
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
@@ -11,6 +12,14 @@ import (
 )
 
 type getQuoteResponse struct {
+	quote
+}
+
+func (gqr *getQuoteResponse) MarshalJSON() ([]byte, error) {
+	return json.Marshal([]interface{}{gqr.quote})
+}
+
+type quote struct {
 	QuoteId               string                `json:"quoteId"`
 	MakerAssetAddress     string                `json:"makerAssetAddress"`
 	TakerAssetAddress     string                `json:"takerAssetAddress"`
@@ -53,7 +62,7 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		takerAmount = *takerSize
 	}
 
-	req := &grpc.GetQuoteRequest{
+	quoteReq := &grpc.GetQuoteRequest{
 		TakerAsset:   takerAsset,
 		MakerAsset:   makerAsset,
 		TakerSize:    takerAmount,
@@ -61,34 +70,34 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		TakerAddress: taker.Hex(),
 	}
 
-	quote, err := svc.dealer.FetchQuote(context.Background(), req)
+	quoteRes, err := svc.dealer.FetchQuote(context.Background(), quoteReq)
 	if err != nil {
 		return nil, err
 	}
 
-	order, err := quote.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
+	order, err := quoteRes.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
 	if err != nil {
 		return nil, err
 	}
 
-	tx, err := quote.ZeroExTransactionInfo.Transaction.ToZeroExTransaction()
+	tx, err := quoteRes.ZeroExTransactionInfo.Transaction.ToZeroExTransaction()
 	if err != nil {
 		return nil, err
 	}
 
-	res := &getQuoteResponse{
-		QuoteId:               quote.QuoteId,
-		MakerAssetAddress:     quote.MakerAssetAddress,
-		TakerAssetAddress:     quote.TakerAssetAddress,
-		MakerAssetSize:        quote.MakerAssetSize,
-		TakerAssetSize:        quote.TakerAssetSize,
-		Expiration:            quote.Expiration,
-		ServerTime:            quote.ServerTime,
-		ZeroExTransactionHash: quote.ZeroExTransactionHash,
+	res := quote{
+		QuoteId:               quoteRes.QuoteId,
+		MakerAssetAddress:     quoteRes.MakerAssetAddress,
+		TakerAssetAddress:     quoteRes.TakerAssetAddress,
+		MakerAssetSize:        quoteRes.MakerAssetSize,
+		TakerAssetSize:        quoteRes.TakerAssetSize,
+		Expiration:            quoteRes.Expiration,
+		ServerTime:            quoteRes.ServerTime,
+		ZeroExTransactionHash: quoteRes.ZeroExTransactionHash,
 		ZeroExTransactionInfo: zeroExTransactionInfo{
 			Order:       order,
 			Transaction: tx,
 		},
 	}
-	return res, nil
+	return &getQuoteResponse{res}, nil
 }
