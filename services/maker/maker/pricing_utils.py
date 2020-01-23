@@ -4,14 +4,7 @@ from asset_data import AssetData
 import math
 from typing import Optional
 
-'''
-asset_pricing_data = {'ZRX': {'exchange_books': [('COINBASE', 'ZRX/USD'), ('BINANCE', 'ZRX/ETH')], 'implied_pref': ('COINBASE', 'ZRX/USD'), 'decimals': 18},
-                      'LINK': {'exchange_books': [('COINBASE', 'LINK/USD'), ('BINANCE', 'LINK/ETH')], 'implied_pref': ('COINBASE', 'LINK/USD'), 'decimals': 18},
-                      'ETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT')], 'implied_pref': ('COINBASE', 'ETH/USD'), 'decimals': 18},
-                      'WETH': {'exchange_books': [('COINBASE', 'ETH/USD'), ('BINANCE', 'ETH/USDT')], 'implied_pref': ('COINBASE', 'ETH/USD'), 'decimals': 18},
-                      'DAI': {'exchange_books': [('COINBASE', 'DAI/USD')], 'implied_pref': ('COINBASE', 'DAI/USD'), 'constant_rate': 'PREF_INSIDE', 'decimals': 18}
-                      }
-'''
+
 asset_data = AssetData()
 asset_pricing_data = AssetData().ticker_to_pricing_data
 
