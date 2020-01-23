@@ -1,15 +1,14 @@
 from obm_interface import OBMInterface
 from redis_interface import RedisInterface
-from asset_data import AssetData
+from config_manager import ConfigManager
 import math
 from typing import Optional
 
 
-asset_data = AssetData()
-asset_pricing_data = AssetData().ticker_to_pricing_data
-
-EXCHANGE_FEES = {'BINANCE':.00075, 'COINBASE':.002, 'GEMINI':.001}
-PREMIUM = .001
+config_manager = ConfigManager()
+asset_pricing_data = config_manager.ticker_to_pricing_data
+EXCHANGE_FEES = config_manager.exchange_fees
+PREMIUM = config_manager.premium
 
 class PricingUtils():
 

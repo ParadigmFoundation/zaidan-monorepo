@@ -6,15 +6,13 @@ import services_pb2_grpc
 from pricing_utils import PricingUtils
 from risk_utils import RiskUtils
 from redis_interface import RedisInterface
-from asset_data import AssetData
-
-VALIDITY_LENGTH = 15000
+from config_manager import ConfigManager
 
 class MakerServicer(services_pb2_grpc.MakerServicer):
 
     def __init__(self, test:bool=False) -> None:
         services_pb2_grpc.MakerServicer.__init__(self)
-        self.asset_data = AssetData()
+        self.config_manager = ConfigManager()
         self.redis_interface = RedisInterface()
         self.risk_utils = RiskUtils()
         self.pricing_utils = PricingUtils()
@@ -22,15 +20,15 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
     def GetQuote(self, request: object, context) -> object:
 
-        maker_asset = self.asset_data.get_ticker_with_address(request.maker_asset)
-        taker_asset = self.asset_data.get_ticker_with_address(request.taker_asset)
+        maker_asset = self.config_manager.get_ticker_with_address(request.maker_asset)
+        taker_asset = self.config_manager.get_ticker_with_address(request.taker_asset)
 
         trading_maker_size = PricingUtils.convert_to_trading_units(maker_asset, request.maker_size)
         trading_taker_size = PricingUtils.convert_to_trading_units(taker_asset, request.taker_size)
 
         quote_info = self.pricing_utils.calculate_quote(maker_asset,
                                      taker_asset, trading_maker_size, trading_taker_size, self.test)
-        expiry_timestamp = int(math.floor(time.time())) + int(VALIDITY_LENGTH)
+        expiry_timestamp = int(math.floor(time.time())) + int(self.config_manager.validity_length)
 
         if False not in self.risk_utils.risk_checks(taker_asset, maker_asset, trading_taker_size, quote_info, self.test):
             quote_id = str(uuid.uuid4())

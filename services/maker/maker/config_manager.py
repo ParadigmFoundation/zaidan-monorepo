@@ -10,14 +10,14 @@ class ConfigManager():
 
     def __init__(self) -> None:
         with open(CONFIG_FILE) as f:
-            asset_config_f = json.load(f)
-            for asset_data in asset_config_f['assets']:
-                self.address_to_ticker[asset_data['address']] = asset_data['symbol']
-                self.ticker_to_pricing_data[asset_data['symbol']] = asset_data['pricing_data']
-                self.ticker_to_pricing_data[asset_data['symbol']]['decimals'] = asset_data['decimals']
-            self.premium = float(asset_config_f['premium'])
-            self.validity_length = int(asset_config_f['validity_length'])
-            self.exchange_fees = asset_config_f['exchange_fees']
+            config_f = json.load(f)
+            for config_manager in config_f['assets']:
+                self.address_to_ticker[config_manager['address']] = config_manager['symbol']
+                self.ticker_to_pricing_data[config_manager['symbol']] = config_manager['pricing_data']
+                self.ticker_to_pricing_data[config_manager['symbol']]['decimals'] = config_manager['decimals']
+            self.premium = float(config_f['premium'])
+            self.validity_length = int(config_f['validity_length'])
+            self.exchange_fees = config_f['exchange_fees']
             for exchange in self.exchange_fees.keys():
                 self.exchange_fees[exchange] = float(self.exchange_fees[exchange])
 
