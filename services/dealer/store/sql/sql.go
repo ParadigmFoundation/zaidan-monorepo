@@ -89,7 +89,7 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 			return err
 		}
 
-		_, err = tx.Exec(`INSERT INTO transaction_info(quote_id, transaction_info_bytes) VALUES ($1, $2)`, q.QuoteId, q.ZeroExTransactionInfo)
+		_, err = tx.Exec(`INSERT INTO transaction_infos(quote_id, transaction_info_bytes) VALUES ($1, $2)`, q.QuoteId, q.ZeroExTransactionInfo)
 		return err
 	})
 
@@ -108,7 +108,7 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 		, q.zero_ex_transaction_hash
 		, t.transaction_info_bytes as "zero_ex_transaction_info"
 		FROM quotes q
-		LEFT JOIN transaction_info t
+		LEFT JOIN transaction_infos t
 		ON q.quote_id = t.quote_id
 		WHERE q.quote_id = $1 LIMIT 1
 	`

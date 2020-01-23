@@ -33,8 +33,8 @@ func (*SQLMigration) Schema() map[string]string {
 				, PRIMARY KEY (quote_id)
 			)`,
 
-		"create-transaction-info-table": `
-			CREATE TABLE transaction_info (
+		"create-transaction-infos-table": `
+			CREATE TABLE transaction_infos (
 				 quote_id VARCHAR(100)
 			   , transaction_info_bytes TEXT
 			   , PRIMARY KEY(quote_id)
