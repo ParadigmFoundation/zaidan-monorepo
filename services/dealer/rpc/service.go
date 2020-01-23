@@ -6,11 +6,14 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 )
 
 type Service struct {
-	dealer *core.Dealer
-	server *rpc.Server
+	dealer     *core.Dealer
+  server *rpc.Server
+	policyMode PolicyMode
+	policy     store.Policy
 }
 
 // NewService creates a new Dealer JSONRPC service
@@ -34,4 +37,10 @@ func (srv *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else {
 		srv.server.ServeHTTP(w, r)
 	}
+}
+
+func (srv *Service) WithPolicy(mode PolicyMode, policy store.Policy) *Service {
+	srv.policyMode = mode
+	srv.policy = policy
+	return srv
 }
