@@ -51,6 +51,12 @@ func (*SQLMigration) Schema() map[string]string {
 				, PRIMARY KEY (maker_asset_address)
 			)
 		`,
+		"create-policy-table": `
+			CREATE TABLE policies (
+				  "entry" VARCHAR(100)
+				, PRIMARY KEY(entry)
+			)
+		`,
 	}
 }
 

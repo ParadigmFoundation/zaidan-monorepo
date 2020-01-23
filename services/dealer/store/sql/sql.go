@@ -136,7 +136,7 @@ func (s *Store) CreateMarket(mkt *types.Market) error {
 }
 
 func (s *Store) GetMarket(makerAssetAddress string) (*types.Market, error) {
-	stmt := ` SELECT * FROM markets where maker_asset_address = $1 LIMIT 1`
+	stmt := `SELECT * FROM markets where maker_asset_address = $1 LIMIT 1`
 	mkt := types.Market{}
 	var addresses StringSlice
 	var metadata MapStringString
@@ -155,6 +155,31 @@ func (s *Store) GetMarket(makerAssetAddress string) (*types.Market, error) {
 	mkt.Metadata = metadata
 
 	return &mkt, nil
+}
+
+func (s *Store) CreatePolicy(t string) error {
+	exists, err := s.HasPolicy(t)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return nil
+	}
+
+	_, err = s.db.Exec("INSERT INTO policies VALUES($1)", t)
+	return err
+}
+
+func (s *Store) HasPolicy(t string) (bool, error) {
+	var count int
+
+	stmt := `SELECT COUNT(*) FROM policies WHERE entry = ?`
+	if err := s.db.QueryRow(stmt, t).Scan(&count); err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
 
 type StringSlice []string
