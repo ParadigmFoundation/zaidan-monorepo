@@ -89,16 +89,16 @@
         "exchange_books": [
           {
             "exchange": "COINBASE",
-            "book": "ZRX/USD"
+            "book": "LINK/USD"
           },
           {
             "exchange": "BINANCE",
-            "book": "ZRX/ETH"
+            "book": "LINK/ETH"
           }
         ],
         "implied_pref": {
             "exchange": "COINBASE",
-            "book": "ZRX/USD"
+            "book": "LINK/USD"
         }
       }
     }
