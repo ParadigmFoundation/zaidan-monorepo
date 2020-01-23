@@ -7,11 +7,14 @@ import (
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 )
 
 type Service struct {
 	dealer *core.Dealer
 	server *rpc.Server
+	policyMode PolicyMode
+	policy     store.Policy
 	log    *logger.Entry
 }
 
@@ -40,4 +43,10 @@ func (srv *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		srv.log.Infof("%s %s", r.Method, path)
 		srv.server.ServeHTTP(w, r)
 	}
+}
+
+func (srv *Service) WithPolicy(mode PolicyMode, policy store.Policy) *Service {
+	srv.policyMode = mode
+	srv.policy = policy
+	return srv
 }
