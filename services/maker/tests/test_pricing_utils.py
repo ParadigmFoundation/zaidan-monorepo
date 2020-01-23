@@ -1,5 +1,15 @@
 import unittest
-from pricing_utils import PricingUtils
+import sys
+
+try:
+    sys.path.append('../maker')
+    from pricing_utils import PricingUtils
+except:
+    try:
+        sys.path.append('../maker/maker')
+        from pricing_utils import PricingUtils
+    except Exception as error:
+        raise Exception('failed to import pricing utils: {}'.format(error.args))
 
 class TestPricingUtils(unittest.TestCase):
     
