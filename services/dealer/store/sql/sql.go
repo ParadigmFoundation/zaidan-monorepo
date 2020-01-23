@@ -75,7 +75,7 @@ func (s *Store) Atomic(fn AtomicFn) error {
 func (s *Store) CreateQuote(q *types.Quote) error {
 	return s.Atomic(func(tx *sqlx.Tx) error {
 		_, err := tx.Exec(
-			`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+			`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8)`,
 			q.QuoteId,
 			q.MakerAssetAddress,
 			q.TakerAssetAddress,
@@ -83,14 +83,13 @@ func (s *Store) CreateQuote(q *types.Quote) error {
 			q.TakerAssetSize,
 			q.Expiration,
 			q.ServerTime,
-			q.OrderHash,
 			q.ZeroExTransactionHash,
 		)
 		if err != nil {
 			return err
 		}
 
-		_, err = tx.Exec(`INSERT INTO signed_orders(quote_id, order_bytes) VALUES ($1, $2)`, q.QuoteId, q.Order)
+		_, err = tx.Exec(`INSERT INTO transaction_info(quote_id, transaction_info_bytes) VALUES ($1, $2)`, q.QuoteId, q.ZeroExTransactionInfo)
 		return err
 	})
 
@@ -106,12 +105,11 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 		, q.taker_asset_size
 		, q.expiration
 		, q.server_time
-		, q.order_hash
 		, q.zero_ex_transaction_hash
-		, s.order_bytes as "order"
+		, t.transaction_info_bytes as "zero_ex_transaction_info"
 		FROM quotes q
-		LEFT JOIN signed_orders s
-		ON q.quote_id = s.quote_id
+		LEFT JOIN transaction_info t
+		ON q.quote_id = t.quote_id
 		WHERE q.quote_id = $1 LIMIT 1
 	`
 	q := types.Quote{}
