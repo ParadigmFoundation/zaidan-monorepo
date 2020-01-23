@@ -2,17 +2,16 @@ package watching
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ethereum/go-ethereum/common"
 )
 
 type WatchedTransaction struct {
-	TxHash common.Hash
+	TxHash  common.Hash
 	QuoteId string
 }
 
@@ -25,14 +24,16 @@ type TxWatching struct {
 	MakerEndpoint           string
 	MakerClient             pb.MakerClient
 	safeWatchedTransactions SafeWatchedTransactions
+	log                     *logger.Entry
 }
 
 var bg = context.Background()
 
-func New(makerClient pb.MakerClient ) *TxWatching {
+func New(makerClient pb.MakerClient) *TxWatching {
 	watching := TxWatching{
 		MakerClient:             makerClient,
-		safeWatchedTransactions: SafeWatchedTransactions{ watchedTransactions: make(map[common.Hash]WatchedTransaction) },
+		safeWatchedTransactions: SafeWatchedTransactions{watchedTransactions: make(map[common.Hash]WatchedTransaction)},
+		log:                     logger.New("watching"),
 	}
 
 	go watching.startWatchingBlocks()
@@ -60,14 +61,13 @@ func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
 	}
 }
 
-
 func (txW *TxWatching) delete(txHash common.Hash) {
 	delete(txW.safeWatchedTransactions.watchedTransactions, txHash)
 }
 
 func (txW *TxWatching) RequestRemoval(txHash common.Hash) {
 	_, isWatched := txW.IsWatched(txHash)
-	_, isPending, _:= eth.Client.TransactionByHash(bg, txHash)
+	_, isPending, _ := eth.Client.TransactionByHash(bg, txHash)
 
 	if !isPending && isWatched {
 		txW.delete(txHash)
@@ -78,22 +78,24 @@ func (txW *TxWatching) startWatchingBlocks() {
 	for {
 
 		select {
-			case errors := <- eth.BlockHeadersSubscription.Err(): {
-				logging.SafeError(fmt.Errorf("subscription error: %v", errors))
-				logging.Info("Attempting to reconnect")
+		case err := <-eth.BlockHeadersSubscription.Err():
+			{
+				txW.log.WithError(err).Error("subscription error")
+				txW.log.Info("Attempting to reconnect")
 				eth.Reset()
 			}
-			case headers, ok := <- eth.BlockHeaders: {
+		case headers, ok := <-eth.BlockHeaders:
+			{
 				txW.Lock()
 
 				if !ok {
-					logging.Fatal(fmt.Errorf("headers channel failure"))
+					txW.log.Fatal("headers channel failure")
 				}
 
 				block, err := eth.Client.BlockByNumber(bg, headers.Number)
 				if err != nil {
-					logging.SafeError(fmt.Errorf("error getting block number %s: %v", headers.Number.String(), err))
-					logging.Info("Attempting to reconnect")
+					txW.log.WithError(err).Errorf("error getting block number %s", headers.Number.String())
+					txW.log.Info("Attempting to reonnect")
 					eth.Reset()
 					eth.BlockHeaders <- headers
 					return
@@ -103,12 +105,12 @@ func (txW *TxWatching) startWatchingBlocks() {
 					txHash := blockTx.Hash()
 
 					if watchedTransaction, present := txW.IsWatched(txHash); present {
-						logging.Info("Found", txHash.String(), "in Block #", block.Number().String())
+						txW.log.Info("Found", txHash.String(), "in Block #", block.Number().String())
 						txW.delete(txHash)
 
 						receipt, err := eth.Client.TransactionReceipt(bg, txHash)
 						if err != nil {
-							logging.SafeError(fmt.Errorf("failure getting receipt for watched transaction %s: %v", txHash.String(), err))
+							txW.log.WithError(err).Errorf("failure getting receipt for watched transaction %s", txHash.String())
 						}
 
 						_, err = txW.MakerClient.OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
@@ -116,7 +118,7 @@ func (txW *TxWatching) startWatchingBlocks() {
 							Status:  uint32(receipt.Status),
 						})
 						if err != nil {
-							logging.SafeError(fmt.Errorf("failure calling maker for transaction %s: %v", txHash.String(), err))
+							txW.log.WithError(err).Errorf("failure calling maker for transaction %s", txHash.String())
 						}
 					}
 				}
@@ -126,6 +128,3 @@ func (txW *TxWatching) startWatchingBlocks() {
 		}
 	}
 }
-
-
-

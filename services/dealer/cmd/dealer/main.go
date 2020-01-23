@@ -3,12 +3,14 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
+	"net"
 	"net/http"
 	"os"
 
 	"github.com/peterbourgon/ff"
+	"github.com/sirupsen/logrus"
 
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
@@ -29,6 +31,8 @@ func main() {
 		ff.WithEnvVarPrefix("DEALER"),
 	)
 
+	log := logger.New("app")
+	log.WithFields(logrus.Fields{"db": *db, "dsn": *dsn}).Info("Initializing database")
 	store, err := sql.New(*db, *dsn)
 	if err != nil {
 		log.Fatal(err)
@@ -38,6 +42,7 @@ func main() {
 		MakerBindAddress:     *makerBind,
 		HotWalletBindAddress: *hwBind,
 	}
+	log.WithField("cfg", cfg).Info("Dealer")
 	dealer, err := core.NewDealer(context.Background(), store, cfg)
 	if err != nil {
 		log.Fatal(err)
@@ -47,8 +52,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	if *policyBlack && *policyWhite {
+  
+  if *policyBlack && *policyWhite {
 		log.Fatal("Can't use both -policy.blacklist and -policy.whitelist")
 	}
 
@@ -66,7 +71,11 @@ func main() {
 		service.WithPolicy(mode, store)
 	}
 
-	if err := http.ListenAndServe(*bind, service); err != nil {
+	ln, err := net.Listen("tcp", *bind)
+	if err != nil {
 		log.Fatal(err)
 	}
+	log.WithField("bind", *bind).Info("Server started")
+	server := &http.Server{Handler: service}
+	log.Fatal(server.Serve(ln))
 }

@@ -7,23 +7,26 @@ import (
 	"net"
 	"strings"
 
-	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 	"github.com/ethereum/go-ethereum/common"
 	"google.golang.org/grpc"
+
+	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
 )
 
 type WatcherServer struct {
 	TxWatching *watching.TxWatching
-	grpc *grpc.Server
+	grpc       *grpc.Server
+	log        *logger.Entry
 }
 
 func NewServer(txWatching *watching.TxWatching) *WatcherServer {
 	watcherServer := &WatcherServer{
 		TxWatching: txWatching,
-		grpc:  grpc.NewServer(),
+		grpc:       grpc.NewServer(),
+		log:        logger.New("grpc"),
 	}
 
 	pb.RegisterWatcherServer(watcherServer.grpc, watcherServer)
@@ -36,7 +39,7 @@ func (s *WatcherServer) Listen(port string) error {
 	if err != nil {
 		return err
 	}
-	logging.Info("Watcher listening on port", port)
+	s.log.Infof("Watcher listening on port %s", port)
 
 	return s.grpc.Serve(lis)
 }
@@ -50,26 +53,26 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		return nil, errors.New("invalid txHash")
 	}
 
-	logging.Info(fmt.Sprintf("Received: %v", in.TxHash))
+	s.log.Info(fmt.Sprintf("Received: %v", in.TxHash))
 	s.TxWatching.Lock()
 	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
-		logging.SafeError(fmt.Errorf("transaction lookup failure: %s", err.Error()))
+		s.log.Error(fmt.Errorf("transaction lookup failure: %s", err.Error()))
 		return nil, err
 	}
 
 	_, isWatched := s.TxWatching.IsWatched(txHash)
 	if isPending && !isWatched {
-		logging.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
+		s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
 		s.TxWatching.Watch(txHash, in.QuoteId)
 		isWatched = true
 	} else if !isPending {
 		if isWatched {
-			logging.Info("No longer watching previously mined transaction", txHash.String())
+			s.log.Info("No longer watching previously mined transaction", txHash.String())
 			s.TxWatching.RequestRemoval(txHash)
 		}
 
-		logging.Info("Transaction", txHash.String(), "mined and does not need to be watched notifying maker")
+		s.log.Info("Transaction", txHash.String(), "mined and does not need to be watched notifying maker")
 		_, _ = s.TxWatching.MakerClient.OrderStatusUpdate(ctx, &pb.OrderStatusUpdateRequest{
 			QuoteId: in.QuoteId,
 			Status:  status,
@@ -77,15 +80,14 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	}
 	s.TxWatching.Unlock()
 
-	return &pb.WatchTransactionResponse{ IsWatched: isWatched, IsPending: isPending, TxStatus: status, TxHash: txHash.String(), QuoteId: in.QuoteId }, nil
+	return &pb.WatchTransactionResponse{IsWatched: isWatched, IsPending: isPending, TxStatus: status, TxHash: txHash.String(), QuoteId: in.QuoteId}, nil
 }
 
 func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
-	_, isPending, err:= eth.Client.TransactionByHash(c, txHash)
+	_, isPending, err := eth.Client.TransactionByHash(c, txHash)
 	if err != nil {
 		return false, 0, err
 	}
-
 
 	if isPending {
 		return isPending, 0, nil
