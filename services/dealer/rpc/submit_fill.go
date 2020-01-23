@@ -24,7 +24,7 @@ func (sfr *submitFillResponse) MarshalJSON() ([]byte, error) {
 }
 
 // SubmitFill implements the dealer_submitFill method
-func (svc *Service) SubmitFill(quoteId string, salt string, signature string, signer string, data string, gasPrice string, expirationTimeSeconds string) (*submitFillResponse, error) {
+func (svc *Service) SubmitFill(quoteId string, salt string, signature string, signer string, data string, gasPrice string, expirationTimeSeconds int64) (*submitFillResponse, error) {
 	order, err := svc.dealer.GetOrder(quoteId)
 	if err != nil {
 		return nil, err
@@ -35,23 +35,20 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 		return nil, ErrFillValidationFailed
 	}
 
-	bData, err := hexutil.Decode(data)
-	if err != nil {
-		return nil, err
-	}
-
 	bSignature, err := hexutil.Decode(signature)
 	if err != nil {
 		return nil, err
 	}
 
 	fillReq := &grpc.ExecuteZeroExTransactionRequest{
-		Salt:                  salt,
-		ExpirationTimeSeconds: expirationTimeSeconds,
-		GasPrice:              gasPrice,
-		SignerAddress:         signer,
-		Data:                  bData,
-		Signature:             bSignature,
+		Transaction: &grpc.ZeroExTransaction{
+			Salt:                  salt,
+			ExpirationTimeSeconds: expirationTimeSeconds,
+			GasPrice:              gasPrice,
+			SignerAddress:         signer,
+			Data:                  data,
+		},
+		Signature: bSignature,
 	}
 
 	fillRes, err := svc.dealer.ExecuteZeroExTransaction(context.TODO(), fillReq)

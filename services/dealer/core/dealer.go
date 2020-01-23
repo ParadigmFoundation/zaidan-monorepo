@@ -88,6 +88,11 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		return nil, err
 	}
 
+	txInfo := &types.ZeroExTransactionInfo{
+		Transaction: orderRes.ZeroExTransaction,
+		Order:       orderRes.Order,
+	}
+
 	quote := &types.Quote{
 		QuoteId:               res.QuoteId,
 		MakerAssetAddress:     res.MakerAsset,
@@ -96,10 +101,8 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		TakerAssetSize:        res.TakerSize,
 		Expiration:            res.Expiration,
 		ServerTime:            now.UnixNano() / 1e6, // conversion from nanoseconds to milliseconds = ns / 1e6
-		OrderHash:             orderRes.OrderHash,
-		Order:                 orderRes.Order,
-		ZeroExTransaction:     orderRes.ZeroExTransaction,
 		ZeroExTransactionHash: orderRes.ZeroExTransactionHash,
+		ZeroExTransactionInfo: txInfo,
 	}
 
 	if err := d.db.CreateQuote(quote); err != nil {
@@ -145,7 +148,7 @@ func (d *Dealer) GetOrder(quoteId string) (*zeroex.SignedOrder, error) {
 		return nil, err
 	}
 
-	order, err := quote.Order.ToZeroExSignedOrder()
+	order, err := quote.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
 	if err != nil {
 		return nil, err
 	}
