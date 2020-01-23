@@ -42,9 +42,6 @@ func (suite *Suite) TestQuotes() {
 	suite.Require().NoError(
 		suite.Store.CreateQuote(obj),
 	)
-	suite.Require().Len(obj.QuoteId, 36,
-		"UUID from quote should be of length 36",
-	)
 
 	suite.Run("Found", func() {
 		found, err := suite.Store.GetQuote(obj.QuoteId)
