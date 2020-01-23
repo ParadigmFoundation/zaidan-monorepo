@@ -254,11 +254,11 @@ message QuoteInfo {
 }
 
 message Market {
-  string maker_asset_address = 2; // The Ethereum address of the markets maker asset (provided by the dealer).
-  repeated string taker_asset_addresses = 3; // An array of asset Ethereum addresses for which quotes are supported.
-  TradeInfo trade_info = 4; // Information about trade settlement and execution for this market (gas price, etc.)
-  QuoteInfo quote_info = 5; // Information about quotes provided on this market (max/min size, etc.)
-  map<string, string> metadata = 6; //
+  string maker_asset_address = 1; // The Ethereum address of the markets maker asset (provided by the dealer).
+  repeated string taker_asset_addresses = 2; // An array of asset Ethereum addresses for which quotes are supported.
+  TradeInfo trade_info = 3; // Information about trade settlement and execution for this market (gas price, etc.)
+  QuoteInfo quote_info = 4; // Information about quotes provided on this market (max/min size, etc.)
+  map<string, string> metadata = 5; //
 } 
 
 // Exchange Manager
