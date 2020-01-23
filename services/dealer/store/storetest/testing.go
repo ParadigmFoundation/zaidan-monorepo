@@ -88,3 +88,25 @@ func (suite *Suite) TestMarkets() {
 			"\nexpected: %s\ngot:      %s", obj, found)
 	})
 }
+
+func (suite *Suite) TestPolicies() {
+	policy := "xxx"
+
+	found, err := suite.Store.HasPolicy(policy)
+	suite.Require().NoError(err)
+	suite.Require().False(found)
+
+	suite.Require().NoError(
+		suite.Store.CreatePolicy(policy),
+	)
+
+	found, err = suite.Store.HasPolicy(policy)
+	suite.Require().NoError(err)
+	suite.Require().True(found)
+
+	suite.Run("Idempotence", func() {
+		p := "foo"
+		suite.Require().NoError(suite.Store.CreatePolicy(p))
+		suite.Require().NoError(suite.Store.CreatePolicy(p))
+	})
+}
