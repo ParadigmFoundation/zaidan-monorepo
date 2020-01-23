@@ -15,7 +15,7 @@ type Service struct {
 	server     *rpc.Server
 	policyMode PolicyMode
 	policy     store.Policy
-	log    *logger.Entry
+	log        *logger.Entry
 }
 
 // NewService creates a new Dealer JSONRPC service
