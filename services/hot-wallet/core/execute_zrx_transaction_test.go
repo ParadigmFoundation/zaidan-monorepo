@@ -121,12 +121,8 @@ func testExecuteZrxTransaction(hw *HotWallet, t *testing.T) {
 
 	// create and send gRPC request to execute
 	executeReq := &grpc.ExecuteZeroExTransactionRequest{
-		Salt:                  fillTx.Salt.String(),
-		ExpirationTimeSeconds: fillTx.ExpirationTimeSeconds.String(),
-		GasPrice:              fillTx.GasPrice.String(),
-		SignerAddress:         fillTx.SignerAddress.Hex(),
-		Data:                  fillTx.Data,
-		Signature:             signedTransaction.Signature,
+		Transaction: grpc.ZeroExTransactionToProto(&signedTransaction.Transaction),
+		Signature:   signedTransaction.Signature,
 	}
 	_, err = hw.ExecuteZeroExTransaction(context.Background(), executeReq)
 	require.NoError(t, err)

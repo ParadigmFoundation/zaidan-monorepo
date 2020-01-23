@@ -20,6 +20,7 @@ service Maker {
 
 service HotWallet {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc ValidateOrder(ValidateOrderRequest) returns (ValidateOrderResponse);
     rpc GetAllowance(GetAllowanceRequest) returns (GetAllowanceResponse);
     rpc SetAllowance(SetAllowanceRequest) returns (SetAllowanceResponse);
     rpc GetTokenBalance(GetBalanceRequest) returns (GetBalanceResponse);

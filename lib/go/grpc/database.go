@@ -16,3 +16,8 @@ func (m *QuoteInfo) Scan(v interface{}) error     { return proto.Unmarshal(utils
 
 func (m *SignedOrder) Value() (driver.Value, error) { return proto.Marshal(m) }
 func (m *SignedOrder) Scan(v interface{}) error     { return proto.Unmarshal(utils.AnyToBytes(v), m) }
+
+func (m *ZeroExTransactionInfo) Value() (driver.Value, error) { return proto.Marshal(m) }
+func (m *ZeroExTransactionInfo) Scan(v interface{}) error {
+	return proto.Unmarshal(utils.AnyToBytes(v), m)
+}

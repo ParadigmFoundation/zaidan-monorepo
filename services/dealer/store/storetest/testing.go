@@ -18,26 +18,29 @@ type Suite struct {
 
 func (suite *Suite) TestQuotes() {
 	obj := &types.Quote{
-		QuoteId:           uuid.New().String(),
-		MakerAssetAddress: "maker-asset-address",
-		TakerAssetAddress: "taker-asset-address",
-		MakerAssetSize:    "maker-asset-size",
-		TakerAssetSize:    "taker-asset-size",
-		Expiration:        time.Now().Add(1 * time.Second).Unix(),
-		ServerTime:        time.Now().Unix(),
-		OrderHash:         "order-hash",
-		Order: &types.SignedOrder{
-			ChainId:         1,
-			ExchangeAddress: "exchange-address",
+		QuoteId:               uuid.New().String(),
+		MakerAssetAddress:     "maker-asset-address",
+		TakerAssetAddress:     "taker-asset-address",
+		MakerAssetSize:        "maker-asset-size",
+		TakerAssetSize:        "taker-asset-size",
+		Expiration:            time.Now().Add(1 * time.Second).Unix(),
+		ServerTime:            time.Now().Unix(),
+		ZeroExTransactionHash: "tx-hash",
+		ZeroExTransactionInfo: &types.ZeroExTransactionInfo{
+			Order: &types.SignedOrder{
+				ChainId:         1,
+				ExchangeAddress: "exchange-address",
+			},
+			Transaction: &types.ZeroExTransaction{
+				Salt:                  "salty",
+				Data:                  "data",
+				ExpirationTimeSeconds: time.Now().Unix(),
+			},
 		},
-		FillTx: "fill-tx",
 	}
 
 	suite.Require().NoError(
 		suite.Store.CreateQuote(obj),
-	)
-	suite.Require().Len(obj.QuoteId, 36,
-		"CreateTrade should set a UUID",
 	)
 
 	suite.Run("Found", func() {

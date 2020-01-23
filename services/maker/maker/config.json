@@ -59,6 +59,55 @@
         },
         "constant_rate": "PREF_INSIDE"
       }
+    },
+    {
+      "symbol": "ETH",
+      "address": "0x0000000000000000000000000000000000000000",
+      "decimals": 18,
+      "pricing_data" : {
+        "exchange_books": [
+          {
+            "exchange": "COINBASE",
+            "book": "ETH/USD"
+          },
+          {
+            "exchange": "BINANCE",
+            "book": "ETH/USDT"
+          }
+        ],
+        "implied_pref": {
+            "exchange": "COINBASE",
+            "book": "ETH/USD"
+        }
+      }
+    },
+    {
+      "symbol": "LINK",
+      "address": "0xbe0037eaf2d64fe5529bca93c18c9702d3930376",
+      "decimals": 18,
+      "pricing_data" : {
+        "exchange_books": [
+          {
+            "exchange": "COINBASE",
+            "book": "LINK/USD"
+          },
+          {
+            "exchange": "BINANCE",
+            "book": "LINK/ETH"
+          }
+        ],
+        "implied_pref": {
+            "exchange": "COINBASE",
+            "book": "LINK/USD"
+        }
+      }
     }
-  ]
+  ],
+  "validity_length": 15000,
+  "premium": ".001",
+  "exchange_fees": {
+    "BINANCE": ".00075",
+    "COINBASE": ".002",
+    "GEMINI": ".001"
+  }
 }

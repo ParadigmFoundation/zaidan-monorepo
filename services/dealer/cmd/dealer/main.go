@@ -43,7 +43,7 @@ func main() {
 		HotWalletBindAddress: *hwBind,
 	}
 	log.WithField("cfg", cfg).Info("Dealer")
-	dealer, err := core.NewDealer(context.Background(), cfg)
+	dealer, err := core.NewDealer(context.Background(), store, cfg)
 	if err != nil {
 		log.Fatal(err)
 	}

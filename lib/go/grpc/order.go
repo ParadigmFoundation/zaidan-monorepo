@@ -118,40 +118,40 @@ func (o *Order) ToZeroExOrder() (*zeroex.Order, error) {
 }
 
 // ToZeroExSignedOrder converts a protobuf unsigned order message to a 0x SignedOrder
-func (o *SignedOrder) ToZeroExSignedOrder() (zeroex.SignedOrder, error) {
+func (o *SignedOrder) ToZeroExSignedOrder() (*zeroex.SignedOrder, error) {
 	chainId, ok := new(big.Int).SetString(strconv.FormatUint(o.ChainId, 10), 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'chainId'")
+		return nil, fmt.Errorf("unable to parse 'chainId'")
 	}
 
 	makerAssetAmount, ok := new(big.Int).SetString(o.MakerAssetAmount, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'makerAssetAmount'")
+		return nil, fmt.Errorf("unable to parse 'makerAssetAmount'")
 	}
 
 	makerFee, ok := new(big.Int).SetString(o.MakerFee, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'makerFee'")
+		return nil, fmt.Errorf("unable to parse 'makerFee'")
 	}
 
 	takerAssetAmount, ok := new(big.Int).SetString(o.TakerAssetAmount, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'takerAssetAmount'")
+		return nil, fmt.Errorf("unable to parse 'takerAssetAmount'")
 	}
 
 	takerFee, ok := new(big.Int).SetString(o.TakerFee, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'takerFee'")
+		return nil, fmt.Errorf("unable to parse 'takerFee'")
 	}
 
 	salt, ok := new(big.Int).SetString(o.Salt, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'salt'")
+		return nil, fmt.Errorf("unable to parse 'salt'")
 	}
 
 	expirationTimeSeconds, ok := new(big.Int).SetString(o.ExpirationTimeSeconds, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'expirationTimeSeconds'")
+		return nil, fmt.Errorf("unable to parse 'expirationTimeSeconds'")
 	}
 
 	order := zeroex.Order{
@@ -173,7 +173,7 @@ func (o *SignedOrder) ToZeroExSignedOrder() (zeroex.SignedOrder, error) {
 		Salt:                  salt,
 	}
 
-	return zeroex.SignedOrder{
+	return &zeroex.SignedOrder{
 		Order:     order,
 		Signature: common.FromHex(o.Signature),
 	}, nil
