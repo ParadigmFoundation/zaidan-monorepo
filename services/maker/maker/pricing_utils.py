@@ -48,276 +48,250 @@ class PricingUtils():
         if implied:
             if maker_asset_pricing_data['implied_pref'][1].split('/')[1] == taker_asset_pricing_data['implied_pref'][1].split('/')[1]:
                 if 'constant_rate' in maker_asset_pricing_data.keys():
-                    books_to_get = taker_asset_pricing_data['exchange_books']
-                    order_books = {}
-                    for book in books_to_get:
-                        if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
-                            order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'bids'))
-                    if taker_size:
-                        price = self._get_price_from_book_base(order_books, taker_size, 'buy')
-                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
-                        return {'maker_size': taker_size * price, 'taker_size': taker_size}
-                    else:
-                        price = self._get_price_from_book_quote(order_books, maker_size, 'buy')
-                        price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
-                        return {'maker_size': maker_size, 'taker_size': maker_size/price}
+                    return self.constant_rate_maker_asset(taker_asset_pricing_data, maker_asset_pricing_data, taker_size, maker_size)
                 elif 'constant_rate' in taker_asset_pricing_data.keys():
-                    books_to_get = maker_asset_pricing_data['exchange_books']
-                    order_books = {}
-                    for book in books_to_get:
-                        if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
-                            order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'asks'))
-                    if maker_size:
-                        price = self._get_price_from_book_base(order_books, maker_size, 'sell')
-                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
-                        return {'maker_size': maker_size, 'taker_size': maker_size*price}
-
-                    else:
-                        price = self._get_price_from_book_quote(order_books, taker_size, 'sell')
-                        price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
-                        return {'maker_size': taker_size/price, 'taker_size': taker_size}
+                    return self.constant_rate_taker_asset(taker_asset_pricing_data, maker_asset_pricing_data, taker_size, maker_size)
                 else:
                     if taker_size:
-                        imp_book = taker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
-
-                        taker_asset_price = self._get_price_from_book_base(order_books, taker_size, 'buy')
-
-                        imp_book = maker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
-
-                        maker_asset_price = self._get_price_from_book_quote(order_books, taker_size*taker_asset_price, 'sell')
-
-                        return {'maker_size': taker_size*taker_asset_price/maker_asset_price, 'taker_size':taker_size}
+                        return self.implied_standard_taker_size(taker_asset_pricing_data, maker_asset_pricing_data,
+                                                    taker_size)
                     else:
-                        imp_book = maker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
+                        return self.implied_standard_maker_size(taker_asset_pricing_data, maker_asset_pricing_data,
+                                                         maker_size)
+        else:
+            raise Exception
 
-                        maker_asset_price = self._get_price_from_book_base(order_books, maker_size, 'sell')
-
-                        imp_book = taker_asset_pricing_data['implied_pref']
-                        order_books = {}
-                        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
-
-                        taker_asset_price = self._get_price_from_book_quote(order_books, maker_size*maker_asset_price, 'sell')
-
-                        return {'maker_size': maker_size, 'taker_size':maker_size*maker_asset_price/taker_asset_price}
-
-            else:
-                raise Exception
 
     def _get_price_from_book_base(self, half_book:object, size:float, side:str) -> float:
         ''' Return price. '''
 
         if side == 'buy':
-            inside_bids = {}
-            exchange_levels = {}
-            total_inside_bid = [float('-Inf'), float('-Inf')]
-            exchange_sizes = {}
-            exchange_prices = {}
-            exchange_exhausted = {}
-
-            for exchange in half_book.keys():
-                exchange_exhausted[exchange] = False
-                exchange_levels[exchange] = 0
-                exchange_sizes[exchange] = 0
-                inside_bids[exchange] = half_book[exchange][0]
-                inside_bids[exchange][0] = inside_bids[exchange][0]
-                if inside_bids[exchange][0] * (1 - EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
-                        1 - EXCHANGE_FEES[exchange]):
-                    total_inside_bid = inside_bids[exchange]
-                    total_inside_bid_exchange = exchange
-
-            while size > 0:
-                if total_inside_bid[1] > size:
-                    exchange_sizes[total_inside_bid_exchange] = exchange_sizes.get(total_inside_bid_exchange, 0) + size
-                    exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
-                                1 - EXCHANGE_FEES[total_inside_bid_exchange])
-                    size = 0
-                else:
-                    size = size - total_inside_bid[1]
-                    exchange_sizes[total_inside_bid_exchange] = \
-                        exchange_sizes.get(total_inside_bid_exchange, 0) + total_inside_bid[1]
-                    exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
-                                1 - EXCHANGE_FEES[total_inside_bid_exchange])
-                    exchange_levels[total_inside_bid_exchange] = exchange_levels[total_inside_bid_exchange] + 1
-
-                total_inside_bid = [float('-Inf'), float('-Inf')]
-                for exchange in half_book.keys():
-                    if not exchange_levels[exchange] >= len(half_book[exchange]):
-                        inside_bids[exchange] = half_book[exchange][exchange_levels[exchange]]
-                        inside_bids[exchange][0] = inside_bids[exchange][0]
-                        if inside_bids[exchange][0] * (1 - EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
-                                1 - EXCHANGE_FEES[exchange]):
-                            total_inside_bid = inside_bids[exchange]
-                            total_inside_bid_exchange = exchange
-                    else:
-                        exchange_exhausted[exchange] = True
-                if False not in exchange_exhausted.values():
-                    exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
-                    size = 0
-
-            return min(exchange_prices.values())*(1 - PREMIUM)
+            return self._get_price_from_book_base_buyside(half_book, size)
 
         if side == 'sell':
-            inside_asks = {}
-            exchange_levels = {}
-            total_inside_ask = [float('Inf'), float('Inf')]
-            exchange_sizes = {}
-            exchange_prices = {}
-            exchange_exhausted = {}
-
-
-            for exchange in half_book.keys():
-                exchange_exhausted[exchange] = False
-                exchange_levels[exchange] = 0
-                exchange_sizes[exchange] = 0
-                inside_asks[exchange] = half_book[exchange][0]
-                inside_asks[exchange][0] = inside_asks[exchange][0]
-                if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
-                        1 + EXCHANGE_FEES[exchange]):
-                    total_inside_ask = inside_asks[exchange]
-                    total_inside_ask_exchange = exchange
-
-            while size > 0:
-                if total_inside_ask[1] > size:
-                    exchange_sizes[total_inside_ask_exchange] = exchange_sizes.get(total_inside_ask_exchange, 0) + size
-                    exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
-                                1 + EXCHANGE_FEES[total_inside_ask_exchange])
-                    size = 0
-                else:
-                    size = size - total_inside_ask[1]
-                    exchange_sizes[total_inside_ask_exchange] = \
-                        exchange_sizes.get(total_inside_ask_exchange, 0) + total_inside_ask[1]
-                    exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
-                                1 + EXCHANGE_FEES[total_inside_ask_exchange])
-                    exchange_levels[total_inside_ask_exchange] = exchange_levels[total_inside_ask_exchange] + 1
-
-                total_inside_ask = [float('Inf'), float('Inf')]
-
-                for exchange in half_book.keys():
-                    if not exchange_levels[exchange] >= len(half_book[exchange]):
-                        inside_asks[exchange] = half_book[exchange][exchange_levels[exchange]]
-                        inside_asks[exchange][0] = inside_asks[exchange][0]
-                        if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
-                                1 + EXCHANGE_FEES[exchange]):
-                            total_inside_ask = inside_asks[exchange]
-                            total_inside_ask_exchange = exchange
-                    else:
-                        exchange_exhausted[exchange] = True
-                if False not in exchange_exhausted.values():
-                    exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
-                    size = 0
-            return max(exchange_prices.values())*(1 + PREMIUM)
+            return self._get_price_from_book_base_sellside(half_book, size)
 
         raise Exception('Error in calculating price')
 
     def _get_price_from_book_quote(self, half_book:object, size:float, side:str) -> float:
         ''' Return price. '''
 
+        if side == 'sell':
+            return self._get_price_from_book_quote_sellside(half_book, size)
 
+        if side == 'buy':
+            return self._get_price_from_book_quote_buyside(half_book, size)
+
+
+    def adjust_for_constant_rate(self, price:float, book:object, asset_side:str) -> float:
+        if asset_side == 'maker_asset':
+            half_book = self.cache.get_order_book(book[0], book[1], 'asks')
+            return price/(half_book[0][0])
+        if asset_side == 'taker_asset':
+            half_book = self.cache.get_order_book(book[0], book[1], 'bids')
+            return price/(half_book[0][0])
+
+    def _get_price_from_book_quote_sellside(self, half_book:object, size:float) -> float:
         exchange_levels = {}
         exchange_sizes = {}
         exchange_prices = {}
         exchange_exhausted = {}
+        inside_asks = {}
+        total_inside_ask = [float('Inf'), float('Inf')]
+        for exchange in half_book.keys():
+            exchange_exhausted[exchange] = False
+            exchange_levels[exchange] = 0
+            exchange_sizes[exchange] = 0
+            inside_asks[exchange] = half_book[exchange][0]
+            inside_asks[exchange][0] = inside_asks[exchange][0]
+            if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
+                    1 + EXCHANGE_FEES[exchange]):
+                total_inside_ask = inside_asks[exchange]
+                total_inside_ask_exchange = exchange
 
-        if side == 'sell':
-            inside_asks = {}
+        while size > 0:
+            total_available = total_inside_ask[0] * total_inside_ask[1]
+            if total_available > size:
+                exchange_sizes[total_inside_ask_exchange] = exchange_sizes.get(total_inside_ask_exchange, 0) + size
+                exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
+                        1 + EXCHANGE_FEES[total_inside_ask_exchange])
+                size = 0
+            else:
+                size = size - total_available
+                exchange_sizes[total_inside_ask_exchange] = \
+                    exchange_sizes.get(total_inside_ask_exchange, 0) + total_available
+                exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
+                        1 + EXCHANGE_FEES[total_inside_ask_exchange])
+                exchange_levels[total_inside_ask_exchange] = exchange_levels[total_inside_ask_exchange] + 1
+
             total_inside_ask = [float('Inf'), float('Inf')]
             for exchange in half_book.keys():
-                exchange_exhausted[exchange] = False
-                exchange_levels[exchange] = 0
-                exchange_sizes[exchange] = 0
-                inside_asks[exchange] = half_book[exchange][0]
-                inside_asks[exchange][0] = inside_asks[exchange][0]
-                if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
-                        1 + EXCHANGE_FEES[exchange]):
-                    total_inside_ask = inside_asks[exchange]
-                    total_inside_ask_exchange = exchange
-
-            while size > 0:
-                total_available = total_inside_ask[0] * total_inside_ask[1]
-                if total_available > size:
-                    exchange_sizes[total_inside_ask_exchange] = exchange_sizes.get(total_inside_ask_exchange, 0) + size
-                    exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
-                                1 + EXCHANGE_FEES[total_inside_ask_exchange])
-                    size = 0
+                if not exchange_levels[exchange] >= len(half_book[exchange]):
+                    inside_asks[exchange] = half_book[exchange][exchange_levels[exchange]]
+                    inside_asks[exchange][0] = inside_asks[exchange][0]
+                    if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
+                            1 + EXCHANGE_FEES[exchange]):
+                        total_inside_ask = inside_asks[exchange]
+                        total_inside_ask_exchange = exchange
                 else:
-                    size = size - total_available
-                    exchange_sizes[total_inside_ask_exchange] = \
-                        exchange_sizes.get(total_inside_ask_exchange, 0) + total_available
-                    exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
-                                1 + EXCHANGE_FEES[total_inside_ask_exchange])
-                    exchange_levels[total_inside_ask_exchange] = exchange_levels[total_inside_ask_exchange] + 1
+                    exchange_exhausted[exchange] = True
 
-                total_inside_ask = [float('Inf'), float('Inf')]
-                for exchange in half_book.keys():
-                    if not exchange_levels[exchange] >= len(half_book[exchange]):
-                        inside_asks[exchange] = half_book[exchange][exchange_levels[exchange]]
-                        inside_asks[exchange][0] = inside_asks[exchange][0]
-                        if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
-                                1 + EXCHANGE_FEES[exchange]):
-                            total_inside_ask = inside_asks[exchange]
-                            total_inside_ask_exchange = exchange
-                    else:
-                        exchange_exhausted[exchange] = True
+            if False not in exchange_exhausted.values():
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
+                size = 0
 
-                if False not in exchange_exhausted.values():
-                    exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
-                    size = 0
+        return max(exchange_prices.values()) * (1 + PREMIUM)
 
-            return max(exchange_prices.values()) * (1 + PREMIUM)
+    def _get_price_from_book_quote_buyside(self, half_book: object, size: float) -> float:
+        exchange_levels = {}
+        exchange_sizes = {}
+        exchange_prices = {}
+        exchange_exhausted = {}
+        inside_bids = {}
+        total_inside_bid = [float('-Inf'), float('-Inf')]
+        for exchange in half_book.keys():
+            exchange_exhausted[exchange] = False
+            exchange_levels[exchange] = 0
+            exchange_sizes[exchange] = 0
+            inside_bids[exchange] = half_book[exchange][0]
+            inside_bids[exchange][0] = inside_bids[exchange][0]
+            if inside_bids[exchange][0] * (1 - EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
+                    1 + EXCHANGE_FEES[exchange]):
+                total_inside_bid = inside_bids[exchange]
+                total_inside_bid_exchange = exchange
 
-        if side == 'buy':
-            inside_bids = {}
+        while size > 0:
+            total_available = total_inside_bid[0] * total_inside_bid[1]
+            if total_available > size:
+                exchange_sizes[total_inside_bid_exchange] = exchange_sizes.get(total_inside_bid_exchange, 0) + size
+                exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
+                        1 - EXCHANGE_FEES[total_inside_bid_exchange])
+                size = 0
+            else:
+                size = size - total_available
+                exchange_sizes[total_inside_bid_exchange] = \
+                    exchange_sizes.get(total_inside_bid_exchange, 0) + total_available
+                exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
+                        1 - EXCHANGE_FEES[total_inside_bid_exchange])
+                exchange_levels[total_inside_bid_exchange] = exchange_levels[total_inside_bid_exchange] + 1
+
             total_inside_bid = [float('-Inf'), float('-Inf')]
             for exchange in half_book.keys():
-                exchange_exhausted[exchange] = False
-                exchange_levels[exchange] = 0
-                exchange_sizes[exchange] = 0
-                inside_bids[exchange] = half_book[exchange][0]
-                inside_bids[exchange][0] = inside_bids[exchange][0]
-                if inside_bids[exchange][0] * (1 - EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
-                        1 + EXCHANGE_FEES[exchange]):
-                    total_inside_bid = inside_bids[exchange]
-                    total_inside_bid_exchange = exchange
-
-            while size > 0:
-                total_available = total_inside_bid[0] * total_inside_bid[1]
-                if total_available > size:
-                    exchange_sizes[total_inside_bid_exchange] = exchange_sizes.get(total_inside_bid_exchange, 0) + size
-                    exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
-                                1 - EXCHANGE_FEES[total_inside_bid_exchange])
-                    size = 0
+                if not exchange_levels[exchange] >= len(half_book[exchange]):
+                    inside_bids[exchange] = half_book[exchange][exchange_levels[exchange]]
+                    inside_bids[exchange][0] = inside_bids[exchange][0]
+                    if inside_bids[exchange][0] * (1 + EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
+                            1 - EXCHANGE_FEES[exchange]):
+                        total_inside_bid = inside_bids[exchange]
+                        total_inside_bid_exchange = exchange
                 else:
-                    size = size - total_available
-                    exchange_sizes[total_inside_bid_exchange] = \
-                        exchange_sizes.get(total_inside_bid_exchange, 0) + total_available
-                    exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
-                                1 - EXCHANGE_FEES[total_inside_bid_exchange])
-                    exchange_levels[total_inside_bid_exchange] = exchange_levels[total_inside_bid_exchange] + 1
+                    exchange_exhausted[exchange] = True
 
-                total_inside_bid = [float('-Inf'), float('-Inf')]
-                for exchange in half_book.keys():
-                    if not exchange_levels[exchange] >= len(half_book[exchange]):
-                        inside_bids[exchange] = half_book[exchange][exchange_levels[exchange]]
-                        inside_bids[exchange][0] = inside_bids[exchange][0]
-                        if inside_bids[exchange][0] * (1 + EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
-                                1 - EXCHANGE_FEES[exchange]):
-                            total_inside_bid = inside_bids[exchange]
-                            total_inside_bid_exchange = exchange
-                    else:
-                        exchange_exhausted[exchange] = True
+            if False not in exchange_exhausted.values():
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
+                size = 0
 
-                if False not in exchange_exhausted.values():
-                    exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
-                    size = 0
+        return min(exchange_prices.values()) * (1 - PREMIUM)
 
-            return min(exchange_prices.values())*(1 - PREMIUM)
+    def _get_price_from_book_base_buyside(self, half_book:object, size:float) -> float:
+        inside_bids = {}
+        exchange_levels = {}
+        total_inside_bid = [float('-Inf'), float('-Inf')]
+        exchange_sizes = {}
+        exchange_prices = {}
+        exchange_exhausted = {}
 
+        for exchange in half_book.keys():
+            exchange_exhausted[exchange] = False
+            exchange_levels[exchange] = 0
+            exchange_sizes[exchange] = 0
+            inside_bids[exchange] = half_book[exchange][0]
+            inside_bids[exchange][0] = inside_bids[exchange][0]
+            if inside_bids[exchange][0] * (1 - EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
+                    1 - EXCHANGE_FEES[exchange]):
+                total_inside_bid = inside_bids[exchange]
+                total_inside_bid_exchange = exchange
+
+        while size > 0:
+            if total_inside_bid[1] > size:
+                exchange_sizes[total_inside_bid_exchange] = exchange_sizes.get(total_inside_bid_exchange, 0) + size
+                exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
+                        1 - EXCHANGE_FEES[total_inside_bid_exchange])
+                size = 0
+            else:
+                size = size - total_inside_bid[1]
+                exchange_sizes[total_inside_bid_exchange] = \
+                    exchange_sizes.get(total_inside_bid_exchange, 0) + total_inside_bid[1]
+                exchange_prices[total_inside_bid_exchange] = total_inside_bid[0] * (
+                        1 - EXCHANGE_FEES[total_inside_bid_exchange])
+                exchange_levels[total_inside_bid_exchange] = exchange_levels[total_inside_bid_exchange] + 1
+
+            total_inside_bid = [float('-Inf'), float('-Inf')]
+            for exchange in half_book.keys():
+                if not exchange_levels[exchange] >= len(half_book[exchange]):
+                    inside_bids[exchange] = half_book[exchange][exchange_levels[exchange]]
+                    inside_bids[exchange][0] = inside_bids[exchange][0]
+                    if inside_bids[exchange][0] * (1 - EXCHANGE_FEES[exchange]) > total_inside_bid[0] * (
+                            1 - EXCHANGE_FEES[exchange]):
+                        total_inside_bid = inside_bids[exchange]
+                        total_inside_bid_exchange = exchange
+                else:
+                    exchange_exhausted[exchange] = True
+            if False not in exchange_exhausted.values():
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
+                size = 0
+
+        return min(exchange_prices.values()) * (1 - PREMIUM)
+
+    def _get_price_from_book_base_sellside(self, half_book:object, size:float) -> float:
+        inside_asks = {}
+        exchange_levels = {}
+        total_inside_ask = [float('Inf'), float('Inf')]
+        exchange_sizes = {}
+        exchange_prices = {}
+        exchange_exhausted = {}
+
+        for exchange in half_book.keys():
+            exchange_exhausted[exchange] = False
+            exchange_levels[exchange] = 0
+            exchange_sizes[exchange] = 0
+            inside_asks[exchange] = half_book[exchange][0]
+            inside_asks[exchange][0] = inside_asks[exchange][0]
+            if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
+                    1 + EXCHANGE_FEES[exchange]):
+                total_inside_ask = inside_asks[exchange]
+                total_inside_ask_exchange = exchange
+
+        while size > 0:
+            if total_inside_ask[1] > size:
+                exchange_sizes[total_inside_ask_exchange] = exchange_sizes.get(total_inside_ask_exchange, 0) + size
+                exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
+                        1 + EXCHANGE_FEES[total_inside_ask_exchange])
+                size = 0
+            else:
+                size = size - total_inside_ask[1]
+                exchange_sizes[total_inside_ask_exchange] = \
+                    exchange_sizes.get(total_inside_ask_exchange, 0) + total_inside_ask[1]
+                exchange_prices[total_inside_ask_exchange] = total_inside_ask[0] * (
+                        1 + EXCHANGE_FEES[total_inside_ask_exchange])
+                exchange_levels[total_inside_ask_exchange] = exchange_levels[total_inside_ask_exchange] + 1
+
+            total_inside_ask = [float('Inf'), float('Inf')]
+
+            for exchange in half_book.keys():
+                if not exchange_levels[exchange] >= len(half_book[exchange]):
+                    inside_asks[exchange] = half_book[exchange][exchange_levels[exchange]]
+                    inside_asks[exchange][0] = inside_asks[exchange][0]
+                    if inside_asks[exchange][0] * (1 + EXCHANGE_FEES[exchange]) < total_inside_ask[0] * (
+                            1 + EXCHANGE_FEES[exchange]):
+                        total_inside_ask = inside_asks[exchange]
+                        total_inside_ask_exchange = exchange
+                else:
+                    exchange_exhausted[exchange] = True
+            if False not in exchange_exhausted.values():
+                exchange_sizes[half_book.keys()[0]] = exchange_sizes[half_book.keys()[0]] + size
+                size = 0
+        return max(exchange_prices.values()) * (1 + PREMIUM)
 
     def adjust_for_constant_rate(self, price:float, book:object, asset_side:str) -> float:
         if asset_side == 'maker_asset':
@@ -353,3 +327,64 @@ class PricingUtils():
             return float(quantity)/(10**asset_pricing_data[asset]['decimals'])
         else:
             return quantity
+
+    def constant_rate_maker_asset(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, taker_size:float, maker_size:float) -> object:
+        books_to_get = taker_asset_pricing_data['exchange_books']
+        order_books = {}
+        for book in books_to_get:
+            if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
+                order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'bids'))
+        if taker_size:
+            price = self._get_price_from_book_base(order_books, taker_size, 'buy')
+            price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
+            return {'maker_size': taker_size * price, 'taker_size': taker_size}
+        else:
+            price = self._get_price_from_book_quote(order_books, maker_size, 'buy')
+            price = self.adjust_for_constant_rate(price, maker_asset_pricing_data['implied_pref'], 'maker_asset')
+            return {'maker_size': maker_size, 'taker_size': maker_size / price}
+
+    def constant_rate_taker_asset(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, taker_size:float, maker_size:float) -> object:
+        books_to_get = maker_asset_pricing_data['exchange_books']
+        order_books = {}
+        for book in books_to_get:
+            if book[1].split('/')[1] == maker_asset_pricing_data['implied_pref'][1].split('/')[1]:
+                order_books[book[0]] = (self.cache.get_order_book(book[0], book[1], 'asks'))
+        if maker_size:
+            price = self._get_price_from_book_base(order_books, maker_size, 'sell')
+            price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
+            return {'maker_size': maker_size, 'taker_size': maker_size * price}
+
+        else:
+            price = self._get_price_from_book_quote(order_books, taker_size, 'sell')
+            price = self.adjust_for_constant_rate(price, taker_asset_pricing_data['implied_pref'], 'taker_asset')
+            return {'maker_size': taker_size / price, 'taker_size': taker_size}
+
+    def implied_standard_taker_size(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, taker_size:float) -> object:
+        imp_book = taker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
+
+        taker_asset_price = self._get_price_from_book_base(order_books, taker_size, 'buy')
+
+        imp_book = maker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
+
+        maker_asset_price = self._get_price_from_book_quote(order_books, taker_size * taker_asset_price, 'sell')
+
+        return {'maker_size': taker_size * taker_asset_price / maker_asset_price, 'taker_size': taker_size}
+
+    def implied_standard_maker_size(self, taker_asset_pricing_data:object, maker_asset_pricing_data:object, maker_size:float) -> object:
+        imp_book = maker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'asks'))
+
+        maker_asset_price = self._get_price_from_book_base(order_books, maker_size, 'sell')
+
+        imp_book = taker_asset_pricing_data['implied_pref']
+        order_books = {}
+        order_books[imp_book[0]] = (self.cache.get_order_book(imp_book[0], imp_book[1], 'bids'))
+
+        taker_asset_price = self._get_price_from_book_quote(order_books, maker_size * maker_asset_price, 'sell')
+
+        return {'maker_size': maker_size, 'taker_size': maker_size * maker_asset_price / taker_asset_price}

@@ -228,7 +228,7 @@ message ExecuteZeroExTransactionResponse {
     int64 submitted_at = 2;
 }
 
-// Dealer
+// Dealer (public API types)
 message Quote {
   string quote_id = 1; // A UUID (v4) that MUST correspond to this offer only
   string maker_asset_address = 2; // Address of the quote's maker asset (see quotes)
@@ -240,28 +240,6 @@ message Quote {
   string order_hash = 8; // The 0x-specific order hash, as defined in the v3 specification
   SignedOrder order = 9; // The dealer-signed 0x order that corresponds to this offer
   string fill_tx = 10; // The raw 0x fill transaction data for this quote that the taker may sign (see 6)
-}
-
-message Trade {
-  string quote_id = 1; // The ID of the original quote that was filled in a trade
-  string market_id = 2; // Implementation-specific ID corresponding to the correct market
-  string order_hash = 3; // The 0x order hash of the order filled in a trade
-  string transaction_hash = 4; // The Ethereum transaction hash (transaction ID) of fill
-  string taker_address = 5; // The Ethereum address of the taker who requested and filled the quote
-  int64 timestamp = 6; // The UNIX timestamp the fill was submitted (or mined) at
-  string maker_asset_address = 7; // The address of the trade's maker asset
-  string taker_asset_address = 8; // The address of the trade's taker asset
-  string maker_asset_amount = 9; // The amount of the maker asset transacted in the trade
-  string taker_asset_amount = 10; // The amount of the taker asset transacted in the trade
-  SignedOrder order = 11; // The dealer-signed 0x order that corresponds to this offer
-}
-
-message Asset {
-  string ticker = 1; // Short-form name of the ERC-20 asset. SHOULD match the value provided by the contract
-  string name = 2; // Long-form name of the ERC-20 asset. SHOULD match the value provided by the contract
-  uint32 decimals = 3; // The number of decimals used in the tokens user representation (see EIP-20)
-  uint32 network_id = 4; // The EIP-155 network ID of the active Ethereum network (2)
-  string address = 5; // ABIv2 encoded asset data (including address) as used in the 0x system
 }
 
 message TradeInfo {
@@ -276,12 +254,11 @@ message QuoteInfo {
 }
 
 message Market {
-  string id = 1; // An implementation-specific market ID string. MUST be unique for each market
-  string maker_asset_ticker = 2; // The shorthand ticker of the markets maker asset (provided by the dealer)
-  repeated string taker_asset_tickers = 3; // An array of shorthand tickers for which quotes are supported
-  TradeInfo trade_info = 4; // Information about trade settlement and execution for this market (gas price, etc.)
-  QuoteInfo quote_info = 5; // Information about quotes provided on this market (max/min size, etc.)
-  map<string, string> metadata = 6; //
+  string maker_asset_address = 1; // The Ethereum address of the markets maker asset (provided by the dealer).
+  repeated string taker_asset_addresses = 2; // An array of asset Ethereum addresses for which quotes are supported.
+  TradeInfo trade_info = 3; // Information about trade settlement and execution for this market (gas price, etc.)
+  QuoteInfo quote_info = 4; // Information about quotes provided on this market (max/min size, etc.)
+  map<string, string> metadata = 5; //
 } 
 
 // Exchange Manager
