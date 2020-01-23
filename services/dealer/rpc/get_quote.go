@@ -1,27 +1,30 @@
 package rpc
 
 import (
-	"bytes"
 	"context"
 
-	"github.com/gogo/protobuf/jsonpb"
-
+	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 	"github.com/ethereum/go-ethereum/common"
 )
 
 type getQuoteResponse struct {
-	*grpc.Quote
+	QuoteId               string                `json:"quoteId"`
+	MakerAssetAddress     string                `json:"makerAssetAddress"`
+	TakerAssetAddress     string                `json:"takerAssetAddress"`
+	MakerAssetSize        string                `json:"makerAssetSize"`
+	TakerAssetSize        string                `json:"takerAssetSize"`
+	Expiration            int64                 `json:"expiration"`
+	ServerTime            int64                 `json:"serverTime"`
+	ZeroExTransactionHash string                `json:"zeroExTransactionHash"`
+	ZeroExTransactionInfo zeroExTransactionInfo `json:"zeroExTransactionInfo"`
 }
 
-func (gcr *getQuoteResponse) MarshalJSON() ([]byte, error) {
-	buf := new(bytes.Buffer)
-	if err := new(jsonpb.Marshaler).Marshal(buf, gcr.Quote); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
+type zeroExTransactionInfo struct {
+	Order       *zeroex.SignedOrder `json:"order"`
+	Transaction *zrx.Transaction    `json:"transaction"`
 }
 
 func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *string, takerSize *string, takerAddress *string, includeOrder *bool) (*getQuoteResponse, error) {
@@ -63,6 +66,29 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		return nil, err
 	}
 
-	res := &getQuoteResponse{quote}
+	order, err := quote.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	tx, err := quote.ZeroExTransactionInfo.Transaction.ToZeroExTransaction()
+	if err != nil {
+		return nil, err
+	}
+
+	res := &getQuoteResponse{
+		QuoteId:               quote.QuoteId,
+		MakerAssetAddress:     quote.MakerAssetAddress,
+		TakerAssetAddress:     quote.TakerAssetAddress,
+		MakerAssetSize:        quote.MakerAssetSize,
+		TakerAssetSize:        quote.TakerAssetSize,
+		Expiration:            quote.Expiration,
+		ServerTime:            quote.ServerTime,
+		ZeroExTransactionHash: quote.ZeroExTransactionHash,
+		ZeroExTransactionInfo: zeroExTransactionInfo{
+			Order:       order,
+			Transaction: tx,
+		},
+	}
 	return res, nil
 }
