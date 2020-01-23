@@ -9,9 +9,6 @@ import (
 
 	"github.com/peterbourgon/ff"
 
-	gethlog "github.com/ethereum/go-ethereum/log"
-	gethrpc "github.com/ethereum/go-ethereum/rpc"
-
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
