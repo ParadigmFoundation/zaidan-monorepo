@@ -102,5 +102,12 @@
         }
       }
     }
-  ]
+  ],
+  "validity_length": 15000,
+  "premium": ".001",
+  "exchange_fees": {
+    "BINANCE": ".00075",
+    "COINBASE": ".002",
+    "GEMINI": ".001"
+  }
 }
