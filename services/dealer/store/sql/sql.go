@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/jmoiron/sqlx/reflectx"
 	_ "github.com/lib/pq"
@@ -73,38 +72,7 @@ func (s *Store) Atomic(fn AtomicFn) error {
 	return tx.Commit()
 }
 
-func (s *Store) CreateTrade(t *types.Trade) error {
-	stmt := `
-		INSERT INTO trades VALUES (
-			:quote_id,
-			:market_id,
-			:order_hash,
-			:transaction_hash,
-			:taker_address,
-			:timestamp,
-			:maker_asset_address,
-			:taker_asset_address,
-			:maker_asset_amount,
-			:taker_asset_amount
-		);
-	`
-	_, err := s.db.NamedExec(stmt, t)
-	return err
-}
-
-func (s *Store) GetTrade(quoteId string) (*types.Trade, error) {
-	stmt := `
-		SELECT * FROM trades WHERE quote_id = $1 LIMIT 1
-	`
-	t := types.Trade{}
-	if err := s.db.Get(&t, stmt, quoteId); err != nil {
-		return nil, err
-	}
-	return &t, nil
-}
-
 func (s *Store) CreateQuote(q *types.Quote) error {
-	q.QuoteId = uuid.New().String()
 	return s.Atomic(func(tx *sqlx.Tx) error {
 		_, err := tx.Exec(
 			`INSERT INTO quotes VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
@@ -155,43 +123,11 @@ func (s *Store) GetQuote(quoteId string) (*types.Quote, error) {
 	return &q, nil
 }
 
-func (s *Store) CreateAsset(a *types.Asset) error {
-	_, err := s.db.Exec(
-		`INSERT INTO assets VALUES($1, $2, $3, $4, $5)`,
-		a.Ticker,
-		a.Name,
-		a.Decimals,
-		a.NetworkId,
-		a.Address,
-	)
-	return err
-}
-
-func (s *Store) GetAssetBy(key, value string) (*types.Asset, error) {
-	stmt := "SELECT * FROM assets WHERE " + key + " = $1 LIMIT 1"
-	asset := types.Asset{}
-	if err := s.db.Get(&asset, stmt, value); err != nil {
-		return nil, err
-	}
-	return &asset, nil
-
-}
-
-func (s *Store) GetAsset(ticker string) (*types.Asset, error) {
-	return s.GetAssetBy("ticker", ticker)
-}
-
-func (s *Store) GetAssetByAddress(addr string) (*types.Asset, error) {
-	return s.GetAssetBy("address", addr)
-}
-
 func (s *Store) CreateMarket(mkt *types.Market) error {
-	mkt.Id = uuid.New().String()
 	_, err := s.db.Exec(
-		`INSERT INTO markets VALUES($1, $2, $3, $4, $5, $6)`,
-		mkt.Id,
-		mkt.MakerAssetTicker,
-		StringSlice(mkt.TakerAssetTickers),
+		`INSERT INTO markets VALUES($1, $2, $3, $4, $5)`,
+		mkt.MakerAssetAddress,
+		StringSlice(mkt.TakerAssetAddresses),
 		mkt.TradeInfo,
 		mkt.QuoteInfo,
 		MapStringString(mkt.Metadata),
@@ -199,16 +135,15 @@ func (s *Store) CreateMarket(mkt *types.Market) error {
 	return err
 }
 
-func (s *Store) GetMarket(id string) (*types.Market, error) {
-	stmt := ` SELECT * FROM markets where id = $1 LIMIT 1`
+func (s *Store) GetMarket(makerAssetAddress string) (*types.Market, error) {
+	stmt := ` SELECT * FROM markets where maker_asset_address = $1 LIMIT 1`
 	mkt := types.Market{}
-	var tickers StringSlice
+	var addresses StringSlice
 	var metadata MapStringString
 
-	err := s.db.QueryRow(stmt, id).Scan(
-		&mkt.Id,
-		&mkt.MakerAssetTicker,
-		&tickers,
+	err := s.db.QueryRow(stmt, makerAssetAddress).Scan(
+		&mkt.MakerAssetAddress,
+		&addresses,
 		&mkt.TradeInfo,
 		&mkt.QuoteInfo,
 		&metadata,
@@ -216,7 +151,7 @@ func (s *Store) GetMarket(id string) (*types.Market, error) {
 	if err != nil {
 		return nil, err
 	}
-	mkt.TakerAssetTickers = tickers
+	mkt.TakerAssetAddresses = addresses
 	mkt.Metadata = metadata
 
 	return &mkt, nil
