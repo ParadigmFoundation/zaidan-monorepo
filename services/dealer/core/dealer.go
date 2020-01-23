@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/sirupsen/logrus"
+
 	"google.golang.org/grpc"
 
 	"github.com/0xProject/0x-mesh/zeroex"
@@ -25,7 +27,7 @@ type DealerConfig struct {
 
 // Dealer is the core dealer service that interacts with other services
 type Dealer struct {
-	Logger *logger.Entry
+	logger *logger.Entry
 
 	makerClient   types.MakerClient
 	hwClient      types.HotWalletClient
@@ -59,7 +61,7 @@ func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, 
 		watcherClient: types.NewWatcherClient(watcherConn),
 		orderDuration: cfg.OrderDuration,
 		db:            db,
-		Logger:        logger.New("core"),
+		logger:        logger.New("core"),
 	}, nil
 }
 
@@ -105,7 +107,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		return nil, err
 	}
 
-	d.Logger.WithFields(logrus.Fields{"id": res.QuoteId, "taker": req.TakerAddress).Info("created new quote")
+	d.logger.WithFields(logrus.Fields{"id": res.QuoteId, "taker": req.TakerAddress}).Info("created new quote")
 	return quote, nil
 }
 
@@ -122,7 +124,7 @@ func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequ
 }
 
 func (d *Dealer) ExecuteZeroExTransaction(ctx context.Context, req *types.ExecuteZeroExTransactionRequest) (*types.ExecuteZeroExTransactionResponse, error) {
-	d.Logger.WithField("taker", req.Transaction.SignerAddress).Info("executing 0x transaction")
+	d.logger.WithField("taker", req.Transaction.SignerAddress).Info("executing 0x transaction")
 	return d.hwClient.ExecuteZeroExTransaction(ctx, req)
 }
 
