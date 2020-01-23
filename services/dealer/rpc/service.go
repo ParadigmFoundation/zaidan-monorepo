@@ -11,7 +11,7 @@ import (
 
 type Service struct {
 	dealer     *core.Dealer
-  server *rpc.Server
+	server     *rpc.Server
 	policyMode PolicyMode
 	policy     store.Policy
 }

@@ -26,6 +26,8 @@ type HotWalletConfig struct {
 
 // HotWallet represents a live hot wallet that can interact with the 0x contract system
 type HotWallet struct {
+	chainId int
+
 	provider     *eth.Provider
 	zrxHelper    *zrx.ZeroExHelper
 	tokenManager *eth.ERC20TokenManager
@@ -69,7 +71,17 @@ func NewHotWallet(provider *eth.Provider, cfg HotWalletConfig) (*HotWallet, erro
 		return nil, err
 	}
 
+	bigChainId, err := provider.Client().ChainID(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	if !bigChainId.IsInt64() {
+		return nil, fmt.Errorf("unsupported chain ID (too large)")
+	}
+
 	hw := &HotWallet{
+		chainId:          int(bigChainId.Int64()),
 		provider:         provider,
 		zrxHelper:        zrxHelper,
 		tokenManager:     mgr,

@@ -29,15 +29,14 @@ func (*SQLMigration) Schema() map[string]string {
 				, "taker_asset_size"   TEXT
 				, "expiration"         INTEGER
 				, "server_time"        INTEGER
-				, "order_hash"         VARCHAR(100)
-				, "fill_tx"            VARCHAR(100)
+				, "zero_ex_transaction_hash" VARCHAR(100)
 				, PRIMARY KEY (quote_id)
 			)`,
 
-		"create-orders-table": `
-			CREATE TABLE signed_orders (
+		"create-transaction-infos-table": `
+			CREATE TABLE transaction_infos (
 				 quote_id VARCHAR(100)
-			   , order_bytes TEXT
+			   , transaction_info_bytes TEXT
 			   , PRIMARY KEY(quote_id)
 			)`,
 

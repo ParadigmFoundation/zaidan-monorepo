@@ -28,7 +28,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
         quote_info = self.pricing_utils.calculate_quote(maker_asset,
                                      taker_asset, trading_maker_size, trading_taker_size, self.test)
-        expiry_timestamp = int(math.floor(time.time())) + int(self.config_manager.validity_length)
+        expiry_timestamp = int(time.time() * 1000) + int(self.config_manager.validity_length)
 
         if False not in self.risk_utils.risk_checks(taker_asset, maker_asset, trading_taker_size, quote_info, self.test):
             quote_id = str(uuid.uuid4())
@@ -55,7 +55,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
         except ValueError:
             return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=1)
 
-        if quote['expiration'] < time.time():
+        if quote['expiration'] < int(time.time() * 1000):
             return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=2)
 
         self.redis_interface.fill_quote(request.quote_id)

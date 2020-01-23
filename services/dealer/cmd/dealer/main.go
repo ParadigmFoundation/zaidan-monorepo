@@ -7,10 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
-
 	"github.com/peterbourgon/ff"
 
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
@@ -39,7 +38,7 @@ func main() {
 		MakerBindAddress:     *makerBind,
 		HotWalletBindAddress: *hwBind,
 	}
-	dealer, err := core.NewDealer(context.Background(), cfg)
+	dealer, err := core.NewDealer(context.Background(), store, cfg)
 	if err != nil {
 		log.Fatal(err)
 	}

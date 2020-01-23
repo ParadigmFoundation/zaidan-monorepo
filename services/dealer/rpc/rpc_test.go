@@ -11,18 +11,17 @@ import (
 )
 
 func TestRPC(t *testing.T) {
-	dealer, err := core.NewDealer(context.Background(), core.DealerConfig{})
+	store, err := sql.New("sqlite3", ":memory:")
+	require.NoError(t, err)
+
+	dealer, err := core.NewDealer(context.Background(), store, core.DealerConfig{})
 	require.NoError(t, err)
 
 	service, err := NewService(dealer)
 	require.NoError(t, err)
 
 	t.Run("AuthStatus", func(t *testing.T) {
-		store, err := sql.New("sqlite3", ":memory:")
-		require.NoError(t, err)
-		require.NoError(t,
-			store.CreatePolicy("xxx"),
-		)
+		require.NoError(t, store.CreatePolicy("xxx"))
 
 		defer service.WithPolicy(0, nil)
 
