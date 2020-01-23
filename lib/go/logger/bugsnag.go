@@ -1,4 +1,4 @@
-package log
+package logger
 
 import (
 	"errors"
@@ -59,7 +59,7 @@ func (*BugsnagHook) Levels() []logrus.Level {
 
 var bsOnce sync.Once
 
-func ConfigureBugsnag(key string) {
+func ConfigureBugsnag(log *logrus.Logger, key string) {
 	wd, _ := os.Getwd()
 	wd = strings.SplitAfter(wd, "zaidan-monorepo")[0]
 	bugsnag.Configure(bugsnag.Configuration{
@@ -72,21 +72,13 @@ func ConfigureBugsnag(key string) {
 	})
 	bugsnag.Config.APIKey = key
 
-	bsOnce.Do(func() {
-		logrus.AddHook(&BugsnagHook{})
-		logrus.SetFormatter(&logrus.TextFormatter{
-			ForceColors:   true,
-			FullTimestamp: true,
-		})
+	log.AddHook(&BugsnagHook{})
+	log.SetFormatter(&logrus.TextFormatter{
+		ForceColors:   true,
+		FullTimestamp: true,
 	})
 }
 
 type noop struct{}
 
 func (*noop) Printf(string, ...interface{}) {}
-
-func init() {
-	if key := os.Getenv("BUGSNAG_APIKEY"); key != "" {
-		ConfigureBugsnag(key)
-	}
-}

@@ -13,7 +13,7 @@ require (
 	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-sqlite3 v1.11.0
 	github.com/peterbourgon/ff v1.6.0
-	github.com/sirupsen/logrus v1.4.2 // indirect
+	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.4.0
 	google.golang.org/appengine v1.6.1 // indirect
 	google.golang.org/genproto v0.0.0-20190620144150-6af8c5fc6601 // indirect
