@@ -34,6 +34,7 @@ message GetQuoteRequest {
     string taker_size = 4;
     string maker_size = 5;
     string taker_address = 6;
+    bool price_only = 7;
 }
 
 message GetQuoteResponse {

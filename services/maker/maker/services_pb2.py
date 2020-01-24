@@ -23,7 +23,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=_b('Z\004grpc'),
-  serialized_pb=_b('\n\x0eservices.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x0btypes.proto2\x81\x01\n\x10OrderBookManager\x12\x32\n\tOrderBook\x12\x11.OrderBookRequest\x1a\x12.OrderBookResponse\x12\x39\n\x07Updates\x12\x18.OrderBookUpdatesRequest\x1a\x12.OrderBookResponse0\x01\x32\xbb\x01\n\x05Maker\x12/\n\x08GetQuote\x12\x10.GetQuoteRequest\x1a\x11.GetQuoteResponse\x12\x35\n\nCheckQuote\x12\x12.CheckQuoteRequest\x1a\x13.CheckQuoteResponse\x12J\n\x11OrderStatusUpdate\x12\x19.OrderStatusUpdateRequest\x1a\x1a.OrderStatusUpdateResponse2\xca\x04\n\tHotWallet\x12\x38\n\x0b\x43reateOrder\x12\x13.CreateOrderRequest\x1a\x14.CreateOrderResponse\x12;\n\x0cGetAllowance\x12\x14.GetAllowanceRequest\x1a\x15.GetAllowanceResponse\x12;\n\x0cSetAllowance\x12\x14.SetAllowanceRequest\x1a\x15.SetAllowanceResponse\x12:\n\x0fGetTokenBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12:\n\x0fGetEtherBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12\x34\n\rTransferEther\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x34\n\rTransferToken\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x44\n\x0fSendTransaction\x12\x17.SendTransactionRequest\x1a\x18.SendTransactionResponse\x12_\n\x18\x45xecuteZeroExTransaction\x12 .ExecuteZeroExTransactionRequest\x1a!.ExecuteZeroExTransactionResponse2R\n\x07Watcher\x12G\n\x10WatchTransaction\x12\x18.WatchTransactionRequest\x1a\x19.WatchTransactionResponse2\x9a\x02\n\x0f\x45xchangeManager\x12\x42\n\x0b\x43reateOrder\x12\x1b.ExchangeCreateOrderRequest\x1a\x16.ExchangeOrderResponse\x12\x39\n\x08GetOrder\x12\x15.ExchangeOrderRequest\x1a\x16.ExchangeOrderResponse\x12J\n\rGetOpenOrders\x12\x1c.google.protobuf.StringValue\x1a\x1b.ExchangeOrderArrayResponse\x12<\n\x0b\x43\x61ncelOrder\x12\x15.ExchangeOrderRequest\x1a\x16.google.protobuf.EmptyB\x06Z\x04grpcb\x06proto3')
+  serialized_pb=_b('\n\x0eservices.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x0btypes.proto2\x81\x01\n\x10OrderBookManager\x12\x32\n\tOrderBook\x12\x11.OrderBookRequest\x1a\x12.OrderBookResponse\x12\x39\n\x07Updates\x12\x18.OrderBookUpdatesRequest\x1a\x12.OrderBookResponse0\x01\x32\xbb\x01\n\x05Maker\x12/\n\x08GetQuote\x12\x10.GetQuoteRequest\x1a\x11.GetQuoteResponse\x12\x35\n\nCheckQuote\x12\x12.CheckQuoteRequest\x1a\x13.CheckQuoteResponse\x12J\n\x11OrderStatusUpdate\x12\x19.OrderStatusUpdateRequest\x1a\x1a.OrderStatusUpdateResponse2\x8a\x05\n\tHotWallet\x12\x38\n\x0b\x43reateOrder\x12\x13.CreateOrderRequest\x1a\x14.CreateOrderResponse\x12>\n\rValidateOrder\x12\x15.ValidateOrderRequest\x1a\x16.ValidateOrderResponse\x12;\n\x0cGetAllowance\x12\x14.GetAllowanceRequest\x1a\x15.GetAllowanceResponse\x12;\n\x0cSetAllowance\x12\x14.SetAllowanceRequest\x1a\x15.SetAllowanceResponse\x12:\n\x0fGetTokenBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12:\n\x0fGetEtherBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12\x34\n\rTransferEther\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x34\n\rTransferToken\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x44\n\x0fSendTransaction\x12\x17.SendTransactionRequest\x1a\x18.SendTransactionResponse\x12_\n\x18\x45xecuteZeroExTransaction\x12 .ExecuteZeroExTransactionRequest\x1a!.ExecuteZeroExTransactionResponse2R\n\x07Watcher\x12G\n\x10WatchTransaction\x12\x18.WatchTransactionRequest\x1a\x19.WatchTransactionResponse2\x9a\x02\n\x0f\x45xchangeManager\x12\x42\n\x0b\x43reateOrder\x12\x1b.ExchangeCreateOrderRequest\x1a\x16.ExchangeOrderResponse\x12\x39\n\x08GetOrder\x12\x15.ExchangeOrderRequest\x1a\x16.ExchangeOrderResponse\x12J\n\rGetOpenOrders\x12\x1c.google.protobuf.StringValue\x1a\x1b.ExchangeOrderArrayResponse\x12<\n\x0b\x43\x61ncelOrder\x12\x15.ExchangeOrderRequest\x1a\x16.google.protobuf.EmptyB\x06Z\x04grpcb\x06proto3')
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,types__pb2.DESCRIPTOR,])
 
@@ -116,7 +116,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   index=2,
   serialized_options=None,
   serialized_start=415,
-  serialized_end=1001,
+  serialized_end=1065,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateOrder',
@@ -128,9 +128,18 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
     serialized_options=None,
   ),
   _descriptor.MethodDescriptor(
+    name='ValidateOrder',
+    full_name='HotWallet.ValidateOrder',
+    index=1,
+    containing_service=None,
+    input_type=types__pb2._VALIDATEORDERREQUEST,
+    output_type=types__pb2._VALIDATEORDERRESPONSE,
+    serialized_options=None,
+  ),
+  _descriptor.MethodDescriptor(
     name='GetAllowance',
     full_name='HotWallet.GetAllowance',
-    index=1,
+    index=2,
     containing_service=None,
     input_type=types__pb2._GETALLOWANCEREQUEST,
     output_type=types__pb2._GETALLOWANCERESPONSE,
@@ -139,7 +148,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SetAllowance',
     full_name='HotWallet.SetAllowance',
-    index=2,
+    index=3,
     containing_service=None,
     input_type=types__pb2._SETALLOWANCEREQUEST,
     output_type=types__pb2._SETALLOWANCERESPONSE,
@@ -148,7 +157,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetTokenBalance',
     full_name='HotWallet.GetTokenBalance',
-    index=3,
+    index=4,
     containing_service=None,
     input_type=types__pb2._GETBALANCEREQUEST,
     output_type=types__pb2._GETBALANCERESPONSE,
@@ -157,7 +166,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetEtherBalance',
     full_name='HotWallet.GetEtherBalance',
-    index=4,
+    index=5,
     containing_service=None,
     input_type=types__pb2._GETBALANCEREQUEST,
     output_type=types__pb2._GETBALANCERESPONSE,
@@ -166,7 +175,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='TransferEther',
     full_name='HotWallet.TransferEther',
-    index=5,
+    index=6,
     containing_service=None,
     input_type=types__pb2._TRANSFERREQUEST,
     output_type=types__pb2._TRANSFERRESPONSE,
@@ -175,7 +184,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='TransferToken',
     full_name='HotWallet.TransferToken',
-    index=6,
+    index=7,
     containing_service=None,
     input_type=types__pb2._TRANSFERREQUEST,
     output_type=types__pb2._TRANSFERRESPONSE,
@@ -184,7 +193,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SendTransaction',
     full_name='HotWallet.SendTransaction',
-    index=7,
+    index=8,
     containing_service=None,
     input_type=types__pb2._SENDTRANSACTIONREQUEST,
     output_type=types__pb2._SENDTRANSACTIONRESPONSE,
@@ -193,7 +202,7 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='ExecuteZeroExTransaction',
     full_name='HotWallet.ExecuteZeroExTransaction',
-    index=8,
+    index=9,
     containing_service=None,
     input_type=types__pb2._EXECUTEZEROEXTRANSACTIONREQUEST,
     output_type=types__pb2._EXECUTEZEROEXTRANSACTIONRESPONSE,
@@ -211,8 +220,8 @@ _WATCHER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=3,
   serialized_options=None,
-  serialized_start=1003,
-  serialized_end=1085,
+  serialized_start=1067,
+  serialized_end=1149,
   methods=[
   _descriptor.MethodDescriptor(
     name='WatchTransaction',
@@ -235,8 +244,8 @@ _EXCHANGEMANAGER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=4,
   serialized_options=None,
-  serialized_start=1088,
-  serialized_end=1370,
+  serialized_start=1152,
+  serialized_end=1434,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateOrder',

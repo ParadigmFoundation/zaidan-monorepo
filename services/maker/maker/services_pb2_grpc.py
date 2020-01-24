@@ -156,6 +156,11 @@ class HotWalletStub(object):
         request_serializer=types__pb2.CreateOrderRequest.SerializeToString,
         response_deserializer=types__pb2.CreateOrderResponse.FromString,
         )
+    self.ValidateOrder = channel.unary_unary(
+        '/HotWallet/ValidateOrder',
+        request_serializer=types__pb2.ValidateOrderRequest.SerializeToString,
+        response_deserializer=types__pb2.ValidateOrderResponse.FromString,
+        )
     self.GetAllowance = channel.unary_unary(
         '/HotWallet/GetAllowance',
         request_serializer=types__pb2.GetAllowanceRequest.SerializeToString,
@@ -203,6 +208,13 @@ class HotWalletServicer(object):
   pass
 
   def CreateOrder(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+  def ValidateOrder(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -272,6 +284,11 @@ def add_HotWalletServicer_to_server(servicer, server):
           servicer.CreateOrder,
           request_deserializer=types__pb2.CreateOrderRequest.FromString,
           response_serializer=types__pb2.CreateOrderResponse.SerializeToString,
+      ),
+      'ValidateOrder': grpc.unary_unary_rpc_method_handler(
+          servicer.ValidateOrder,
+          request_deserializer=types__pb2.ValidateOrderRequest.FromString,
+          response_serializer=types__pb2.ValidateOrderResponse.SerializeToString,
       ),
       'GetAllowance': grpc.unary_unary_rpc_method_handler(
           servicer.GetAllowance,
