@@ -41,3 +41,7 @@ service ExchangeManager {
   rpc GetOpenOrders(google.protobuf.StringValue) returns (ExchangeOrderArrayResponse);
   rpc CancelOrder(ExchangeOrderRequest) returns (google.protobuf.Empty);
 }
+
+service Hedger {
+  rpc HedgeOrder(HedgeOrderRequest) returns (HedgeOrderResponse);
+}

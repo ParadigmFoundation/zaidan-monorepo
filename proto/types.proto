@@ -302,3 +302,11 @@ message ExchangeOrderResponse {
 message ExchangeOrderArrayResponse {
   repeated ExchangeOrderResponse array = 1;
 }
+
+message HedgeOrderRequest {
+  string id = 1;
+}
+
+message HedgeOrderResponse {
+  bool valid =1;
+}
