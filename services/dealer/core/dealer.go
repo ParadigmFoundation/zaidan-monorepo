@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/0xProject/0x-mesh/zeroex"
+	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc"
 
-	"github.com/ethereum/go-ethereum/log"
+	"github.com/0xProject/0x-mesh/zeroex"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 )
 
@@ -26,7 +27,7 @@ type DealerConfig struct {
 
 // Dealer is the core dealer service that interacts with other services
 type Dealer struct {
-	Logger log.Logger
+	log *logger.Entry
 
 	makerClient   types.MakerClient
 	hwClient      types.HotWalletClient
@@ -39,8 +40,6 @@ type Dealer struct {
 
 // NewDealer creates a new Dealer given ctx context and cfg configuration
 func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, error) {
-	logger := log.New(ctx)
-
 	makerConn, err := grpc.DialContext(ctx, cfg.MakerBindAddress, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
@@ -62,11 +61,10 @@ func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, 
 		watcherClient: types.NewWatcherClient(watcherConn),
 		orderDuration: cfg.OrderDuration,
 		db:            db,
-		Logger:        logger,
+		log:           logger.New("core"),
 	}, nil
 }
 
-// @todo: hrharder - should eventually return types.Quote
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
 	now := time.Now()
 	res, err := d.makerClient.GetQuote(ctx, req)
@@ -75,7 +73,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	orderReq := &types.CreateOrderRequest{
-		TakerAddress:          req.TakerAsset,
+		TakerAddress:          req.TakerAddress,
 		MakerAssetAddress:     res.MakerAsset,
 		TakerAssetAddress:     res.TakerAsset,
 		MakerAssetAmount:      res.MakerSize,
@@ -109,7 +107,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 		return nil, err
 	}
 
-	fmt.Println(fmt.Sprintf("created order for quote with ID (%s)", res.QuoteId))
+	d.log.WithFields(logrus.Fields{"id": res.QuoteId, "taker": req.TakerAddress}).Info("created new quote")
 	return quote, nil
 }
 
@@ -126,6 +124,7 @@ func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequ
 }
 
 func (d *Dealer) ExecuteZeroExTransaction(ctx context.Context, req *types.ExecuteZeroExTransactionRequest) (*types.ExecuteZeroExTransactionResponse, error) {
+	d.log.WithField("taker", req.Transaction.SignerAddress).Info("executing 0x transaction")
 	return d.hwClient.ExecuteZeroExTransaction(ctx, req)
 }
 

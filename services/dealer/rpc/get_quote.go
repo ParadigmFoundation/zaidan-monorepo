@@ -1,27 +1,39 @@
 package rpc
 
 import (
-	"bytes"
 	"context"
+	"encoding/json"
 
-	"github.com/gogo/protobuf/jsonpb"
-
+	"github.com/0xProject/0x-mesh/zeroex"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 	"github.com/ethereum/go-ethereum/common"
 )
 
 type getQuoteResponse struct {
-	*grpc.Quote
+	quote
 }
 
-func (gcr *getQuoteResponse) MarshalJSON() ([]byte, error) {
-	buf := new(bytes.Buffer)
-	if err := new(jsonpb.Marshaler).Marshal(buf, gcr.Quote); err != nil {
-		return nil, err
-	}
+func (gqr *getQuoteResponse) MarshalJSON() ([]byte, error) {
+	return json.Marshal([]interface{}{gqr.quote})
+}
 
-	return buf.Bytes(), nil
+type quote struct {
+	QuoteId               string                `json:"quoteId"`
+	MakerAssetAddress     string                `json:"makerAssetAddress"`
+	TakerAssetAddress     string                `json:"takerAssetAddress"`
+	MakerAssetSize        string                `json:"makerAssetSize"`
+	TakerAssetSize        string                `json:"takerAssetSize"`
+	Expiration            int64                 `json:"expiration"`
+	ServerTime            int64                 `json:"serverTime"`
+	ZeroExTransactionHash string                `json:"zeroExTransactionHash"`
+	ZeroExTransactionInfo zeroExTransactionInfo `json:"zeroExTransactionInfo"`
+}
+
+type zeroExTransactionInfo struct {
+	Order       *zeroex.SignedOrder `json:"order"`
+	Transaction *zrx.Transaction    `json:"transaction"`
 }
 
 func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *string, takerSize *string, takerAddress *string, includeOrder *bool) (*getQuoteResponse, error) {
@@ -50,7 +62,7 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		takerAmount = *takerSize
 	}
 
-	req := &grpc.GetQuoteRequest{
+	quoteReq := &grpc.GetQuoteRequest{
 		TakerAsset:   takerAsset,
 		MakerAsset:   makerAsset,
 		TakerSize:    takerAmount,
@@ -58,11 +70,34 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		TakerAddress: taker.Hex(),
 	}
 
-	quote, err := svc.dealer.FetchQuote(context.Background(), req)
+	quoteRes, err := svc.dealer.FetchQuote(context.Background(), quoteReq)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &getQuoteResponse{quote}
-	return res, nil
+	order, err := quoteRes.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	tx, err := quoteRes.ZeroExTransactionInfo.Transaction.ToZeroExTransaction()
+	if err != nil {
+		return nil, err
+	}
+
+	res := quote{
+		QuoteId:               quoteRes.QuoteId,
+		MakerAssetAddress:     quoteRes.MakerAssetAddress,
+		TakerAssetAddress:     quoteRes.TakerAssetAddress,
+		MakerAssetSize:        quoteRes.MakerAssetSize,
+		TakerAssetSize:        quoteRes.TakerAssetSize,
+		Expiration:            quoteRes.Expiration,
+		ServerTime:            quoteRes.ServerTime,
+		ZeroExTransactionHash: quoteRes.ZeroExTransactionHash,
+		ZeroExTransactionInfo: zeroExTransactionInfo{
+			Order:       order,
+			Transaction: tx,
+		},
+	}
+	return &getQuoteResponse{res}, nil
 }
