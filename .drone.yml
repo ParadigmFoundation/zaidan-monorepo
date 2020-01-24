@@ -26,6 +26,16 @@ steps:
     - pip install -r requirements.txt
     - python -m pytest .
 
+- name: hedger-test
+  image: python:stretch
+  depends_on: ["clone"]
+  environment:
+    REDIS_HOST: redis
+  commands:
+    - cd services/hedger
+    - pip install -r requirements.txt
+    - python -m pytest .
+
 - name: lint
   image: golangci/golangci-lint:v1.21.0
   depends_on: ["clone"]
