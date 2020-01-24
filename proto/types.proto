@@ -308,5 +308,5 @@ message HedgeOrderRequest {
 }
 
 message HedgeOrderResponse {
-  bool valid =1;
+  bool valid = 1;
 }
