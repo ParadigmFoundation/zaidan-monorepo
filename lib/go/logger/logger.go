@@ -21,6 +21,11 @@ func New(module string, opts ...LogOpt) *Entry {
 		opt(entry)
 	}
 
+	log.SetFormatter(&logrus.TextFormatter{
+		ForceColors:   true,
+		FullTimestamp: true,
+	})
+
 	return entry
 }
 

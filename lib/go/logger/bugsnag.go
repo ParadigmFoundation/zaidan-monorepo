@@ -73,10 +73,6 @@ func ConfigureBugsnag(log *logrus.Logger, key string) {
 	bugsnag.Config.APIKey = key
 
 	log.AddHook(&BugsnagHook{})
-	log.SetFormatter(&logrus.TextFormatter{
-		ForceColors:   true,
-		FullTimestamp: true,
-	})
 }
 
 type noop struct{}
