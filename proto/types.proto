@@ -61,7 +61,8 @@ message CheckQuoteResponse {
 // TransactionStatus
 message TransactionStatusUpdateRequest {
     string tx_hash = 1;
-    uint32 status = 2;
+    string quote_id = 2;
+    uint32 status = 3;
 }
 
 message TransactionStatusUpdateResponse {
