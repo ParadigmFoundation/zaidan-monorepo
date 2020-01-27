@@ -82,8 +82,8 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 				s.log.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
 			}
 
-			_, _ = pb.NewOrderStatusClient(conn).OrderStatusUpdate(ctx, &pb.OrderStatusUpdateRequest{
-				QuoteId: in.QuoteId,
+			_, _ = pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
+				TxHash: in.TxHash,
 				Status:  status,
 			})
 		}

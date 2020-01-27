@@ -18,7 +18,7 @@ service Maker {
 }
 
 service TransactionStatus {
-    rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse);
+    rpc TransactionStatusUpdate(TransactionStatusUpdateRequest) returns (TransactionStatusUpdateResponse);
 }
 
 service HotWallet {

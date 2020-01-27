@@ -122,8 +122,8 @@ func (txW *TxWatching) startWatchingBlocks() {
 								txW.log.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
 							}
 
-							_, _ = pb.NewOrderStatusClient(conn).OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
-								QuoteId: watchedTransaction.QuoteId,
+							_, _ = pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(bg, &pb.TransactionStatusUpdateRequest{
+								TxHash: watchedTransaction.TxHash.String(),
 								Status:  uint32(receipt.Status),
 							})
 						}

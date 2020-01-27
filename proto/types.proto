@@ -58,12 +58,13 @@ message CheckQuoteResponse {
     uint32 status = 3;
 }
 
-message OrderStatusUpdateRequest {
-    string quote_id = 1;
+// TransactionStatus
+message TransactionStatusUpdateRequest {
+    string tx_hash = 1;
     uint32 status = 2;
 }
 
-message OrderStatusUpdateResponse {
+message TransactionStatusUpdateResponse {
     uint32 status = 1;
 }
 
