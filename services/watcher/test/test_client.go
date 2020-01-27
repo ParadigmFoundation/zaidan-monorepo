@@ -38,7 +38,7 @@ func main() {
 			&pb.WatchTransactionRequest{
 				QuoteId: "Random from test_client",
 				TxHash: strings.Replace(txHash, "\n", "", -1),
-				StatusUrls: []string{"http://localhost:5002"},
+				StatusUrls: []string{"localhost:5002"},
 			},
 		)
 
