@@ -16,3 +16,6 @@ services:
 
   watcher:
     image: gcr.io/zaidan-io/watcher
+
+  hedger:
+    image: gcr.io/zaidan-io/hedger
