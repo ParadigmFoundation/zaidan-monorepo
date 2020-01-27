@@ -23,7 +23,7 @@ func (oss *TransactionStatusServer) TransactionStatusUpdate(c context.Context, r
 }
 
 func main() {
-	log.Info("Starting Test Maker Endpoint on port 5002")
+	log.Info("Starting Test Transaction Update Endpoint on port 5002")
 	lis, err := net.Listen("tcp", ":"+strconv.Itoa(5002))
 	if err != nil {
 		log.WithError(err).Fatal("failed to listen:")
