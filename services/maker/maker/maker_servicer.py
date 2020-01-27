@@ -63,6 +63,6 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
         return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=True, status=200)
 
-    def OrderStatusUpdate(self, request:object, context) -> object:
-        self.risk_utils.order_status_update(request.quote_id, request.status)
-        return types_pb2.OrderStatusUpdateResponse(status=200)
+    # def OrderStatusUpdate(self, request:object, context) -> object:
+    #     self.risk_utils.order_status_update(request.quote_id, request.status)
+    #     return types_pb2.OrderStatusUpdateResponse(status=200)
