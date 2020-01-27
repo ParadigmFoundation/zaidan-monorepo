@@ -18,7 +18,7 @@ type TransactionStatusServer struct {
 }
 
 func (oss *TransactionStatusServer) TransactionStatusUpdate(c context.Context, r *pb.TransactionStatusUpdateRequest) (*pb.TransactionStatusUpdateResponse, error) {
-	log.Info("Received update for ", r.QuoteId, " Status: ", r.Status)
+	log.Info("Received update for QuoteId: ", r.QuoteId, ", TransactionHash: ", r.TxHash, " with Status: ", r.Status)
 	return &pb.TransactionStatusUpdateResponse{ Status: 1 }, nil
 }
 
