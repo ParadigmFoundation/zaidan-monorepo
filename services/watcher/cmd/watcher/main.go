@@ -47,7 +47,7 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	if err := eth.Configure(ethAddress); err != nil {
 		log.Fatal(err)
 	}
-	log.Info("Connected to ethereum at", ethAddress)
+	log.Info("Connected to ethereum at ", ethAddress)
 
 	txWatching := watching.New(makerUrl)
 

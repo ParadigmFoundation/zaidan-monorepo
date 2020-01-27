@@ -133,7 +133,7 @@ func (txW *TxWatching) startWatchingBlocks() {
 								QuoteId: watchedTransaction.QuoteId,
 								Status:  uint32(receipt.Status),
 							}); err != nil {
-								txW.log.Error(fmt.Errorf("error connecting to %v: %v", url, err))
+								txW.log.Errorf("error connecting to %v: %v", url, err)
 							}
 						}
 						if err != nil {

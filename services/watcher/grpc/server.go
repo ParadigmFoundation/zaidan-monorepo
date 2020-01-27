@@ -70,16 +70,16 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		isWatched = true
 	} else if !isPending {
 		if isWatched {
-			s.log.Info("No longer watching previously mined transaction", txHash.String())
+			s.log.Info("No longer watching previously mined transaction ", txHash.String())
 			s.TxWatching.RequestRemoval(txHash)
 		}
 
-		s.log.Info("Transaction", txHash.String(), "mined and does not need to be watched notifying maker")
+		s.log.Info("Transaction ", txHash.String(), " mined and does not need to be watched notifying maker")
 
 		for _, url := range updateUrls {
 			conn, err := grpc.Dial(url, grpc.WithInsecure())
 			if err != nil {
-				s.log.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
+				s.log.WithError(err).Fatal("failed to connect maker client:")
 			}
 
 			if _, err := pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
@@ -87,7 +87,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 				QuoteId: in.QuoteId,
 				Status:  status,
 			}); err != nil {
-					s.log.Error(fmt.Errorf("error connecting to %v: %v", url, err))
+					s.log.Errorf("error connecting to %v: %v", url, err)
 			}
 		}
 	}

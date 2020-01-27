@@ -26,13 +26,13 @@ func main() {
 	log.Info("Starting Test Maker Endpoint on port 5002")
 	lis, err := net.Listen("tcp", ":"+strconv.Itoa(5002))
 	if err != nil {
-		log.Fatal("failed to listen: %v", err)
+		log.WithError(err).Fatal("failed to listen:")
 	}
 	s := grpc.NewServer()
 	transactionStatusServer := TransactionStatusServer{}
 
 	pb.RegisterTransactionStatusServer(s, &transactionStatusServer)
 	if err := s.Serve(lis); err != nil {
-		log.Fatal("failed to serve: %v", err)
+		log.WithError(err).Fatal("failed to serve:")
 	}
 }
