@@ -127,6 +127,14 @@ func (txW *TxWatching) startWatchingBlocks() {
 								QuoteId: watchedTransaction.QuoteId,
 								Status:  uint32(receipt.Status),
 							})
+
+							if _, err := pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(bg, &pb.TransactionStatusUpdateRequest{
+								TxHash: watchedTransaction.TxHash.String(),
+								QuoteId: watchedTransaction.QuoteId,
+								Status:  uint32(receipt.Status),
+							}); err != nil {
+								txW.log.Error(fmt.Errorf("error connecting to %v: %v", url, err))
+							}
 						}
 						if err != nil {
 							txW.log.WithError(err).Errorf("failure calling maker for transaction %s", txHash.String())

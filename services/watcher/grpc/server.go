@@ -82,11 +82,13 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 				s.log.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
 			}
 
-			_, _ = pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
+			if _, err := pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
 				TxHash: in.TxHash,
 				QuoteId: in.QuoteId,
 				Status:  status,
-			})
+			}); err != nil {
+					s.log.Error(fmt.Errorf("error connecting to %v: %v", url, err))
+			}
 		}
 	}
 	s.TxWatching.Unlock()
