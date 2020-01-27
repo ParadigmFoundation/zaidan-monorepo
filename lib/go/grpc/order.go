@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 
 	"github.com/0xProject/0x-mesh/zeroex"
 )
@@ -24,11 +25,11 @@ func OrderToProto(order *zeroex.Order) *Order {
 		ChainId:               order.ChainID.Uint64(),
 		ExchangeAddress:       NormalizeAddress(order.ExchangeAddress),
 		MakerAddress:          NormalizeAddress(order.MakerAddress),
-		MakerAssetData:        common.Bytes2Hex(order.MakerAssetData),
+		MakerAssetData:        hexutil.Encode(order.MakerAssetData),
 		MakerAssetAmount:      order.MakerAssetAmount.String(),
 		MakerFee:              order.MakerFee.String(),
 		TakerAddress:          NormalizeAddress(order.TakerAddress),
-		TakerAssetData:        common.Bytes2Hex(order.TakerAssetData),
+		TakerAssetData:        hexutil.Encode(order.TakerAssetData),
 		TakerAssetAmount:      order.TakerAssetAmount.String(),
 		TakerFee:              order.TakerFee.String(),
 		SenderAddress:         NormalizeAddress(order.SenderAddress),
@@ -44,18 +45,20 @@ func SignedOrderToProto(order *zeroex.SignedOrder) *SignedOrder {
 		ChainId:               order.ChainID.Uint64(),
 		ExchangeAddress:       NormalizeAddress(order.ExchangeAddress),
 		MakerAddress:          NormalizeAddress(order.MakerAddress),
-		MakerAssetData:        common.Bytes2Hex(order.MakerAssetData),
+		MakerAssetData:        hexutil.Encode(order.MakerAssetData),
+		MakerFeeAssetData:     hexutil.Encode(order.MakerFeeAssetData),
 		MakerAssetAmount:      order.MakerAssetAmount.String(),
 		MakerFee:              order.MakerFee.String(),
 		TakerAddress:          NormalizeAddress(order.TakerAddress),
-		TakerAssetData:        common.Bytes2Hex(order.TakerAssetData),
+		TakerAssetData:        hexutil.Encode(order.TakerAssetData),
+		TakerFeeAssetData:     hexutil.Encode(order.TakerFeeAssetData),
 		TakerAssetAmount:      order.TakerAssetAmount.String(),
 		TakerFee:              order.TakerFee.String(),
 		SenderAddress:         NormalizeAddress(order.SenderAddress),
 		FeeRecipientAddress:   NormalizeAddress(order.FeeRecipientAddress),
 		ExpirationTimeSeconds: order.ExpirationTimeSeconds.String(),
 		Salt:                  order.Salt.String(),
-		Signature:             common.Bytes2Hex(order.Signature),
+		Signature:             hexutil.Encode(order.Signature),
 	}
 }
 
@@ -117,40 +120,40 @@ func (o *Order) ToZeroExOrder() (*zeroex.Order, error) {
 }
 
 // ToZeroExSignedOrder converts a protobuf unsigned order message to a 0x SignedOrder
-func (o *SignedOrder) ToZeroExSignedOrder() (zeroex.SignedOrder, error) {
+func (o *SignedOrder) ToZeroExSignedOrder() (*zeroex.SignedOrder, error) {
 	chainId, ok := new(big.Int).SetString(strconv.FormatUint(o.ChainId, 10), 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'chainId'")
+		return nil, fmt.Errorf("unable to parse 'chainId'")
 	}
 
 	makerAssetAmount, ok := new(big.Int).SetString(o.MakerAssetAmount, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'makerAssetAmount'")
+		return nil, fmt.Errorf("unable to parse 'makerAssetAmount'")
 	}
 
 	makerFee, ok := new(big.Int).SetString(o.MakerFee, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'makerFee'")
+		return nil, fmt.Errorf("unable to parse 'makerFee'")
 	}
 
 	takerAssetAmount, ok := new(big.Int).SetString(o.TakerAssetAmount, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'takerAssetAmount'")
+		return nil, fmt.Errorf("unable to parse 'takerAssetAmount'")
 	}
 
 	takerFee, ok := new(big.Int).SetString(o.TakerFee, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'takerFee'")
+		return nil, fmt.Errorf("unable to parse 'takerFee'")
 	}
 
 	salt, ok := new(big.Int).SetString(o.Salt, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'salt'")
+		return nil, fmt.Errorf("unable to parse 'salt'")
 	}
 
 	expirationTimeSeconds, ok := new(big.Int).SetString(o.ExpirationTimeSeconds, 10)
 	if !ok {
-		return zeroex.SignedOrder{}, fmt.Errorf("unable to parse 'expirationTimeSeconds'")
+		return nil, fmt.Errorf("unable to parse 'expirationTimeSeconds'")
 	}
 
 	order := zeroex.Order{
@@ -172,7 +175,7 @@ func (o *SignedOrder) ToZeroExSignedOrder() (zeroex.SignedOrder, error) {
 		Salt:                  salt,
 	}
 
-	return zeroex.SignedOrder{
+	return &zeroex.SignedOrder{
 		Order:     order,
 		Signature: common.FromHex(o.Signature),
 	}, nil

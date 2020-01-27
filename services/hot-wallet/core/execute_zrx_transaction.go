@@ -13,7 +13,7 @@ import (
 
 // ExecuteZeroExTransaction implements grpc.HotWalletServer
 func (hw *HotWallet) ExecuteZeroExTransaction(ctx context.Context, req *grpc.ExecuteZeroExTransactionRequest) (*grpc.ExecuteZeroExTransactionResponse, error) {
-	ztx, err := req.ToZeroExTransaction()
+	ztx, err := req.Transaction.ToZeroExTransaction()
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +40,6 @@ func (hw *HotWallet) ExecuteZeroExTransaction(ctx context.Context, req *grpc.Exe
 
 	return &grpc.ExecuteZeroExTransactionResponse{
 		TransactionHash: tx.Hash().Hex(),
-		SubmittedAt:     time.Now().Unix(),
+		SubmittedAt:     time.Now().UnixNano() / 1e6, // convert from NS to MS
 	}, nil
 }

@@ -3,6 +3,7 @@ syntax = "proto3";
 option go_package = "grpc";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
 
 import "types.proto";
 
@@ -22,6 +23,7 @@ service TransactionStatus {
 
 service HotWallet {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+    rpc ValidateOrder(ValidateOrderRequest) returns (ValidateOrderResponse);
     rpc GetAllowance(GetAllowanceRequest) returns (GetAllowanceResponse);
     rpc SetAllowance(SetAllowanceRequest) returns (SetAllowanceResponse);
     rpc GetTokenBalance(GetBalanceRequest) returns (GetBalanceResponse);
@@ -39,5 +41,10 @@ service Watcher {
 service ExchangeManager {
   rpc CreateOrder(ExchangeCreateOrderRequest) returns (ExchangeOrderResponse);
   rpc GetOrder(ExchangeOrderRequest) returns (ExchangeOrderResponse);
+  rpc GetOpenOrders(google.protobuf.StringValue) returns (ExchangeOrderArrayResponse);
   rpc CancelOrder(ExchangeOrderRequest) returns (google.protobuf.Empty);
+}
+
+service Hedger {
+  rpc HedgeOrder(HedgeOrderRequest) returns (HedgeOrderResponse);
 }

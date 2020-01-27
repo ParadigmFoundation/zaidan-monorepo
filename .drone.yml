@@ -18,8 +18,21 @@ steps:
 - name: maker-test
   image: python:stretch
   depends_on: ["clone"]
+  environment:
+    REDIS_HOST: redis
+    ASSET_CONFIG_FILE: maker/config.json
   commands:
     - cd services/maker
+    - pip install -r requirements.txt
+    - python -m pytest .
+
+- name: hedger-test
+  image: python:stretch
+  depends_on: ["clone"]
+  environment:
+    REDIS_HOST: redis
+  commands:
+    - cd services/hedger
     - pip install -r requirements.txt
     - python -m pytest .
 
@@ -42,6 +55,9 @@ services:
 - name: 0x-snapshot
   pull: always
   image: gcr.io/zaidan-eth-net/0x-snapshot:v3
+
+- name: redis
+  image: redis
 
 volumes:
 - name: gomod

@@ -25,7 +25,40 @@ func (hw *HotWallet) CreateOrder(ctx context.Context, req *grpc.CreateOrderReque
 		return nil, err
 	}
 
-	return &grpc.CreateOrderResponse{Order: grpc.SignedOrderToProto(signedOrder), Hash: orderHash.Bytes()}, nil
+	txData, err := hw.zrxHelper.GetFillOrderCallData(signedOrder.Order, signedOrder.TakerAssetAmount, signedOrder.Signature)
+	if err != nil {
+		return nil, err
+	}
+
+	salt, err := zrx.GeneratePseudoRandomSalt()
+	if err != nil {
+		return nil, err
+	}
+
+	gasPrice, err := hw.provider.Client().SuggestGasPrice(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	zrxTx := &zrx.Transaction{
+		Salt:                  salt,
+		ExpirationTimeSeconds: new(big.Int).Set(signedOrder.ExpirationTimeSeconds),
+		GasPrice:              gasPrice,
+		SignerAddress:         signedOrder.TakerAddress,
+		Data:                  txData,
+	}
+
+	zrxTxHash, err := zrxTx.ComputeHashForChainID(hw.chainId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpc.CreateOrderResponse{
+		Order:                 grpc.SignedOrderToProto(signedOrder),
+		OrderHash:             orderHash.Hex(),
+		ZeroExTransaction:     grpc.ZeroExTransactionToProto(zrxTx),
+		ZeroExTransactionHash: zrxTxHash.Hex(),
+	}, nil
 }
 
 func (hw *HotWallet) createAndSignOrder(cfg *grpc.CreateOrderRequest) (*zeroex.SignedOrder, error) {
@@ -41,10 +74,6 @@ func (hw *HotWallet) createAndSignOrder(cfg *grpc.CreateOrderRequest) (*zeroex.S
 	if !ok {
 		return nil, fmt.Errorf(`unable to parse "takerAssetAmount"`)
 	}
-	expirationTimeSeconds, ok := new(big.Int).SetString(cfg.ExpirationTimeSeconds, 10)
-	if !ok {
-		return nil, fmt.Errorf(`unable to parse "expirationTimeSeconds"`)
-	}
 
 	order, err := hw.zrxHelper.CreateOrder(
 		hw.makerAddress,
@@ -59,7 +88,7 @@ func (hw *HotWallet) createAndSignOrder(cfg *grpc.CreateOrderRequest) (*zeroex.S
 		big.NewInt(0),
 		zrx.NULL_ADDRESS,
 		zrx.NULL_ADDRESS,
-		expirationTimeSeconds,
+		big.NewInt(cfg.ExpirationTimeSeconds),
 	)
 	if err != nil {
 		return nil, err

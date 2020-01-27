@@ -8,6 +8,7 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -28,38 +29,43 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("services.proto", fileDescriptor_8e16ccb8c5307b32) }
 
 var fileDescriptor_8e16ccb8c5307b32 = []byte{
-	// 486 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0x51, 0x6f, 0xd3, 0x30,
-	0x10, 0xc7, 0x55, 0x69, 0x6c, 0xec, 0x0a, 0xb4, 0xbd, 0x6d, 0xd0, 0x75, 0x2f, 0xf0, 0x05, 0x5c,
-	0x54, 0x40, 0x62, 0xc0, 0x0b, 0x2d, 0x51, 0x11, 0xd2, 0x84, 0x58, 0x86, 0x26, 0xed, 0x65, 0xf2,
-	0xd2, 0x5b, 0x3a, 0x35, 0xc4, 0xc1, 0xb9, 0x40, 0xf7, 0xc8, 0xd7, 0xe3, 0x81, 0xcf, 0x84, 0xea,
-	0xd8, 0x4d, 0xd2, 0x86, 0x02, 0x6f, 0xbe, 0xff, 0xdd, 0xef, 0x7f, 0x8e, 0x73, 0x36, 0x3c, 0x48,
-	0x49, 0x7f, 0xbb, 0x09, 0x28, 0x15, 0x89, 0x56, 0xac, 0x7a, 0x47, 0xa1, 0x52, 0x61, 0x44, 0x7d,
-	0x13, 0x5d, 0x65, 0xd7, 0x7d, 0xfa, 0x92, 0xf0, 0xad, 0x4d, 0x36, 0xf9, 0x36, 0x71, 0x95, 0x83,
-	0x1f, 0x0d, 0x68, 0x7f, 0xd4, 0x13, 0xd2, 0x43, 0xa5, 0x66, 0x27, 0x32, 0x96, 0x21, 0x69, 0x1c,
-	0xc0, 0xee, 0x52, 0xc3, 0x8e, 0x58, 0xae, 0x4f, 0xe9, 0x6b, 0x46, 0x29, 0xf7, 0xb0, 0x2c, 0xa5,
-	0x89, 0x8a, 0x53, 0xc2, 0x63, 0xd8, 0xf9, 0x9c, 0x4c, 0x24, 0x53, 0x8a, 0xdd, 0x22, 0x6d, 0xa5,
-	0x0d, 0xe0, 0xd3, 0xc6, 0x40, 0xc1, 0x9d, 0x13, 0x39, 0x23, 0x8d, 0x7d, 0xb8, 0x3b, 0x26, 0xfe,
-	0x94, 0x29, 0x26, 0x6c, 0x0b, 0xb7, 0x74, 0x70, 0xa7, 0xa4, 0xd8, 0xa6, 0x2f, 0x00, 0x46, 0x53,
-	0x0a, 0x66, 0x39, 0x82, 0xa2, 0x08, 0x1c, 0xb4, 0x57, 0xd1, 0x72, 0x6c, 0x70, 0x09, 0x9d, 0x33,
-	0x2d, 0xe3, 0x54, 0x06, 0x7c, 0xa3, 0x62, 0x9f, 0x25, 0x67, 0x29, 0x7e, 0x80, 0x8e, 0xd9, 0x5c,
-	0x1e, 0xe6, 0x1b, 0xc7, 0x43, 0xb1, 0xa6, 0x39, 0xe7, 0x5e, 0x5d, 0xca, 0x36, 0xf8, 0xb9, 0x05,
-	0xbb, 0xef, 0x15, 0x9f, 0xcb, 0x28, 0x22, 0xc6, 0x97, 0xd0, 0x1c, 0x69, 0x92, 0x4c, 0x06, 0xc0,
-	0x3d, 0x51, 0x8a, 0x9c, 0xdb, 0x7e, 0x55, 0xb4, 0xdf, 0xf7, 0x1a, 0xee, 0x8d, 0x89, 0xdf, 0x46,
-	0x91, 0xfa, 0x2e, 0xe3, 0x80, 0x70, 0x5f, 0x94, 0x43, 0xc7, 0x1e, 0xac, 0xa8, 0x05, 0xec, 0x57,
-	0x61, 0xbf, 0x16, 0xf6, 0xeb, 0xe0, 0x57, 0xd0, 0x1a, 0x13, 0x9f, 0xa9, 0x19, 0xc5, 0x43, 0x19,
-	0x19, 0x1e, 0x17, 0x6d, 0x6c, 0x50, 0x1c, 0x6f, 0x59, 0xab, 0xb0, 0x1e, 0x4f, 0x49, 0xff, 0x37,
-	0xfb, 0x1c, 0xee, 0x9b, 0x5f, 0x73, 0x4d, 0xda, 0x18, 0x60, 0x5b, 0xb8, 0xb8, 0x98, 0x83, 0x42,
-	0x59, 0xa7, 0xcc, 0x96, 0xff, 0x8d, 0x7a, 0x07, 0x2d, 0x9f, 0xe2, 0x49, 0x69, 0x14, 0xf0, 0x91,
-	0x58, 0x51, 0x1c, 0xde, 0x5d, 0x4f, 0x58, 0x97, 0x4b, 0xe8, 0x7a, 0x73, 0x0a, 0x32, 0xa6, 0x0b,
-	0xd2, 0xca, 0x9b, 0x97, 0xed, 0x1e, 0x8b, 0x3f, 0xa5, 0x9c, 0xef, 0x93, 0x0d, 0x15, 0x76, 0x98,
-	0x4e, 0x61, 0xe7, 0x5c, 0x72, 0xb0, 0x38, 0x8c, 0x31, 0xb4, 0xcd, 0xb2, 0xdc, 0xa3, 0x2b, 0x56,
-	0x25, 0xe7, 0x7d, 0x58, 0x93, 0xb1, 0x9e, 0xbf, 0x1a, 0xd0, 0xf2, 0xe6, 0xc1, 0x54, 0xc6, 0x21,
-	0xb9, 0x5b, 0x3f, 0xac, 0x8e, 0xe9, 0x91, 0x70, 0x05, 0x35, 0xe3, 0xfa, 0x70, 0x99, 0xac, 0x0e,
-	0xec, 0xb1, 0xb9, 0xc1, 0xb9, 0xc1, 0xc1, 0x6a, 0xcd, 0x66, 0xf4, 0x0d, 0x34, 0x47, 0x8b, 0x51,
-	0x88, 0xfe, 0x42, 0xe7, 0x4f, 0x9b, 0x70, 0x4f, 0x9b, 0xf0, 0x16, 0x4f, 0xdb, 0x70, 0xfb, 0x62,
-	0x2b, 0xd4, 0x49, 0x70, 0xb5, 0x6d, 0xf4, 0x67, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0xc3, 0x1d,
-	0x4d, 0xa6, 0x12, 0x05, 0x00, 0x00,
+	// 566 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x94, 0xed, 0x6e, 0xd3, 0x30,
+	0x14, 0x86, 0x35, 0xc4, 0x3a, 0x76, 0x4a, 0x69, 0xeb, 0x7d, 0x95, 0x16, 0xc1, 0xb8, 0x01, 0x17,
+	0x15, 0x26, 0x31, 0x40, 0xa0, 0xb5, 0x54, 0x9d, 0x90, 0x26, 0xc4, 0x32, 0x36, 0x69, 0x42, 0x42,
+	0x5e, 0x7a, 0x96, 0x56, 0x0d, 0x71, 0xe6, 0x38, 0xac, 0xfd, 0xc9, 0x5f, 0x2e, 0x81, 0xab, 0x45,
+	0x71, 0xec, 0x7c, 0xf5, 0x03, 0xf6, 0xcf, 0xe7, 0x3d, 0x7e, 0xde, 0xe3, 0x38, 0xaf, 0x0c, 0x8f,
+	0x02, 0x14, 0x3f, 0xc7, 0x36, 0x06, 0xd4, 0x17, 0x5c, 0xf2, 0x66, 0xcb, 0xe1, 0xdc, 0x71, 0xb1,
+	0xad, 0xaa, 0xab, 0xf0, 0xba, 0x8d, 0x3f, 0x7c, 0x39, 0xd3, 0xcd, 0xa7, 0xc5, 0xe6, 0xad, 0x60,
+	0xbe, 0x8f, 0xc2, 0xc0, 0x65, 0x39, 0xf3, 0x8d, 0x53, 0xe7, 0xd7, 0x1a, 0xd4, 0x3e, 0x8b, 0x21,
+	0x8a, 0x2e, 0xe7, 0x93, 0x13, 0xe6, 0x31, 0x07, 0x05, 0xe9, 0xc0, 0x66, 0xa2, 0x91, 0x3a, 0x4d,
+	0xd6, 0xa7, 0x78, 0x13, 0x62, 0x20, 0x9b, 0x24, 0x2b, 0x05, 0x3e, 0xf7, 0x02, 0x24, 0x87, 0xb0,
+	0xf1, 0xd5, 0x1f, 0x32, 0x89, 0x01, 0x69, 0xa4, 0x6d, 0x2d, 0xad, 0x00, 0x5f, 0xac, 0x75, 0x38,
+	0xac, 0x9f, 0xb0, 0x09, 0x0a, 0xd2, 0x86, 0x07, 0x03, 0x94, 0x5f, 0x42, 0x2e, 0x91, 0xd4, 0xa8,
+	0x59, 0x1a, 0xb8, 0x9e, 0x51, 0xf4, 0xd0, 0x03, 0x80, 0xde, 0x08, 0xed, 0x49, 0x8c, 0x10, 0x9a,
+	0x16, 0x06, 0xda, 0xca, 0x69, 0x31, 0xd6, 0xb9, 0x81, 0xfa, 0x99, 0x60, 0x5e, 0xc0, 0x6c, 0x39,
+	0xe6, 0x9e, 0x25, 0x99, 0x0c, 0x03, 0xf2, 0x0d, 0xf6, 0xe6, 0xc4, 0xf8, 0xf8, 0xe4, 0x19, 0x5d,
+	0xd2, 0x31, 0x53, 0xf6, 0x97, 0x6f, 0xd0, 0x23, 0x7f, 0xaf, 0xc3, 0xe6, 0x31, 0x97, 0x17, 0xcc,
+	0x75, 0x51, 0x92, 0xd7, 0x50, 0xee, 0x09, 0x64, 0x12, 0xd5, 0x75, 0x90, 0x2d, 0x9a, 0xa9, 0x8c,
+	0xe7, 0x76, 0x5e, 0xd4, 0x5f, 0xfc, 0x1e, 0x2a, 0xe7, 0xcc, 0x1d, 0x0f, 0x13, 0x76, 0x87, 0xe6,
+	0x6a, 0x43, 0xef, 0x16, 0x65, 0xcd, 0xbf, 0x85, 0x87, 0x03, 0x94, 0x47, 0xae, 0xcb, 0x6f, 0x99,
+	0x67, 0x23, 0xd9, 0xa6, 0xd9, 0xd2, 0xd0, 0x3b, 0x05, 0x35, 0x85, 0xad, 0x3c, 0x6c, 0x2d, 0x84,
+	0xad, 0x45, 0xf0, 0x1b, 0xa8, 0x0e, 0x50, 0x9e, 0xf1, 0x09, 0x7a, 0x5d, 0xe6, 0x2a, 0x9e, 0x44,
+	0x63, 0x74, 0x91, 0xfe, 0xb0, 0xac, 0x96, 0x63, 0xfb, 0x72, 0x84, 0xe2, 0xce, 0xec, 0x2b, 0xa8,
+	0xa8, 0x9f, 0x73, 0x8d, 0x42, 0x19, 0x90, 0x1a, 0x35, 0x75, 0x9a, 0xac, 0x54, 0x99, 0xa7, 0xd4,
+	0x91, 0xff, 0x8f, 0xfa, 0x08, 0x55, 0x0b, 0xbd, 0x61, 0x26, 0x0c, 0x64, 0x8f, 0x16, 0x14, 0x83,
+	0x37, 0xe6, 0x1b, 0xda, 0xe5, 0x3b, 0x34, 0xfa, 0x53, 0xb4, 0x43, 0x89, 0x97, 0x28, 0x78, 0x7f,
+	0x9a, 0xb5, 0xdb, 0xa7, 0xcb, 0x5a, 0xc6, 0xf7, 0xf9, 0x8a, 0x1d, 0x3a, 0x8c, 0xa7, 0xb0, 0x71,
+	0xc1, 0xa4, 0x1d, 0x5d, 0xc6, 0x00, 0x6a, 0x6a, 0x99, 0x9d, 0xd1, 0xa0, 0x45, 0xc9, 0x78, 0x3f,
+	0x5e, 0xd0, 0xd1, 0x9e, 0x7f, 0xee, 0x41, 0xb5, 0x3f, 0xb5, 0x47, 0xcc, 0x73, 0xd0, 0xbc, 0x23,
+	0xdd, 0x7c, 0xcc, 0x5b, 0xd4, 0x6c, 0x58, 0x10, 0xf7, 0xdd, 0xa4, 0x99, 0x0f, 0xec, 0xa1, 0x7a,
+	0x13, 0x4c, 0xd6, 0x0b, 0x7b, 0x56, 0xa3, 0x9f, 0xa0, 0x12, 0xa1, 0x3e, 0x7a, 0x4a, 0x0f, 0xc8,
+	0x13, 0x1a, 0x3f, 0x8d, 0xd4, 0x3c, 0x8d, 0xd4, 0x92, 0x62, 0xec, 0x39, 0xe7, 0xcc, 0x0d, 0xb1,
+	0xd9, 0xca, 0xdb, 0x1c, 0x09, 0xc1, 0x66, 0x89, 0xd7, 0x3b, 0x28, 0xf7, 0xa2, 0x58, 0xb9, 0xff,
+	0x38, 0x49, 0x71, 0x40, 0x3f, 0x7a, 0x98, 0x3b, 0x1f, 0xa0, 0x74, 0x8c, 0xc3, 0xe8, 0x4a, 0x0e,
+	0x00, 0xd4, 0x2a, 0xb6, 0x21, 0x34, 0x2d, 0xd2, 0x10, 0x67, 0xb5, 0x78, 0x7c, 0xb7, 0x74, 0x79,
+	0xdf, 0x11, 0xbe, 0x7d, 0x55, 0x52, 0xc6, 0x2f, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x9a, 0x21,
+	0x27, 0xcd, 0x11, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -318,7 +324,7 @@ var _Maker_serviceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type TransactionStatusClient interface {
-	OrderStatusUpdate(ctx context.Context, in *OrderStatusUpdateRequest, opts ...grpc.CallOption) (*OrderStatusUpdateResponse, error)
+	TransactionStatusUpdate(ctx context.Context, in *TransactionStatusUpdateRequest, opts ...grpc.CallOption) (*TransactionStatusUpdateResponse, error)
 }
 
 type transactionStatusClient struct {
@@ -329,9 +335,9 @@ func NewTransactionStatusClient(cc *grpc.ClientConn) TransactionStatusClient {
 	return &transactionStatusClient{cc}
 }
 
-func (c *transactionStatusClient) OrderStatusUpdate(ctx context.Context, in *OrderStatusUpdateRequest, opts ...grpc.CallOption) (*OrderStatusUpdateResponse, error) {
-	out := new(OrderStatusUpdateResponse)
-	err := c.cc.Invoke(ctx, "/TransactionStatus/OrderStatusUpdate", in, out, opts...)
+func (c *transactionStatusClient) TransactionStatusUpdate(ctx context.Context, in *TransactionStatusUpdateRequest, opts ...grpc.CallOption) (*TransactionStatusUpdateResponse, error) {
+	out := new(TransactionStatusUpdateResponse)
+	err := c.cc.Invoke(ctx, "/TransactionStatus/TransactionStatusUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -340,35 +346,35 @@ func (c *transactionStatusClient) OrderStatusUpdate(ctx context.Context, in *Ord
 
 // TransactionStatusServer is the server API for TransactionStatus service.
 type TransactionStatusServer interface {
-	OrderStatusUpdate(context.Context, *OrderStatusUpdateRequest) (*OrderStatusUpdateResponse, error)
+	TransactionStatusUpdate(context.Context, *TransactionStatusUpdateRequest) (*TransactionStatusUpdateResponse, error)
 }
 
 // UnimplementedTransactionStatusServer can be embedded to have forward compatible implementations.
 type UnimplementedTransactionStatusServer struct {
 }
 
-func (*UnimplementedTransactionStatusServer) OrderStatusUpdate(ctx context.Context, req *OrderStatusUpdateRequest) (*OrderStatusUpdateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderStatusUpdate not implemented")
+func (*UnimplementedTransactionStatusServer) TransactionStatusUpdate(ctx context.Context, req *TransactionStatusUpdateRequest) (*TransactionStatusUpdateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TransactionStatusUpdate not implemented")
 }
 
 func RegisterTransactionStatusServer(s *grpc.Server, srv TransactionStatusServer) {
 	s.RegisterService(&_TransactionStatus_serviceDesc, srv)
 }
 
-func _TransactionStatus_OrderStatusUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderStatusUpdateRequest)
+func _TransactionStatus_TransactionStatusUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransactionStatusUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionStatusServer).OrderStatusUpdate(ctx, in)
+		return srv.(TransactionStatusServer).TransactionStatusUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/TransactionStatus/OrderStatusUpdate",
+		FullMethod: "/TransactionStatus/TransactionStatusUpdate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionStatusServer).OrderStatusUpdate(ctx, req.(*OrderStatusUpdateRequest))
+		return srv.(TransactionStatusServer).TransactionStatusUpdate(ctx, req.(*TransactionStatusUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -378,8 +384,8 @@ var _TransactionStatus_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*TransactionStatusServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "OrderStatusUpdate",
-			Handler:    _TransactionStatus_OrderStatusUpdate_Handler,
+			MethodName: "TransactionStatusUpdate",
+			Handler:    _TransactionStatus_TransactionStatusUpdate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -391,6 +397,7 @@ var _TransactionStatus_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type HotWalletClient interface {
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
+	ValidateOrder(ctx context.Context, in *ValidateOrderRequest, opts ...grpc.CallOption) (*ValidateOrderResponse, error)
 	GetAllowance(ctx context.Context, in *GetAllowanceRequest, opts ...grpc.CallOption) (*GetAllowanceResponse, error)
 	SetAllowance(ctx context.Context, in *SetAllowanceRequest, opts ...grpc.CallOption) (*SetAllowanceResponse, error)
 	GetTokenBalance(ctx context.Context, in *GetBalanceRequest, opts ...grpc.CallOption) (*GetBalanceResponse, error)
@@ -412,6 +419,15 @@ func NewHotWalletClient(cc *grpc.ClientConn) HotWalletClient {
 func (c *hotWalletClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
 	out := new(CreateOrderResponse)
 	err := c.cc.Invoke(ctx, "/HotWallet/CreateOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *hotWalletClient) ValidateOrder(ctx context.Context, in *ValidateOrderRequest, opts ...grpc.CallOption) (*ValidateOrderResponse, error) {
+	out := new(ValidateOrderResponse)
+	err := c.cc.Invoke(ctx, "/HotWallet/ValidateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -493,6 +509,7 @@ func (c *hotWalletClient) ExecuteZeroExTransaction(ctx context.Context, in *Exec
 // HotWalletServer is the server API for HotWallet service.
 type HotWalletServer interface {
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
+	ValidateOrder(context.Context, *ValidateOrderRequest) (*ValidateOrderResponse, error)
 	GetAllowance(context.Context, *GetAllowanceRequest) (*GetAllowanceResponse, error)
 	SetAllowance(context.Context, *SetAllowanceRequest) (*SetAllowanceResponse, error)
 	GetTokenBalance(context.Context, *GetBalanceRequest) (*GetBalanceResponse, error)
@@ -509,6 +526,9 @@ type UnimplementedHotWalletServer struct {
 
 func (*UnimplementedHotWalletServer) CreateOrder(ctx context.Context, req *CreateOrderRequest) (*CreateOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
+}
+func (*UnimplementedHotWalletServer) ValidateOrder(ctx context.Context, req *ValidateOrderRequest) (*ValidateOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateOrder not implemented")
 }
 func (*UnimplementedHotWalletServer) GetAllowance(ctx context.Context, req *GetAllowanceRequest) (*GetAllowanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllowance not implemented")
@@ -553,6 +573,24 @@ func _HotWallet_CreateOrder_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(HotWalletServer).CreateOrder(ctx, req.(*CreateOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _HotWallet_ValidateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HotWalletServer).ValidateOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/HotWallet/ValidateOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HotWalletServer).ValidateOrder(ctx, req.(*ValidateOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -710,6 +748,10 @@ var _HotWallet_serviceDesc = grpc.ServiceDesc{
 			Handler:    _HotWallet_CreateOrder_Handler,
 		},
 		{
+			MethodName: "ValidateOrder",
+			Handler:    _HotWallet_ValidateOrder_Handler,
+		},
+		{
 			MethodName: "GetAllowance",
 			Handler:    _HotWallet_GetAllowance_Handler,
 		},
@@ -824,6 +866,7 @@ var _Watcher_serviceDesc = grpc.ServiceDesc{
 type ExchangeManagerClient interface {
 	CreateOrder(ctx context.Context, in *ExchangeCreateOrderRequest, opts ...grpc.CallOption) (*ExchangeOrderResponse, error)
 	GetOrder(ctx context.Context, in *ExchangeOrderRequest, opts ...grpc.CallOption) (*ExchangeOrderResponse, error)
+	GetOpenOrders(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*ExchangeOrderArrayResponse, error)
 	CancelOrder(ctx context.Context, in *ExchangeOrderRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -853,6 +896,15 @@ func (c *exchangeManagerClient) GetOrder(ctx context.Context, in *ExchangeOrderR
 	return out, nil
 }
 
+func (c *exchangeManagerClient) GetOpenOrders(ctx context.Context, in *wrappers.StringValue, opts ...grpc.CallOption) (*ExchangeOrderArrayResponse, error) {
+	out := new(ExchangeOrderArrayResponse)
+	err := c.cc.Invoke(ctx, "/ExchangeManager/GetOpenOrders", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *exchangeManagerClient) CancelOrder(ctx context.Context, in *ExchangeOrderRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
 	err := c.cc.Invoke(ctx, "/ExchangeManager/CancelOrder", in, out, opts...)
@@ -866,6 +918,7 @@ func (c *exchangeManagerClient) CancelOrder(ctx context.Context, in *ExchangeOrd
 type ExchangeManagerServer interface {
 	CreateOrder(context.Context, *ExchangeCreateOrderRequest) (*ExchangeOrderResponse, error)
 	GetOrder(context.Context, *ExchangeOrderRequest) (*ExchangeOrderResponse, error)
+	GetOpenOrders(context.Context, *wrappers.StringValue) (*ExchangeOrderArrayResponse, error)
 	CancelOrder(context.Context, *ExchangeOrderRequest) (*empty.Empty, error)
 }
 
@@ -878,6 +931,9 @@ func (*UnimplementedExchangeManagerServer) CreateOrder(ctx context.Context, req 
 }
 func (*UnimplementedExchangeManagerServer) GetOrder(ctx context.Context, req *ExchangeOrderRequest) (*ExchangeOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrder not implemented")
+}
+func (*UnimplementedExchangeManagerServer) GetOpenOrders(ctx context.Context, req *wrappers.StringValue) (*ExchangeOrderArrayResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOpenOrders not implemented")
 }
 func (*UnimplementedExchangeManagerServer) CancelOrder(ctx context.Context, req *ExchangeOrderRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CancelOrder not implemented")
@@ -923,6 +979,24 @@ func _ExchangeManager_GetOrder_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ExchangeManager_GetOpenOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(wrappers.StringValue)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ExchangeManagerServer).GetOpenOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ExchangeManager/GetOpenOrders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ExchangeManagerServer).GetOpenOrders(ctx, req.(*wrappers.StringValue))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ExchangeManager_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ExchangeOrderRequest)
 	if err := dec(in); err != nil {
@@ -954,8 +1028,84 @@ var _ExchangeManager_serviceDesc = grpc.ServiceDesc{
 			Handler:    _ExchangeManager_GetOrder_Handler,
 		},
 		{
+			MethodName: "GetOpenOrders",
+			Handler:    _ExchangeManager_GetOpenOrders_Handler,
+		},
+		{
 			MethodName: "CancelOrder",
 			Handler:    _ExchangeManager_CancelOrder_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "services.proto",
+}
+
+// HedgerClient is the client API for Hedger service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+type HedgerClient interface {
+	HedgeOrder(ctx context.Context, in *HedgeOrderRequest, opts ...grpc.CallOption) (*HedgeOrderResponse, error)
+}
+
+type hedgerClient struct {
+	cc *grpc.ClientConn
+}
+
+func NewHedgerClient(cc *grpc.ClientConn) HedgerClient {
+	return &hedgerClient{cc}
+}
+
+func (c *hedgerClient) HedgeOrder(ctx context.Context, in *HedgeOrderRequest, opts ...grpc.CallOption) (*HedgeOrderResponse, error) {
+	out := new(HedgeOrderResponse)
+	err := c.cc.Invoke(ctx, "/Hedger/HedgeOrder", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// HedgerServer is the server API for Hedger service.
+type HedgerServer interface {
+	HedgeOrder(context.Context, *HedgeOrderRequest) (*HedgeOrderResponse, error)
+}
+
+// UnimplementedHedgerServer can be embedded to have forward compatible implementations.
+type UnimplementedHedgerServer struct {
+}
+
+func (*UnimplementedHedgerServer) HedgeOrder(ctx context.Context, req *HedgeOrderRequest) (*HedgeOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HedgeOrder not implemented")
+}
+
+func RegisterHedgerServer(s *grpc.Server, srv HedgerServer) {
+	s.RegisterService(&_Hedger_serviceDesc, srv)
+}
+
+func _Hedger_HedgeOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HedgeOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(HedgerServer).HedgeOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/Hedger/HedgeOrder",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(HedgerServer).HedgeOrder(ctx, req.(*HedgeOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+var _Hedger_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "Hedger",
+	HandlerType: (*HedgerServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "HedgeOrder",
+			Handler:    _Hedger_HedgeOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

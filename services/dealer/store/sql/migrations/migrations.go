@@ -23,59 +23,37 @@ func (*SQLMigration) Schema() map[string]string {
 		"create-quotes-table": `
 			CREATE TABLE quotes (
 				  "quote_id"           VARCHAR(100)
-				, "maker_asset_ticker" VARCHAR(100)
-				, "taker_asset_ticker" VARCHAR(100)
+				, "maker_asset_address" VARCHAR(100)
+				, "taker_asset_address" VARCHAR(100)
 				, "maker_asset_size"   TEXT
-				, "quote_asset_size"   TEXT
+				, "taker_asset_size"   TEXT
 				, "expiration"         INTEGER
 				, "server_time"        INTEGER
-				, "order_hash"         VARCHAR(100)
-				, "fill_tx"            VARCHAR(100)
+				, "zero_ex_transaction_hash" VARCHAR(100)
 				, PRIMARY KEY (quote_id)
 			)`,
 
-		"create-trades-table": `
-			CREATE TABLE trades (
-				 "quote_id"            VARCHAR(100)
-				, "market_id"          VARCHAR(100)
-				, "order_hash"         VARCHAR(100)
-				, "transaction_hash"   VARCHAR(100)
-				, "taker_address"      VARCHAR(100)
-				, "timestamp"          INTEGER
-				, "maker_asset_ticker" VARCHAR(10)
-				, "taker_asset_ticker" VARCHAR(10)
-				, "maker_asset_amount" TEXT
-				, "taker_asset_amount" TEXT
-				, PRIMARY KEY (quote_id)
-			)`,
-
-		"create-orders-table": `
-			CREATE TABLE signed_orders (
+		"create-transaction-infos-table": `
+			CREATE TABLE transaction_infos (
 				 quote_id VARCHAR(100)
-			   , order_bytes TEXT
+			   , transaction_info_bytes TEXT
 			   , PRIMARY KEY(quote_id)
 			)`,
 
-		"create-assets-table": `
-			CREATE TABLE assets (
-				  "ticker"     VARCHAR(10)
-				, "name"       VARCHAR(100)
-				, "decimals"   INT
-				, "network_id" INT
-				, "address"    VARCHAR(100)
-				, PRIMARY KEY (ticker)
-			)
-		`,
-
 		"create-markets-table": `
 			CREATE TABLE markets (
-				  "id"                  VARCHAR(36)
-				, "market_asset_ticker" VARCHAR(10)
-				, "taker_asset_tickers" TEXT
+				  "maker_asset_address" VARCHAR(10)
+				, "taker_asset_addresses" TEXT
 				, "trade_info"          TEXT
 				, "quote_info"          TEXT
 				, "metadata"            TEXT
-				, PRIMARY KEY (id)
+				, PRIMARY KEY (maker_asset_address)
+			)
+		`,
+		"create-policy-table": `
+			CREATE TABLE policies (
+				  "entry" VARCHAR(100)
+				, PRIMARY KEY(entry)
 			)
 		`,
 	}

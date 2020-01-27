@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logging"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
-	"github.com/spf13/cobra"
 )
 
 var (
@@ -27,7 +29,7 @@ var (
 func main() {
 	configureFlags()
 	if err := cmd.Execute(); err != nil {
-		logging.Fatal(err)
+		logrus.Fatal(err)
 	}
 }
 
@@ -36,19 +38,16 @@ func configureFlags() {
 	flags.StringVarP(&ethAddress, "eth", "e", "wss://ropsten.infura.io/ws", "Ethereum RPC url")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
 	flags.StringVarP(&makerUrl, "maker", "m", "localhost:5002", "Maker gRPC url")
-	flags.StringVarP(&bugsnagKey, "bugsnag", "b", "", "Bugsnag project key")
 }
 
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
-	logging.ConfigureBugsnag(bugsnagKey)
-	logging.Info("Starting")
+	log := logger.New("app")
+	log.Info("Starting")
 
 	if err := eth.Configure(ethAddress); err != nil {
-		logging.Fatal(err)
+		log.Fatal(err)
 	}
-	logging.Info("Connected to ethereum at", ethAddress)
-
-
+	log.Info("Connected to ethereum at", ethAddress)
 
 	txWatching := watching.New(makerUrl)
 
@@ -56,6 +55,6 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 		txWatching,
 	)
 	if err := watcherServer.Listen(strconv.Itoa(port)); err != nil {
-		logging.Fatal(fmt.Errorf("failed to listen: %v", err))
+		log.Fatal(fmt.Errorf("failed to listen: %w", err))
 	}
 }
