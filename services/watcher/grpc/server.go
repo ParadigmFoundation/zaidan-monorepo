@@ -84,6 +84,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 
 			_, _ = pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
 				TxHash: in.TxHash,
+				QuoteId: in.QuoteId,
 				Status:  status,
 			})
 		}

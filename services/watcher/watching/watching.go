@@ -124,6 +124,7 @@ func (txW *TxWatching) startWatchingBlocks() {
 
 							_, _ = pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(bg, &pb.TransactionStatusUpdateRequest{
 								TxHash: watchedTransaction.TxHash.String(),
+								QuoteId: watchedTransaction.QuoteId,
 								Status:  uint32(receipt.Status),
 							})
 						}
