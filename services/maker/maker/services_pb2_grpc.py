@@ -85,11 +85,6 @@ class MakerStub(object):
         request_serializer=types__pb2.CheckQuoteRequest.SerializeToString,
         response_deserializer=types__pb2.CheckQuoteResponse.FromString,
         )
-    self.OrderStatusUpdate = channel.unary_unary(
-        '/Maker/OrderStatusUpdate',
-        request_serializer=types__pb2.OrderStatusUpdateRequest.SerializeToString,
-        response_deserializer=types__pb2.OrderStatusUpdateResponse.FromString,
-        )
 
 
 class MakerServicer(object):
@@ -110,13 +105,6 @@ class MakerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def OrderStatusUpdate(self, request, context):
-    # missing associated documentation comment in .proto file
-    pass
-    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-    context.set_details('Method not implemented!')
-    raise NotImplementedError('Method not implemented!')
-
 
 def add_MakerServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -130,14 +118,51 @@ def add_MakerServicer_to_server(servicer, server):
           request_deserializer=types__pb2.CheckQuoteRequest.FromString,
           response_serializer=types__pb2.CheckQuoteResponse.SerializeToString,
       ),
-      'OrderStatusUpdate': grpc.unary_unary_rpc_method_handler(
-          servicer.OrderStatusUpdate,
-          request_deserializer=types__pb2.OrderStatusUpdateRequest.FromString,
-          response_serializer=types__pb2.OrderStatusUpdateResponse.SerializeToString,
-      ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
       'Maker', rpc_method_handlers)
+  server.add_generic_rpc_handlers((generic_handler,))
+
+
+class TransactionStatusStub(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def __init__(self, channel):
+    """Constructor.
+
+    Args:
+      channel: A grpc.Channel.
+    """
+    self.TransactionStatusUpdate = channel.unary_unary(
+        '/TransactionStatus/TransactionStatusUpdate',
+        request_serializer=types__pb2.TransactionStatusUpdateRequest.SerializeToString,
+        response_deserializer=types__pb2.TransactionStatusUpdateResponse.FromString,
+        )
+
+
+class TransactionStatusServicer(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def TransactionStatusUpdate(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+
+def add_TransactionStatusServicer_to_server(servicer, server):
+  rpc_method_handlers = {
+      'TransactionStatusUpdate': grpc.unary_unary_rpc_method_handler(
+          servicer.TransactionStatusUpdate,
+          request_deserializer=types__pb2.TransactionStatusUpdateRequest.FromString,
+          response_serializer=types__pb2.TransactionStatusUpdateResponse.SerializeToString,
+      ),
+  }
+  generic_handler = grpc.method_handlers_generic_handler(
+      'TransactionStatus', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -468,4 +493,46 @@ def add_ExchangeManagerServicer_to_server(servicer, server):
   }
   generic_handler = grpc.method_handlers_generic_handler(
       'ExchangeManager', rpc_method_handlers)
+  server.add_generic_rpc_handlers((generic_handler,))
+
+
+class HedgerStub(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def __init__(self, channel):
+    """Constructor.
+
+    Args:
+      channel: A grpc.Channel.
+    """
+    self.HedgeOrder = channel.unary_unary(
+        '/Hedger/HedgeOrder',
+        request_serializer=types__pb2.HedgeOrderRequest.SerializeToString,
+        response_deserializer=types__pb2.HedgeOrderResponse.FromString,
+        )
+
+
+class HedgerServicer(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def HedgeOrder(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+
+def add_HedgerServicer_to_server(servicer, server):
+  rpc_method_handlers = {
+      'HedgeOrder': grpc.unary_unary_rpc_method_handler(
+          servicer.HedgeOrder,
+          request_deserializer=types__pb2.HedgeOrderRequest.FromString,
+          response_serializer=types__pb2.HedgeOrderResponse.SerializeToString,
+      ),
+  }
+  generic_handler = grpc.method_handlers_generic_handler(
+      'Hedger', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))
