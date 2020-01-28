@@ -66,3 +66,14 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
     def OrderStatusUpdate(self, request:object, context) -> object:
         self.risk_utils.order_status_update(request.quote_id, request.status)
         return types_pb2.OrderStatusUpdateResponse(status=200)
+
+    def GetMarkets(self, request:object, context) -> object:
+        our_markets = self.config_manager.get_markets(request.maker_asset_address, request.taker_asset_address)
+        print(our_markets)
+        markets = []
+        for market in our_markets:
+            markets.append(types_pb2.Market(maker_asset_address=market[0], taker_asset_addresses=market[1],
+                                            quote_info=types_pb2.QuoteInfo(min_size=str(market[2]), max_size=str(market[3]))))
+
+        return types_pb2.GetMarketsResponse(markets=markets)
+
