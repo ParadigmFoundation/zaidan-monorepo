@@ -27,19 +27,20 @@ func (sfr *submitFillResponse) MarshalJSON() ([]byte, error) {
 func (svc *Service) SubmitFill(quoteId string, salt string, signature string, signer string, data string, gasPrice string, expirationTimeSeconds int64) (*submitFillResponse, error) {
 	order, err := svc.dealer.GetOrder(quoteId)
 	if err != nil {
-		svc.log.Errorf("failed to fetch order from DB: %v", err)
-		return nil, err
+		svc.log.WithError(err).Error("failed to fetch order from DB")
+		return nil, ErrUnknownQuoteID
 	}
 
 	validateReq := &grpc.ValidateOrderRequest{Order: grpc.SignedOrderToProto(order)}
 	if err := svc.dealer.ValidateOrder(context.TODO(), validateReq); err != nil {
-		svc.log.Errorf("failed to validate order from HW: %v", err)
+		svc.log.WithError(err).Error("failed to validate order from hot-wallet")
 		return nil, ErrFillValidationFailed
 	}
 
 	bSignature, err := hexutil.Decode(signature)
 	if err != nil {
-		return nil, err
+		svc.log.WithError(err).Error("unable to decode signature parameter")
+		return nil, ErrInvalidParameters
 	}
 
 	fillReq := &grpc.ExecuteZeroExTransactionRequest{
@@ -55,14 +56,14 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 
 	fillRes, err := svc.dealer.ExecuteZeroExTransaction(context.TODO(), fillReq)
 	if err != nil {
-		svc.log.Errorf("failed to execute 0x transaction with hot-wallet: %v", err)
-		return nil, err
+		svc.log.WithError(err).Error("failed to execute 0x transaction with hot-wallet")
+		return nil, ErrInternal
 	}
 
 	// todo (@hrharder): do we need to do anything with the response value here?
 	if _, err := svc.dealer.WatchTransaction(context.TODO(), quoteId, fillRes.TransactionHash); err != nil {
-		svc.log.Errorf("failed to watch submitted transaction: %v", err)
-		return nil, err
+		svc.log.WithError(err).Error("failed to watch submitted fill transaction")
+		return nil, ErrInternal
 	}
 
 	return &submitFillResponse{

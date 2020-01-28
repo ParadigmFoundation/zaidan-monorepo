@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -69,7 +68,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	now := time.Now()
 	res, err := d.makerClient.GetQuote(ctx, req)
 	if err != nil {
-		d.log.Errorf("failed fetching quote from maker: %v", err)
+		d.log.WithError(err).Error("failed fetching quote from maker")
 		return nil, err
 	}
 
@@ -84,7 +83,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 
 	orderRes, err := d.hwClient.CreateOrder(ctx, orderReq)
 	if err != nil {
-		d.log.Errorf("failed creating signed order: %v", err)
+		d.log.WithError(err).Error("failed creating signed order")
 		return nil, err
 	}
 
@@ -106,7 +105,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	if err := d.db.CreateQuote(quote); err != nil {
-		d.log.Errorf("failed creating quote in DB: %v", err)
+		d.log.WithError(err).Error("failed creating quote in DB")
 		return nil, err
 	}
 
@@ -121,7 +120,8 @@ func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequ
 	}
 
 	if !res.Valid {
-		return fmt.Errorf("fill failed validation: %s", res.Info)
+		d.log.WithField("reason", res.Info).Error("fill failed validation")
+		return nil
 	}
 	return nil
 }

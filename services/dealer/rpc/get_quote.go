@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 
 	"github.com/0xProject/0x-mesh/zeroex"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/zrx"
 	"github.com/ethereum/go-ethereum/common"
@@ -37,16 +36,16 @@ type zeroExTransactionInfo struct {
 }
 
 func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *string, takerSize *string, takerAddress *string, includeOrder *bool) (*getQuoteResponse, error) {
-	// var inclOrder bool
-	// if includeOrder == nil {
-	// 	inclOrder = true
-	// } else {
-	// 	inclOrder = *includeOrder
-	// }
+	var inclOrder bool
+	if includeOrder == nil {
+		inclOrder = true
+	} else {
+		inclOrder = *includeOrder
+	}
 
 	var taker common.Address
 	if takerAddress == nil {
-		taker = eth.NULL_ADDRESS
+		return nil, ErrUnauthorizedTaker
 	} else {
 		taker = common.HexToAddress(*takerAddress)
 	}
@@ -55,7 +54,7 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 	if makerSize == nil && takerSize == nil {
 		return nil, ErrInvalidParameters
 	} else if makerSize != nil && takerSize != nil {
-		return nil, ErrInvalidParameters
+		return nil, ErrTwoSizeRequests
 	} else if makerSize != nil {
 		makerAmount = *makerSize
 	} else if takerSize != nil {
@@ -68,24 +67,25 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 		TakerSize:    takerAmount,
 		MakerSize:    makerAmount,
 		TakerAddress: taker.Hex(),
+		PriceOnly:    !inclOrder,
 	}
 
 	quoteRes, err := svc.dealer.FetchQuote(context.Background(), quoteReq)
 	if err != nil {
-		svc.log.Errorf("failed to fetch quote: %v", err)
-		return nil, err
+		svc.log.WithError(err).Error("failed to fetch quote")
+		return nil, ErrQuoteUnavailable
 	}
 
 	order, err := quoteRes.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
 	if err != nil {
-		svc.log.Errorf("failed to convert signed order: %v", err)
-		return nil, err
+		svc.log.WithError(err).Error("failed to convert signed order")
+		return nil, ErrQuoteUnavailable
 	}
 
 	tx, err := quoteRes.ZeroExTransactionInfo.Transaction.ToZeroExTransaction()
 	if err != nil {
-		svc.log.Errorf("failed to convert 0x transaction: %v", err)
-		return nil, err
+		svc.log.WithError(err).Error("failed to convert 0x transaction")
+		return nil, ErrQuoteUnavailable
 	}
 
 	res := quote{
