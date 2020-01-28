@@ -154,3 +154,37 @@ func (d *Dealer) GetOrder(quoteId string) (*zeroex.SignedOrder, error) {
 
 	return order, nil
 }
+
+type paginatedMakets []*types.Market
+
+func (p paginatedMakets) Paginate(page, perPage int) []*types.Market {
+	if perPage == 0 {
+		return p
+	}
+
+	offset := page * perPage
+	end := offset + perPage
+	if end > len(p) {
+		end = len(p)
+	}
+
+	if offset > len(p) {
+		return nil
+	}
+
+	return p[offset:end]
+}
+
+func (d *Dealer) GetMarkets(mAddr, tAddr string, page, perPage int) ([]*types.Market, error) {
+	ctx := context.Background()
+	req := &types.GetMarketsRequest{
+		MakerAssetAddress: mAddr,
+		TakerAssetAddress: tAddr,
+	}
+	resp, err := d.makerClient.GetMarkets(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	mkts := paginatedMakets(resp.Markets).Paginate(page, perPage)
+	return mkts, nil
+}
