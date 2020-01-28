@@ -43,18 +43,21 @@ class ConfigManager():
 
     def get_markets(self, maker_asset_address:Optional[str]=None, taker_asset_address:Optional[str]=None) -> list:
         markets_to_return = []
-        for market in self.markets:
-            if maker_asset_address:
+        if not maker_asset_address and not taker_asset_address:
+            for market in self.markets:
+                markets_to_return.append(market)
+        elif maker_asset_address and not taker_asset_address:
+            for market in self.markets:
                 if market['maker_asset_address'] == maker_asset_address:
-                    if taker_asset_address:
-                        if taker_asset_address in market['taker_asset_addresses']:
-                            return [market]
-                    else:
-                        return [market]
-            elif taker_asset_address:
+                    return [market]
+        elif taker_asset_address and not maker_asset_address:
+            for market in self.markets:
                 if taker_asset_address in market['taker_asset_addresses']:
                     markets_to_return.append(market)
-            else:
-                markets_to_return.append(market)
+        else:
+            for market in self.markets:
+                if market['maker_asset_address'] == maker_asset_address:
+                    if taker_asset_address in market['taker_asset_addresses']:
+                        return [market]
 
         return markets_to_return
