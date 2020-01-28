@@ -27,7 +27,7 @@ type DealerConfig struct {
 
 // Dealer is the core dealer service that interacts with other services
 type Dealer struct {
-	log *logger.Entry
+	log *logger.Logger
 
 	makerClient   types.MakerClient
 	hwClient      types.HotWalletClient
