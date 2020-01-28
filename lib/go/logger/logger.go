@@ -19,27 +19,28 @@ func (f *ModuleFormatter) Format(entry *Entry) ([]byte, error) {
 	return append(headerBytes, arr...), err
 }
 
-type LogOpt func(*logrus.Entry)
+type LogOpt func(*Logger)
 
 // New returns an initialized logrus.Entry
-func New(module string, opts ...LogOpt) *Entry {
-	log := logrus.New()
+func New(module string, opts ...LogOpt) *Logger {
+	logger := logrus.New()
 	if key := os.Getenv("BUGSNAG_APIKEY"); key != "" {
-		ConfigureBugsnag(log, key)
+		ConfigureBugsnag(logger, key)
 	}
-
-	entry := log.WithField("module", module)
 
 	for _, opt := range opts {
-		opt(entry)
+		opt(logger)
 	}
 
-	log.SetFormatter(&logrus.TextFormatter{
+	logger.SetFormatter(&ModuleFormatter{
+		module,
+		&logrus.TextFormatter{
 		ForceColors:   true,
 		FullTimestamp: true,
-	})
+	}})
 
-	return entry
+	return logger
 }
 
+type Logger = logrus.Logger
 type Entry = logrus.Entry
