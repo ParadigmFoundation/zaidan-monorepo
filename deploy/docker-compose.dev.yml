@@ -20,7 +20,13 @@ services:
       - eth
 
   obm:
-    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC", "--bind", "0.0.0.0:8000"]
+    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC,ZRX/USD", "--exchange", "binance:ETH/USDT,ZRX/ETH,ZRX/USDT", "--bind", "0.0.0.0:8000"]
+
+  watcher:
+    restart: always
+    command: ["--eth", "ws://eth:8545", "-m", "maker:8000", "-p", "8000"]
+    depends_on: 
+      - eth
 
   maker:
     restart: always
