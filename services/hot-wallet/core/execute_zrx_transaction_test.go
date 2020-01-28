@@ -52,13 +52,13 @@ func testExecuteZrxTransaction(hw *HotWallet, t *testing.T) {
 	require.NoError(t, err)
 
 	// set erc-20 approvals for maker/taker accounts for both ZRX and wETH
-	_, err = wethToken.Approve(takerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(1000000))
+	_, err = wethToken.Approve(takerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(100000000))
 	require.NoError(t, err)
-	_, err = zrxToken.Approve(takerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(1000000))
+	_, err = zrxToken.Approve(takerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(100000000))
 	require.NoError(t, err)
-	_, err = wethToken.Approve(makerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(1000000))
+	_, err = wethToken.Approve(makerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(100000000))
 	require.NoError(t, err)
-	_, err = zrxToken.Approve(makerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(1000000))
+	_, err = zrxToken.Approve(makerTransactor, hw.zrxHelper.ContractAddresses.ERC20Proxy, big.NewInt(100000000))
 	require.NoError(t, err)
 
 	zrxAssetData := zrx.EncodeERC20AssetData(hw.zrxHelper.ContractAddresses.ZRXToken)
