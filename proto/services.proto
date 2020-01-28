@@ -15,7 +15,10 @@ service OrderBookManager {
 service Maker {
   rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
   rpc CheckQuote(CheckQuoteRequest) returns (CheckQuoteResponse);
-  rpc OrderStatusUpdate(OrderStatusUpdateRequest) returns (OrderStatusUpdateResponse); 
+}
+
+service TransactionStatus {
+    rpc TransactionStatusUpdate(TransactionStatusUpdateRequest) returns (TransactionStatusUpdateResponse);
 }
 
 service HotWallet {

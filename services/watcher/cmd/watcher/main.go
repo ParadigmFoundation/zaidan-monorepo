@@ -6,9 +6,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	ggrpc "google.golang.org/grpc"
 
-	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/grpc"
@@ -49,16 +47,9 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	if err := eth.Configure(ethAddress); err != nil {
 		log.Fatal(err)
 	}
-	log.Info("Connected to ethereum at", ethAddress)
+	log.Info("Connected to ethereum at ", ethAddress)
 
-	conn, err := ggrpc.Dial(makerUrl, ggrpc.WithInsecure())
-	if err != nil {
-		log.Fatal(fmt.Errorf("failed to connect maker client: %w", err))
-	}
-	makerClient := pb.NewMakerClient(conn)
-	log.Info("Maker client configured for ", makerUrl)
-
-	txWatching := watching.New(makerClient)
+	txWatching := watching.New(makerUrl)
 
 	watcherServer := grpc.NewServer(
 		txWatching,
