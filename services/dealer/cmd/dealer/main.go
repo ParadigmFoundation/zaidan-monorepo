@@ -16,20 +16,33 @@ import (
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
 
+func unQuote(s string) string {
+	isQuote := func(c byte) bool {
+		return c == '\'' || c == '"'
+	}
+
+	n := len(s)
+	if isQuote(s[0]) && s[0] == s[n-1] {
+		return s[1 : n-1]
+	}
+	return s
+}
+
 func main() {
 	fs := flag.NewFlagSet("dealer", flag.ExitOnError)
 	var (
 		db          = fs.String("db", "sqlite3", "Database driver [sqlite3|postgres]")
 		dsn         = fs.String("dsn", ":memory:", "Database's Data Source Name (see driver's doc for details)")
 		bind        = fs.String("bind", ":8000", "Server binding address")
-		makerBind   = fs.String("maker", "0.0.0.0:50051", "The port to connect to a maker server over gRPC on")
-		hwBind      = fs.String("hw", "0.0.0.0:42001", "The port to connect to a hot-wallet server over gRPC on")
+		makerBind   = fs.String("maker", "localhost:50051", "The address connect to a maker server over gRPC on")
+		hwBind      = fs.String("hw", "localhost:42001", "The address connect to a hot-wallet server over gRPC on")
 		policyBlack = fs.Bool("policy.blacklist", false, "Enable BlackList policy mode")
 		policyWhite = fs.Bool("policy.whitelist", false, "Enable WhiteList policy mode")
 	)
 	ff.Parse(fs, os.Args[1:],
 		ff.WithEnvVarPrefix("DEALER"),
 	)
+	*dsn = unQuote(*dsn)
 
 	log := logger.New("app")
 	log.WithFields(logrus.Fields{"db": *db, "dsn": *dsn}).Info("Initializing database")
@@ -52,8 +65,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-  
-  if *policyBlack && *policyWhite {
+
+	if *policyBlack && *policyWhite {
 		log.Fatal("Can't use both -policy.blacklist and -policy.whitelist")
 	}
 
