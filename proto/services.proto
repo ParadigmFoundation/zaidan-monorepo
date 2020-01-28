@@ -19,6 +19,10 @@ service Maker {
   rpc GetMarkets(GetMarketsRequest) returns (GetMarketsResponse);
 }
 
+service TransactionStatus {
+    rpc TransactionStatusUpdate(TransactionStatusUpdateRequest) returns (TransactionStatusUpdateResponse);
+}
+
 service HotWallet {
     rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
     rpc ValidateOrder(ValidateOrderRequest) returns (ValidateOrderResponse);

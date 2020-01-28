@@ -2,17 +2,20 @@ package watching
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ethereum/go-ethereum/common"
+	"google.golang.org/grpc"
 )
 
 type WatchedTransaction struct {
 	TxHash  common.Hash
 	QuoteId string
+	UpdateUrls []string
 }
 
 type SafeWatchedTransactions struct {
@@ -21,18 +24,17 @@ type SafeWatchedTransactions struct {
 }
 
 type TxWatching struct {
-	MakerEndpoint           string
-	MakerClient             pb.MakerClient
+	MakerUrl           string
 	safeWatchedTransactions SafeWatchedTransactions
 	log                     *logger.Entry
 }
 
 var bg = context.Background()
 
-func New(makerClient pb.MakerClient) *TxWatching {
+func New(makerUrl string) *TxWatching {
 	watching := TxWatching{
-		MakerClient:             makerClient,
-		safeWatchedTransactions: SafeWatchedTransactions{watchedTransactions: make(map[common.Hash]WatchedTransaction)},
+		MakerUrl: 				 makerUrl,
+		safeWatchedTransactions: SafeWatchedTransactions{ watchedTransactions: make(map[common.Hash]WatchedTransaction) },
 		log:                     logger.New("watching"),
 	}
 
@@ -54,10 +56,11 @@ func (txW *TxWatching) IsWatched(txHash common.Hash) (WatchedTransaction, bool) 
 	return value, present
 }
 
-func (txW *TxWatching) Watch(txHash common.Hash, quoteId string) {
+func (txW *TxWatching) Watch(txHash common.Hash, quoteId string, updateUrls []string) {
 	txW.safeWatchedTransactions.watchedTransactions[txHash] = WatchedTransaction{
 		TxHash:  txHash,
 		QuoteId: quoteId,
+		UpdateUrls: updateUrls,
 	}
 }
 
@@ -113,10 +116,26 @@ func (txW *TxWatching) startWatchingBlocks() {
 							txW.log.WithError(err).Errorf("failure getting receipt for watched transaction %s", txHash.String())
 						}
 
-						_, err = txW.MakerClient.OrderStatusUpdate(bg, &pb.OrderStatusUpdateRequest{
-							QuoteId: watchedTransaction.QuoteId,
-							Status:  uint32(receipt.Status),
-						})
+						for _, url := range watchedTransaction.UpdateUrls {
+							conn, err := grpc.Dial(url, grpc.WithInsecure())
+							if err != nil {
+								txW.log.Fatal(fmt.Errorf("failed to connect maker client: %v", err))
+							}
+
+							_, _ = pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(bg, &pb.TransactionStatusUpdateRequest{
+								TxHash: watchedTransaction.TxHash.String(),
+								QuoteId: watchedTransaction.QuoteId,
+								Status:  uint32(receipt.Status),
+							})
+
+							if _, err := pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(bg, &pb.TransactionStatusUpdateRequest{
+								TxHash: watchedTransaction.TxHash.String(),
+								QuoteId: watchedTransaction.QuoteId,
+								Status:  uint32(receipt.Status),
+							}); err != nil {
+								txW.log.Errorf("error connecting to %v: %v", url, err)
+							}
+						}
 						if err != nil {
 							txW.log.WithError(err).Errorf("failure calling maker for transaction %s", txHash.String())
 						}

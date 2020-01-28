@@ -58,12 +58,14 @@ message CheckQuoteResponse {
     uint32 status = 3;
 }
 
-message OrderStatusUpdateRequest {
-    string quote_id = 1;
-    uint32 status = 2;
+// TransactionStatus
+message TransactionStatusUpdateRequest {
+    string tx_hash = 1;
+    string quote_id = 2;
+    uint32 status = 3;
 }
 
-message OrderStatusUpdateResponse {
+message TransactionStatusUpdateResponse {
     uint32 status = 1;
 }
 
@@ -143,6 +145,7 @@ message CreateOrderResponse {
 message WatchTransactionRequest {
     string quote_id = 1;
     string tx_hash = 2;
+    repeated string status_urls = 3;
 }
 
 message WatchTransactionResponse {
