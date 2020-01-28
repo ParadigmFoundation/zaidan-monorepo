@@ -8,11 +8,11 @@ import (
 )
 
 type EthLogHandler struct {
-	*logrus.Entry
+	*logrus.Logger
 }
 
 func (log EthLogHandler) Log(record *ethlog.Record) error {
-	entry := log.Entry
+	entry := &logrus.Entry{Logger: log.Logger}
 	for i := 0; i < len(record.Ctx); i += 2 {
 		key, val := record.Ctx[i].(string), record.Ctx[i+1]
 		if key == "err" {
@@ -49,8 +49,8 @@ func (log EthLogHandler) Log(record *ethlog.Record) error {
 }
 
 func HandleEthLog() LogOpt {
-	fn := func(log *logrus.Entry) {
-		ethlog.Root().SetHandler(EthLogHandler{log})
+	fn := func(logger *logrus.Logger) {
+		ethlog.Root().SetHandler(EthLogHandler{logger})
 	}
 	return fn
 }
