@@ -28,18 +28,25 @@ class PricingUtils():
             maker_asset = 'ETH'
         if taker_asset == 'WETH':
             taker_asset = 'ETH'
+
         implied = True
+
         if maker_size:
             maker_size = float(maker_size)
         if taker_size:
             taker_size = float(taker_size)
+
         for market in maker_asset_pricing_data['exchange_books']:
             if maker_asset + '/' + taker_asset == market['book']:
-                order_books.append(maker_asset + '/' + taker_asset)
-                implied = False
+                return self.standard_sell(maker_size, taker_size, market)
             if taker_asset + '/' + maker_asset == market['book']:
-                order_books.append(taker_asset + '/' + maker_asset)
-                implied = False
+                return self.standard_buy(maker_size, taker_size, market)
+
+        for market in taker_asset_pricing_data['exchange_books']:
+            if maker_asset + '/' + taker_asset == market['book']:
+                return self.standard_sell(maker_size, taker_size, market)
+            if taker_asset + '/' + maker_asset == market['book']:
+                return self.standard_buy(maker_size, taker_size, market)
 
         if implied:
             if maker_asset_pricing_data['implied_pref']['book'].split('/')[1] == taker_asset_pricing_data['implied_pref']['book'].split('/')[1]:
@@ -54,8 +61,6 @@ class PricingUtils():
                     else:
                         return self.implied_standard_maker_size(taker_asset_pricing_data, maker_asset_pricing_data,
                                                          maker_size)
-        else:
-            raise Exception
 
 
     def _get_price_from_book_base(self, half_book:object, size:float, side:str) -> float:
@@ -384,3 +389,27 @@ class PricingUtils():
         taker_asset_price = self._get_price_from_book_quote(order_books, maker_size * maker_asset_price, 'sell')
 
         return {'maker_size': maker_size, 'taker_size': maker_size * maker_asset_price / taker_asset_price}
+
+    def standard_sell(self, maker_size:float, taker_size:float, market:object) -> object:
+        if maker_size:
+            order_books = {}
+            order_books[market['exchange']] = (self.cache.get_order_book(market['exchange'], market['book'], 'asks'))
+            price = self._get_price_from_book_base(order_books, maker_size, 'sell')
+            return {'maker_size': maker_size, 'taker_size': maker_size*price}
+        else:
+            order_books = {}
+            order_books[market['exchange']] = (self.cache.get_order_book(market['exchange'], market['book'], 'asks'))
+            price = self._get_price_from_book_quote(order_books, taker_size, 'sell')
+            return {'maker_size': taker_size/price, 'taker_size': taker_size}
+
+    def standard_buy(self, maker_size:float, taker_size:float, market:object) -> object:
+        if taker_size:
+            order_books = {}
+            order_books[market['exchange']] = (self.cache.get_order_book(market['exchange'], market['book'], 'bids'))
+            price = self._get_price_from_book_base(order_books, taker_size, 'buy')
+            return {'maker_size': taker_size*price, 'taker_size': taker_size}
+        else:
+            order_books = {}
+            order_books[market['exchange']] = (self.cache.get_order_book(market['exchange'], market['book'], 'bids'))
+            price = self._get_price_from_book_quote(order_books, maker_size, 'buy')
+            return {'maker_size': maker_size, 'taker_size': maker_size/price}
