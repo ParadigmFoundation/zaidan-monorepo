@@ -1,10 +1,23 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
 )
+
+type ModuleFormatter struct {
+	module string
+	baseFormatter *logrus.TextFormatter
+}
+
+func (f *ModuleFormatter) Format(entry *Entry) ([]byte, error) {
+	arr, err := f.baseFormatter.Format(entry)
+
+	headerBytes := []byte(fmt.Sprintf("%v|", f.module))
+	return append(headerBytes, arr...), err
+}
 
 type LogOpt func(*logrus.Entry)
 
