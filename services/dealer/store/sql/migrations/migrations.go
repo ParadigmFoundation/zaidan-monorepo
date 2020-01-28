@@ -22,13 +22,13 @@ func (*SQLMigration) Schema() map[string]string {
 	return map[string]string{
 		"create-quotes-table": `
 			CREATE TABLE quotes (
-				  "quote_id"           VARCHAR(100)
+				  "quote_id"            VARCHAR(100)
 				, "maker_asset_address" VARCHAR(100)
 				, "taker_asset_address" VARCHAR(100)
-				, "maker_asset_size"   TEXT
-				, "taker_asset_size"   TEXT
-				, "expiration"         INTEGER
-				, "server_time"        INTEGER
+				, "maker_asset_size"    TEXT
+				, "taker_asset_size"    TEXT
+				, "expiration"          NUMERIC
+				, "server_time"         NUMERIC
 				, "zero_ex_transaction_hash" VARCHAR(100)
 				, PRIMARY KEY (quote_id)
 			)`,
