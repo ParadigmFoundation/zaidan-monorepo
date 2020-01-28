@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   dealer:
-    command: ["--maker", "maker:8000", "--hw", "hwd:8000"]
+    command: ["--maker", "maker:8000", "--hw", "hwd:8000", "--watcher", "watcher:8000"]
     image: gcr.io/zaidan-io/dealer
 
   obm:
