@@ -7,13 +7,14 @@ import (
 	"net"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
-	"google.golang.org/grpc"
-
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/watching"
+	"github.com/ethereum/go-ethereum/common"
+	"google.golang.org/grpc"
+	grpcCodes "google.golang.org/grpc/codes"
+	grpcStatus "google.golang.org/grpc/status"
 )
 
 type WatcherServer struct {
@@ -49,6 +50,7 @@ func (s *WatcherServer) Stop() { s.grpc.GracefulStop() }
 func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransactionRequest) (*pb.WatchTransactionResponse, error) {
 	trimmed := strings.TrimSpace(in.TxHash)
 	txHash := common.HexToHash(trimmed)
+	updateUrls := in.StatusUrls
 	if !strings.EqualFold(txHash.String(), trimmed) || len(txHash.String()) != 66 {
 		return nil, errors.New("invalid txHash")
 	}
@@ -58,25 +60,36 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	isPending, status, err := getTransactionInfo(ctx, s, txHash)
 	if err != nil {
 		s.log.Error(fmt.Errorf("transaction lookup failure: %s", err.Error()))
-		return nil, err
+		return nil, grpcStatus.Error(grpcCodes.Internal, fmt.Sprintf("transaction lookup failure: %s", err.Error()))
 	}
 
 	_, isWatched := s.TxWatching.IsWatched(txHash)
 	if isPending && !isWatched {
 		s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
-		s.TxWatching.Watch(txHash, in.QuoteId)
+		s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
 		isWatched = true
 	} else if !isPending {
 		if isWatched {
-			s.log.Info("No longer watching previously mined transaction", txHash.String())
+			s.log.Info("No longer watching previously mined transaction ", txHash.String())
 			s.TxWatching.RequestRemoval(txHash)
 		}
 
-		s.log.Info("Transaction", txHash.String(), "mined and does not need to be watched notifying maker")
-		_, _ = s.TxWatching.MakerClient.OrderStatusUpdate(ctx, &pb.OrderStatusUpdateRequest{
-			QuoteId: in.QuoteId,
-			Status:  status,
-		})
+		s.log.Info("Transaction ", txHash.String(), " mined and does not need to be watched notifying maker")
+
+		for _, url := range updateUrls {
+			conn, err := grpc.Dial(url, grpc.WithInsecure())
+			if err != nil {
+				s.log.WithError(err).Fatal("failed to connect maker client:")
+			}
+
+			if _, err := pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
+				TxHash: in.TxHash,
+				QuoteId: in.QuoteId,
+				Status:  status,
+			}); err != nil {
+					s.log.Errorf("error connecting to %v: %v", url, err)
+			}
+		}
 	}
 	s.TxWatching.Unlock()
 
