@@ -69,6 +69,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	now := time.Now()
 	res, err := d.makerClient.GetQuote(ctx, req)
 	if err != nil {
+		d.log.Errorf("failed fetching quote from maker: %v", err)
 		return nil, err
 	}
 
@@ -83,6 +84,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 
 	orderRes, err := d.hwClient.CreateOrder(ctx, orderReq)
 	if err != nil {
+		d.log.Errorf("failed creating signed order: %v", err)
 		return nil, err
 	}
 
@@ -104,6 +106,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	}
 
 	if err := d.db.CreateQuote(quote); err != nil {
+		d.log.Errorf("failed creating quote in DB: %v", err)
 		return nil, err
 	}
 
