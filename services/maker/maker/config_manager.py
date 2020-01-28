@@ -18,16 +18,17 @@ class ConfigManager():
                 self.address_to_ticker[asset['address']] = asset['symbol']
                 self.ticker_to_pricing_data[asset['symbol']] = asset['pricing_data']
                 self.ticker_to_pricing_data[asset['symbol']]['decimals'] = asset['decimals']
-                markets_entry = []
-                markets_entry.append(asset['address'])
-                pair_assets = []
-                for pair_asset in config_f['assets']:
-                    if not asset['address'] == pair_asset['address']:
-                        pair_assets.append(pair_asset['address'])
-                markets_entry.append(pair_assets)
-                markets_entry.append(asset['min_size'])
-                markets_entry.append(asset['max_size'])
-                all_markets.append(markets_entry)
+                if not asset['symbol'] == 'ETH':
+                    markets_entry = {}
+                    markets_entry['maker_asset_address'] = asset['address']
+                    pair_assets = []
+                    for pair_asset in config_f['assets']:
+                        if not asset['address'] == pair_asset['address']:
+                            pair_assets.append(pair_asset['address'])
+                    markets_entry['taker_asset_addresses'] = pair_assets
+                    markets_entry['min_size'] = asset['min_size']
+                    markets_entry['max_size'] = asset['max_size']
+                    all_markets.append(markets_entry)
             self.markets = all_markets
             self.premium = float(config_f['premium'])
             self.validity_length = int(config_f['validity_length'])
@@ -44,14 +45,14 @@ class ConfigManager():
         markets_to_return = []
         for market in self.markets:
             if maker_asset_address:
-                if market[0] == maker_asset_address:
+                if market['maker_asset_address'] == maker_asset_address:
                     if taker_asset_address:
-                        if market[1] == taker_asset_address:
+                        if taker_asset_address in market['taker_asset_addresses']:
                             return [market]
                     else:
                         return [market]
             elif taker_asset_address:
-                if taker_asset_address in market[1]:
+                if taker_asset_address in market['taker_asset_addresses']:
                     markets_to_return.append(market)
             else:
                 markets_to_return.append(market)

@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=_b('Z\004grpc'),
-  serialized_pb=_b('\n\x0btypes.proto\"1\n\x0eOrderBookEntry\x12\r\n\x05price\x18\x01 \x01(\x01\x12\x10\n\x08quantity\x18\x02 \x01(\x01\"4\n\x10OrderBookRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x0e\n\x06symbol\x18\x02 \x01(\t\"L\n\x17OrderBookUpdatesRequest\x12\"\n\x07request\x18\x01 \x01(\x0b\x32\x11.OrderBookRequest\x12\r\n\x05limit\x18\x02 \x01(\r\"\x88\x01\n\x11OrderBookResponse\x12\x13\n\x0blast_update\x18\x01 \x01(\x03\x12\x10\n\x08\x65xchange\x18\x02 \x01(\t\x12\x0e\n\x06symbol\x18\x03 \x01(\t\x12\x1d\n\x04\x61sks\x18\x04 \x03(\x0b\x32\x0f.OrderBookEntry\x12\x1d\n\x04\x62ids\x18\x05 \x03(\x0b\x32\x0f.OrderBookEntry\"\xa0\x01\n\x0fGetQuoteRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x13\n\x0btaker_asset\x18\x02 \x01(\t\x12\x13\n\x0bmaker_asset\x18\x03 \x01(\t\x12\x12\n\ntaker_size\x18\x04 \x01(\t\x12\x12\n\nmaker_size\x18\x05 \x01(\t\x12\x15\n\rtaker_address\x18\x06 \x01(\t\x12\x12\n\nprice_only\x18\x07 \x01(\x08\"\xa7\x01\n\x10GetQuoteResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x12\n\nexpiration\x18\x02 \x01(\x03\x12\x13\n\x0btaker_asset\x18\x03 \x01(\t\x12\x13\n\x0bmaker_asset\x18\x04 \x01(\t\x12\x12\n\ntaker_size\x18\x05 \x01(\t\x12\x12\n\nmaker_size\x18\x06 \x01(\t\x12\x0b\n\x03\x66\x65\x65\x18\x07 \x01(\t\x12\x0e\n\x06status\x18\x08 \x01(\x05\"%\n\x11\x43heckQuoteRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\"H\n\x12\x43heckQuoteResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x10\n\x08is_valid\x18\x02 \x01(\x08\x12\x0e\n\x06status\x18\x03 \x01(\r\"<\n\x18OrderStatusUpdateRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\r\"+\n\x19OrderStatusUpdateResponse\x12\x0e\n\x06status\x18\x01 \x01(\r\"d\n\x06Market\x12\x1b\n\x13maker_asset_address\x18\x01 \x01(\t\x12\x1d\n\x15taker_asset_addresses\x18\x02 \x03(\t\x12\x1e\n\nquote_info\x18\x03 \x01(\x0b\x32\n.QuoteInfo\"M\n\x11GetMarketsRequest\x12\x1b\n\x13maker_asset_address\x18\x01 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x02 \x01(\t\".\n\x12GetMarketsResponse\x12\x18\n\x07markets\x18\x01 \x03(\x0b\x32\x07.Market\"\x95\x03\n\x05Order\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\x04\x12\x18\n\x10\x65xchange_address\x18\x02 \x01(\t\x12\x15\n\rmaker_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_data\x18\x04 \x01(\t\x12\x1c\n\x14maker_fee_asset_data\x18\x05 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x06 \x01(\t\x12\x11\n\tmaker_fee\x18\x07 \x01(\t\x12\x15\n\rtaker_address\x18\x08 \x01(\t\x12\x18\n\x10taker_asset_data\x18\t \x01(\t\x12\x1c\n\x14taker_fee_asset_data\x18\n \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x0b \x01(\t\x12\x11\n\ttaker_fee\x18\x0c \x01(\t\x12\x16\n\x0esender_address\x18\r \x01(\t\x12\x1d\n\x15\x66\x65\x65_recipient_address\x18\x0e \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\"\xae\x03\n\x0bSignedOrder\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\x04\x12\x18\n\x10\x65xchange_address\x18\x02 \x01(\t\x12\x15\n\rmaker_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_data\x18\x04 \x01(\t\x12\x1c\n\x14maker_fee_asset_data\x18\x05 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x06 \x01(\t\x12\x11\n\tmaker_fee\x18\x07 \x01(\t\x12\x15\n\rtaker_address\x18\x08 \x01(\t\x12\x18\n\x10taker_asset_data\x18\t \x01(\t\x12\x1c\n\x14taker_fee_asset_data\x18\n \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x0b \x01(\t\x12\x11\n\ttaker_fee\x18\x0c \x01(\t\x12\x16\n\x0esender_address\x18\r \x01(\t\x12\x1d\n\x15\x66\x65\x65_recipient_address\x18\x0e \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\x12\x11\n\tsignature\x18\x11 \x01(\t\"\xbe\x01\n\x12\x43reateOrderRequest\x12\x15\n\rtaker_address\x18\x01 \x01(\t\x12\x1b\n\x13maker_asset_address\x18\x02 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x03 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x04 \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x05 \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x06 \x01(\x03\"\x99\x01\n\x13\x43reateOrderResponse\x12\x1b\n\x05order\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\x12/\n\x13zero_ex_transaction\x18\x02 \x01(\x0b\x32\x12.ZeroExTransaction\x12\x12\n\norder_hash\x18\x03 \x01(\t\x12 \n\x18zero_ex_transaction_hash\x18\x04 \x01(\t\"<\n\x17WatchTransactionRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0f\n\x07tx_hash\x18\x02 \x01(\t\"x\n\x18WatchTransactionResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0f\n\x07tx_hash\x18\x02 \x01(\t\x12\x12\n\nis_pending\x18\x03 \x01(\x08\x12\x12\n\nis_watched\x18\x04 \x01(\x08\x12\x11\n\ttx_status\x18\x05 \x01(\r\"A\n\x11GetBalanceRequest\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\"S\n\x12GetBalanceResponse\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x0f\n\x07\x62\x61lance\x18\x03 \x01(\t\"C\n\x13GetAllowanceRequest\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\"n\n\x14GetAllowanceResponse\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x15\n\rproxy_address\x18\x03 \x01(\t\x12\x11\n\tallowance\x18\x04 \x01(\t\"?\n\x13SetAllowanceRequest\x12\x15\n\rtoken_address\x18\x01 \x01(\t\x12\x11\n\tallowance\x18\x02 \x01(\t\"\x88\x01\n\x14SetAllowanceResponse\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x15\n\rproxy_address\x18\x03 \x01(\t\x12\x11\n\tallowance\x18\x04 \x01(\t\x12\x18\n\x10transaction_hash\x18\x05 \x01(\t\"L\n\x0fTransferRequest\x12\x12\n\nto_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x0e\n\x06\x61mount\x18\x03 \x01(\t\"B\n\x10TransferResponse\x12\x18\n\x10transaction_hash\x18\x01 \x01(\t\x12\x14\n\x0csubmitted_at\x18\x02 \x01(\x03\"o\n\x16SendTransactionRequest\x12\x12\n\nto_address\x18\x01 \x01(\t\x12\x11\n\tgas_price\x18\x02 \x01(\t\x12\x11\n\tgas_limit\x18\x03 \x01(\x04\x12\r\n\x05value\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\"D\n\x17SendTransactionResponse\x12\x18\n\x10transaction_hash\x18\x01 \x01(\t\x12\x0f\n\x07sent_at\x18\x02 \x01(\x03\"]\n\x15ZeroExTransactionInfo\x12\'\n\x0btransaction\x18\x01 \x01(\x0b\x32\x12.ZeroExTransaction\x12\x1b\n\x05order\x18\x02 \x01(\x0b\x32\x0c.SignedOrder\"{\n\x11ZeroExTransaction\x12\x0c\n\x04salt\x18\x01 \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x02 \x01(\x03\x12\x11\n\tgas_price\x18\x03 \x01(\t\x12\x16\n\x0esigner_address\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\t\"]\n\x1f\x45xecuteZeroExTransactionRequest\x12\'\n\x0btransaction\x18\x01 \x01(\x0b\x32\x12.ZeroExTransaction\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"R\n ExecuteZeroExTransactionResponse\x12\x18\n\x10transaction_hash\x18\x01 \x01(\t\x12\x14\n\x0csubmitted_at\x18\x02 \x01(\x03\"O\n\x14ValidateOrderRequest\x12\x1b\n\x05order\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\x12\x1a\n\x12taker_asset_amount\x18\x02 \x01(\t\"4\n\x15ValidateOrderResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x12\x0c\n\x04info\x18\x02 \x01(\t\"\x8c\x02\n\x05Quote\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x1b\n\x13maker_asset_address\x18\x02 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_size\x18\x04 \x01(\t\x12\x18\n\x10taker_asset_size\x18\x05 \x01(\t\x12\x12\n\nexpiration\x18\x06 \x01(\x03\x12\x13\n\x0bserver_time\x18\x07 \x01(\x03\x12 \n\x18zero_ex_transaction_hash\x18\x08 \x01(\t\x12\x38\n\x18zero_ex_transaction_info\x18\t \x01(\x0b\x32\x16.ZeroExTransactionInfo\"C\n\tTradeInfo\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\r\x12\x11\n\tgas_limit\x18\x02 \x01(\t\x12\x11\n\tgas_price\x18\x03 \x01(\t\"/\n\tQuoteInfo\x12\x10\n\x08min_size\x18\x01 \x01(\t\x12\x10\n\x08max_size\x18\x02 \x01(\t\"\x88\x01\n\rExchangeOrder\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\t\x12\x0e\n\x06symbol\x18\x03 \x01(\t\x12\x0e\n\x06\x61mount\x18\x04 \x01(\t\x12!\n\x04side\x18\x05 \x01(\x0e\x32\x13.ExchangeOrder.Side\"\x19\n\x04Side\x12\x07\n\x03\x42UY\x10\x00\x12\x08\n\x04SELL\x10\x01\"F\n\x13\x45xchangeOrderStatus\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x0e\n\x06\x66illed\x18\x02 \x01(\t\x12\x0c\n\x04info\x18\x03 \x01(\x0c\"M\n\x1a\x45xchangeCreateOrderRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x1d\n\x05order\x18\x02 \x01(\x0b\x32\x0e.ExchangeOrder\"4\n\x14\x45xchangeOrderRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\"\\\n\x15\x45xchangeOrderResponse\x12\x1d\n\x05order\x18\x01 \x01(\x0b\x32\x0e.ExchangeOrder\x12$\n\x06status\x18\x02 \x01(\x0b\x32\x14.ExchangeOrderStatus\"C\n\x1a\x45xchangeOrderArrayResponse\x12%\n\x05\x61rray\x18\x01 \x03(\x0b\x32\x16.ExchangeOrderResponse\"\x1f\n\x11HedgeOrderRequest\x12\n\n\x02id\x18\x01 \x01(\t\"#\n\x12HedgeOrderResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x42\x06Z\x04grpcb\x06proto3')
+  serialized_pb=_b('\n\x0btypes.proto\"1\n\x0eOrderBookEntry\x12\r\n\x05price\x18\x01 \x01(\x01\x12\x10\n\x08quantity\x18\x02 \x01(\x01\"4\n\x10OrderBookRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x0e\n\x06symbol\x18\x02 \x01(\t\"L\n\x17OrderBookUpdatesRequest\x12\"\n\x07request\x18\x01 \x01(\x0b\x32\x11.OrderBookRequest\x12\r\n\x05limit\x18\x02 \x01(\r\"\x88\x01\n\x11OrderBookResponse\x12\x13\n\x0blast_update\x18\x01 \x01(\x03\x12\x10\n\x08\x65xchange\x18\x02 \x01(\t\x12\x0e\n\x06symbol\x18\x03 \x01(\t\x12\x1d\n\x04\x61sks\x18\x04 \x03(\x0b\x32\x0f.OrderBookEntry\x12\x1d\n\x04\x62ids\x18\x05 \x03(\x0b\x32\x0f.OrderBookEntry\"\xa0\x01\n\x0fGetQuoteRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x13\n\x0btaker_asset\x18\x02 \x01(\t\x12\x13\n\x0bmaker_asset\x18\x03 \x01(\t\x12\x12\n\ntaker_size\x18\x04 \x01(\t\x12\x12\n\nmaker_size\x18\x05 \x01(\t\x12\x15\n\rtaker_address\x18\x06 \x01(\t\x12\x12\n\nprice_only\x18\x07 \x01(\x08\"\xa7\x01\n\x10GetQuoteResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x12\n\nexpiration\x18\x02 \x01(\x03\x12\x13\n\x0btaker_asset\x18\x03 \x01(\t\x12\x13\n\x0bmaker_asset\x18\x04 \x01(\t\x12\x12\n\ntaker_size\x18\x05 \x01(\t\x12\x12\n\nmaker_size\x18\x06 \x01(\t\x12\x0b\n\x03\x66\x65\x65\x18\x07 \x01(\t\x12\x0e\n\x06status\x18\x08 \x01(\x05\"%\n\x11\x43heckQuoteRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\"H\n\x12\x43heckQuoteResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x10\n\x08is_valid\x18\x02 \x01(\x08\x12\x0e\n\x06status\x18\x03 \x01(\r\"<\n\x18OrderStatusUpdateRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0e\n\x06status\x18\x02 \x01(\r\"+\n\x19OrderStatusUpdateResponse\x12\x0e\n\x06status\x18\x01 \x01(\r\"\xde\x01\n\x06Market\x12\x1b\n\x13maker_asset_address\x18\x01 \x01(\t\x12\x1d\n\x15taker_asset_addresses\x18\x02 \x03(\t\x12\x1e\n\ntrade_info\x18\x03 \x01(\x0b\x32\n.TradeInfo\x12\x1e\n\nquote_info\x18\x04 \x01(\x0b\x32\n.QuoteInfo\x12\'\n\x08metadata\x18\x05 \x03(\x0b\x32\x15.Market.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"M\n\x11GetMarketsRequest\x12\x1b\n\x13maker_asset_address\x18\x01 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x02 \x01(\t\".\n\x12GetMarketsResponse\x12\x18\n\x07markets\x18\x01 \x03(\x0b\x32\x07.Market\"\x95\x03\n\x05Order\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\x04\x12\x18\n\x10\x65xchange_address\x18\x02 \x01(\t\x12\x15\n\rmaker_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_data\x18\x04 \x01(\t\x12\x1c\n\x14maker_fee_asset_data\x18\x05 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x06 \x01(\t\x12\x11\n\tmaker_fee\x18\x07 \x01(\t\x12\x15\n\rtaker_address\x18\x08 \x01(\t\x12\x18\n\x10taker_asset_data\x18\t \x01(\t\x12\x1c\n\x14taker_fee_asset_data\x18\n \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x0b \x01(\t\x12\x11\n\ttaker_fee\x18\x0c \x01(\t\x12\x16\n\x0esender_address\x18\r \x01(\t\x12\x1d\n\x15\x66\x65\x65_recipient_address\x18\x0e \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\"\xae\x03\n\x0bSignedOrder\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\x04\x12\x18\n\x10\x65xchange_address\x18\x02 \x01(\t\x12\x15\n\rmaker_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_data\x18\x04 \x01(\t\x12\x1c\n\x14maker_fee_asset_data\x18\x05 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x06 \x01(\t\x12\x11\n\tmaker_fee\x18\x07 \x01(\t\x12\x15\n\rtaker_address\x18\x08 \x01(\t\x12\x18\n\x10taker_asset_data\x18\t \x01(\t\x12\x1c\n\x14taker_fee_asset_data\x18\n \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x0b \x01(\t\x12\x11\n\ttaker_fee\x18\x0c \x01(\t\x12\x16\n\x0esender_address\x18\r \x01(\t\x12\x1d\n\x15\x66\x65\x65_recipient_address\x18\x0e \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x0f \x01(\t\x12\x0c\n\x04salt\x18\x10 \x01(\t\x12\x11\n\tsignature\x18\x11 \x01(\t\"\xbe\x01\n\x12\x43reateOrderRequest\x12\x15\n\rtaker_address\x18\x01 \x01(\t\x12\x1b\n\x13maker_asset_address\x18\x02 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x03 \x01(\t\x12\x1a\n\x12maker_asset_amount\x18\x04 \x01(\t\x12\x1a\n\x12taker_asset_amount\x18\x05 \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x06 \x01(\x03\"\x99\x01\n\x13\x43reateOrderResponse\x12\x1b\n\x05order\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\x12/\n\x13zero_ex_transaction\x18\x02 \x01(\x0b\x32\x12.ZeroExTransaction\x12\x12\n\norder_hash\x18\x03 \x01(\t\x12 \n\x18zero_ex_transaction_hash\x18\x04 \x01(\t\"<\n\x17WatchTransactionRequest\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0f\n\x07tx_hash\x18\x02 \x01(\t\"x\n\x18WatchTransactionResponse\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x0f\n\x07tx_hash\x18\x02 \x01(\t\x12\x12\n\nis_pending\x18\x03 \x01(\x08\x12\x12\n\nis_watched\x18\x04 \x01(\x08\x12\x11\n\ttx_status\x18\x05 \x01(\r\"A\n\x11GetBalanceRequest\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\"S\n\x12GetBalanceResponse\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x0f\n\x07\x62\x61lance\x18\x03 \x01(\t\"C\n\x13GetAllowanceRequest\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\"n\n\x14GetAllowanceResponse\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x15\n\rproxy_address\x18\x03 \x01(\t\x12\x11\n\tallowance\x18\x04 \x01(\t\"?\n\x13SetAllowanceRequest\x12\x15\n\rtoken_address\x18\x01 \x01(\t\x12\x11\n\tallowance\x18\x02 \x01(\t\"\x88\x01\n\x14SetAllowanceResponse\x12\x15\n\rowner_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x15\n\rproxy_address\x18\x03 \x01(\t\x12\x11\n\tallowance\x18\x04 \x01(\t\x12\x18\n\x10transaction_hash\x18\x05 \x01(\t\"L\n\x0fTransferRequest\x12\x12\n\nto_address\x18\x01 \x01(\t\x12\x15\n\rtoken_address\x18\x02 \x01(\t\x12\x0e\n\x06\x61mount\x18\x03 \x01(\t\"B\n\x10TransferResponse\x12\x18\n\x10transaction_hash\x18\x01 \x01(\t\x12\x14\n\x0csubmitted_at\x18\x02 \x01(\x03\"o\n\x16SendTransactionRequest\x12\x12\n\nto_address\x18\x01 \x01(\t\x12\x11\n\tgas_price\x18\x02 \x01(\t\x12\x11\n\tgas_limit\x18\x03 \x01(\x04\x12\r\n\x05value\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\x0c\"D\n\x17SendTransactionResponse\x12\x18\n\x10transaction_hash\x18\x01 \x01(\t\x12\x0f\n\x07sent_at\x18\x02 \x01(\x03\"]\n\x15ZeroExTransactionInfo\x12\'\n\x0btransaction\x18\x01 \x01(\x0b\x32\x12.ZeroExTransaction\x12\x1b\n\x05order\x18\x02 \x01(\x0b\x32\x0c.SignedOrder\"{\n\x11ZeroExTransaction\x12\x0c\n\x04salt\x18\x01 \x01(\t\x12\x1f\n\x17\x65xpiration_time_seconds\x18\x02 \x01(\x03\x12\x11\n\tgas_price\x18\x03 \x01(\t\x12\x16\n\x0esigner_address\x18\x04 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x05 \x01(\t\"]\n\x1f\x45xecuteZeroExTransactionRequest\x12\'\n\x0btransaction\x18\x01 \x01(\x0b\x32\x12.ZeroExTransaction\x12\x11\n\tsignature\x18\x02 \x01(\x0c\"R\n ExecuteZeroExTransactionResponse\x12\x18\n\x10transaction_hash\x18\x01 \x01(\t\x12\x14\n\x0csubmitted_at\x18\x02 \x01(\x03\"O\n\x14ValidateOrderRequest\x12\x1b\n\x05order\x18\x01 \x01(\x0b\x32\x0c.SignedOrder\x12\x1a\n\x12taker_asset_amount\x18\x02 \x01(\t\"4\n\x15ValidateOrderResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x12\x0c\n\x04info\x18\x02 \x01(\t\"\x8c\x02\n\x05Quote\x12\x10\n\x08quote_id\x18\x01 \x01(\t\x12\x1b\n\x13maker_asset_address\x18\x02 \x01(\t\x12\x1b\n\x13taker_asset_address\x18\x03 \x01(\t\x12\x18\n\x10maker_asset_size\x18\x04 \x01(\t\x12\x18\n\x10taker_asset_size\x18\x05 \x01(\t\x12\x12\n\nexpiration\x18\x06 \x01(\x03\x12\x13\n\x0bserver_time\x18\x07 \x01(\x03\x12 \n\x18zero_ex_transaction_hash\x18\x08 \x01(\t\x12\x38\n\x18zero_ex_transaction_info\x18\t \x01(\x0b\x32\x16.ZeroExTransactionInfo\"C\n\tTradeInfo\x12\x10\n\x08\x63hain_id\x18\x01 \x01(\r\x12\x11\n\tgas_limit\x18\x02 \x01(\t\x12\x11\n\tgas_price\x18\x03 \x01(\t\"/\n\tQuoteInfo\x12\x10\n\x08min_size\x18\x01 \x01(\t\x12\x10\n\x08max_size\x18\x02 \x01(\t\"\x88\x01\n\rExchangeOrder\x12\n\n\x02id\x18\x01 \x01(\t\x12\r\n\x05price\x18\x02 \x01(\t\x12\x0e\n\x06symbol\x18\x03 \x01(\t\x12\x0e\n\x06\x61mount\x18\x04 \x01(\t\x12!\n\x04side\x18\x05 \x01(\x0e\x32\x13.ExchangeOrder.Side\"\x19\n\x04Side\x12\x07\n\x03\x42UY\x10\x00\x12\x08\n\x04SELL\x10\x01\"F\n\x13\x45xchangeOrderStatus\x12\x11\n\ttimestamp\x18\x01 \x01(\x03\x12\x0e\n\x06\x66illed\x18\x02 \x01(\t\x12\x0c\n\x04info\x18\x03 \x01(\x0c\"M\n\x1a\x45xchangeCreateOrderRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\x1d\n\x05order\x18\x02 \x01(\x0b\x32\x0e.ExchangeOrder\"4\n\x14\x45xchangeOrderRequest\x12\x10\n\x08\x65xchange\x18\x01 \x01(\t\x12\n\n\x02id\x18\x02 \x01(\t\"\\\n\x15\x45xchangeOrderResponse\x12\x1d\n\x05order\x18\x01 \x01(\x0b\x32\x0e.ExchangeOrder\x12$\n\x06status\x18\x02 \x01(\x0b\x32\x14.ExchangeOrderStatus\"C\n\x1a\x45xchangeOrderArrayResponse\x12%\n\x05\x61rray\x18\x01 \x03(\x0b\x32\x16.ExchangeOrderResponse\"\x1f\n\x11HedgeOrderRequest\x12\n\n\x02id\x18\x01 \x01(\t\"#\n\x12HedgeOrderResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x42\x06Z\x04grpcb\x06proto3')
 )
 
 
@@ -42,8 +42,8 @@ _EXCHANGEORDER_SIDE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=4394,
-  serialized_end=4419,
+  serialized_start=4517,
+  serialized_end=4542,
 )
 _sym_db.RegisterEnumDescriptor(_EXCHANGEORDER_SIDE)
 
@@ -519,6 +519,43 @@ _ORDERSTATUSUPDATERESPONSE = _descriptor.Descriptor(
 )
 
 
+_MARKET_METADATAENTRY = _descriptor.Descriptor(
+  name='MetadataEntry',
+  full_name='Market.MetadataEntry',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='key', full_name='Market.MetadataEntry.key', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='value', full_name='Market.MetadataEntry.value', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=_b('8\001'),
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=1066,
+  serialized_end=1113,
+)
+
 _MARKET = _descriptor.Descriptor(
   name='Market',
   full_name='Market',
@@ -541,16 +578,30 @@ _MARKET = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='quote_info', full_name='Market.quote_info', index=2,
+      name='trade_info', full_name='Market.trade_info', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='quote_info', full_name='Market.quote_info', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='metadata', full_name='Market.metadata', index=4,
+      number=5, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
   ],
   extensions=[
   ],
-  nested_types=[],
+  nested_types=[_MARKET_METADATAENTRY, ],
   enum_types=[
   ],
   serialized_options=None,
@@ -559,8 +610,8 @@ _MARKET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=890,
-  serialized_end=990,
+  serialized_start=891,
+  serialized_end=1113,
 )
 
 
@@ -597,8 +648,8 @@ _GETMARKETSREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=992,
-  serialized_end=1069,
+  serialized_start=1115,
+  serialized_end=1192,
 )
 
 
@@ -628,8 +679,8 @@ _GETMARKETSRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1071,
-  serialized_end=1117,
+  serialized_start=1194,
+  serialized_end=1240,
 )
 
 
@@ -764,8 +815,8 @@ _ORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1120,
-  serialized_end=1525,
+  serialized_start=1243,
+  serialized_end=1648,
 )
 
 
@@ -907,8 +958,8 @@ _SIGNEDORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1528,
-  serialized_end=1958,
+  serialized_start=1651,
+  serialized_end=2081,
 )
 
 
@@ -973,8 +1024,8 @@ _CREATEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1961,
-  serialized_end=2151,
+  serialized_start=2084,
+  serialized_end=2274,
 )
 
 
@@ -1025,8 +1076,8 @@ _CREATEORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2154,
-  serialized_end=2307,
+  serialized_start=2277,
+  serialized_end=2430,
 )
 
 
@@ -1063,8 +1114,8 @@ _WATCHTRANSACTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2309,
-  serialized_end=2369,
+  serialized_start=2432,
+  serialized_end=2492,
 )
 
 
@@ -1122,8 +1173,8 @@ _WATCHTRANSACTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2371,
-  serialized_end=2491,
+  serialized_start=2494,
+  serialized_end=2614,
 )
 
 
@@ -1160,8 +1211,8 @@ _GETBALANCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2493,
-  serialized_end=2558,
+  serialized_start=2616,
+  serialized_end=2681,
 )
 
 
@@ -1205,8 +1256,8 @@ _GETBALANCERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2560,
-  serialized_end=2643,
+  serialized_start=2683,
+  serialized_end=2766,
 )
 
 
@@ -1243,8 +1294,8 @@ _GETALLOWANCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2645,
-  serialized_end=2712,
+  serialized_start=2768,
+  serialized_end=2835,
 )
 
 
@@ -1295,8 +1346,8 @@ _GETALLOWANCERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2714,
-  serialized_end=2824,
+  serialized_start=2837,
+  serialized_end=2947,
 )
 
 
@@ -1333,8 +1384,8 @@ _SETALLOWANCEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2826,
-  serialized_end=2889,
+  serialized_start=2949,
+  serialized_end=3012,
 )
 
 
@@ -1392,8 +1443,8 @@ _SETALLOWANCERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2892,
-  serialized_end=3028,
+  serialized_start=3015,
+  serialized_end=3151,
 )
 
 
@@ -1437,8 +1488,8 @@ _TRANSFERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3030,
-  serialized_end=3106,
+  serialized_start=3153,
+  serialized_end=3229,
 )
 
 
@@ -1475,8 +1526,8 @@ _TRANSFERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3108,
-  serialized_end=3174,
+  serialized_start=3231,
+  serialized_end=3297,
 )
 
 
@@ -1534,8 +1585,8 @@ _SENDTRANSACTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3176,
-  serialized_end=3287,
+  serialized_start=3299,
+  serialized_end=3410,
 )
 
 
@@ -1572,8 +1623,8 @@ _SENDTRANSACTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3289,
-  serialized_end=3357,
+  serialized_start=3412,
+  serialized_end=3480,
 )
 
 
@@ -1610,8 +1661,8 @@ _ZEROEXTRANSACTIONINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3359,
-  serialized_end=3452,
+  serialized_start=3482,
+  serialized_end=3575,
 )
 
 
@@ -1669,8 +1720,8 @@ _ZEROEXTRANSACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3454,
-  serialized_end=3577,
+  serialized_start=3577,
+  serialized_end=3700,
 )
 
 
@@ -1707,8 +1758,8 @@ _EXECUTEZEROEXTRANSACTIONREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3579,
-  serialized_end=3672,
+  serialized_start=3702,
+  serialized_end=3795,
 )
 
 
@@ -1745,8 +1796,8 @@ _EXECUTEZEROEXTRANSACTIONRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3674,
-  serialized_end=3756,
+  serialized_start=3797,
+  serialized_end=3879,
 )
 
 
@@ -1783,8 +1834,8 @@ _VALIDATEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3758,
-  serialized_end=3837,
+  serialized_start=3881,
+  serialized_end=3960,
 )
 
 
@@ -1821,8 +1872,8 @@ _VALIDATEORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3839,
-  serialized_end=3891,
+  serialized_start=3962,
+  serialized_end=4014,
 )
 
 
@@ -1908,8 +1959,8 @@ _QUOTE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3894,
-  serialized_end=4162,
+  serialized_start=4017,
+  serialized_end=4285,
 )
 
 
@@ -1953,8 +2004,8 @@ _TRADEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4164,
-  serialized_end=4231,
+  serialized_start=4287,
+  serialized_end=4354,
 )
 
 
@@ -1991,8 +2042,8 @@ _QUOTEINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4233,
-  serialized_end=4280,
+  serialized_start=4356,
+  serialized_end=4403,
 )
 
 
@@ -2051,8 +2102,8 @@ _EXCHANGEORDER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4283,
-  serialized_end=4419,
+  serialized_start=4406,
+  serialized_end=4542,
 )
 
 
@@ -2096,8 +2147,8 @@ _EXCHANGEORDERSTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4421,
-  serialized_end=4491,
+  serialized_start=4544,
+  serialized_end=4614,
 )
 
 
@@ -2134,8 +2185,8 @@ _EXCHANGECREATEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4493,
-  serialized_end=4570,
+  serialized_start=4616,
+  serialized_end=4693,
 )
 
 
@@ -2172,8 +2223,8 @@ _EXCHANGEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4572,
-  serialized_end=4624,
+  serialized_start=4695,
+  serialized_end=4747,
 )
 
 
@@ -2210,8 +2261,8 @@ _EXCHANGEORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4626,
-  serialized_end=4718,
+  serialized_start=4749,
+  serialized_end=4841,
 )
 
 
@@ -2241,8 +2292,8 @@ _EXCHANGEORDERARRAYRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4720,
-  serialized_end=4787,
+  serialized_start=4843,
+  serialized_end=4910,
 )
 
 
@@ -2272,8 +2323,8 @@ _HEDGEORDERREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4789,
-  serialized_end=4820,
+  serialized_start=4912,
+  serialized_end=4943,
 )
 
 
@@ -2303,14 +2354,17 @@ _HEDGEORDERRESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4822,
-  serialized_end=4857,
+  serialized_start=4945,
+  serialized_end=4980,
 )
 
 _ORDERBOOKUPDATESREQUEST.fields_by_name['request'].message_type = _ORDERBOOKREQUEST
 _ORDERBOOKRESPONSE.fields_by_name['asks'].message_type = _ORDERBOOKENTRY
 _ORDERBOOKRESPONSE.fields_by_name['bids'].message_type = _ORDERBOOKENTRY
+_MARKET_METADATAENTRY.containing_type = _MARKET
+_MARKET.fields_by_name['trade_info'].message_type = _TRADEINFO
 _MARKET.fields_by_name['quote_info'].message_type = _QUOTEINFO
+_MARKET.fields_by_name['metadata'].message_type = _MARKET_METADATAENTRY
 _GETMARKETSRESPONSE.fields_by_name['markets'].message_type = _MARKET
 _CREATEORDERRESPONSE.fields_by_name['order'].message_type = _SIGNEDORDER
 _CREATEORDERRESPONSE.fields_by_name['zero_ex_transaction'].message_type = _ZEROEXTRANSACTION
@@ -2444,11 +2498,19 @@ OrderStatusUpdateResponse = _reflection.GeneratedProtocolMessageType('OrderStatu
 _sym_db.RegisterMessage(OrderStatusUpdateResponse)
 
 Market = _reflection.GeneratedProtocolMessageType('Market', (_message.Message,), {
+
+  'MetadataEntry' : _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), {
+    'DESCRIPTOR' : _MARKET_METADATAENTRY,
+    '__module__' : 'types_pb2'
+    # @@protoc_insertion_point(class_scope:Market.MetadataEntry)
+    })
+  ,
   'DESCRIPTOR' : _MARKET,
   '__module__' : 'types_pb2'
   # @@protoc_insertion_point(class_scope:Market)
   })
 _sym_db.RegisterMessage(Market)
+_sym_db.RegisterMessage(Market.MetadataEntry)
 
 GetMarketsRequest = _reflection.GeneratedProtocolMessageType('GetMarketsRequest', (_message.Message,), {
   'DESCRIPTOR' : _GETMARKETSREQUEST,
@@ -2697,4 +2759,5 @@ _sym_db.RegisterMessage(HedgeOrderResponse)
 
 
 DESCRIPTOR._options = None
+_MARKET_METADATAENTRY._options = None
 # @@protoc_insertion_point(module_scope)

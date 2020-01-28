@@ -70,7 +70,9 @@ message OrderStatusUpdateResponse {
 message Market {
     string maker_asset_address = 1;
     repeated string taker_asset_addresses = 2;
-    QuoteInfo quote_info = 3;
+    TradeInfo trade_info = 3;
+    QuoteInfo quote_info = 4;
+    map<string, string> metadata = 5;
 }
 
 message GetMarketsRequest {
