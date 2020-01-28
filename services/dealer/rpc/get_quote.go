@@ -72,16 +72,19 @@ func (svc *Service) GetQuote(makerAsset string, takerAsset string, makerSize *st
 
 	quoteRes, err := svc.dealer.FetchQuote(context.Background(), quoteReq)
 	if err != nil {
+		svc.log.Errorf("failed to fetch quote: %v", err)
 		return nil, err
 	}
 
 	order, err := quoteRes.ZeroExTransactionInfo.Order.ToZeroExSignedOrder()
 	if err != nil {
+		svc.log.Errorf("failed to convert signed order: %v", err)
 		return nil, err
 	}
 
 	tx, err := quoteRes.ZeroExTransactionInfo.Transaction.ToZeroExTransaction()
 	if err != nil {
+		svc.log.Errorf("failed to convert 0x transaction: %v", err)
 		return nil, err
 	}
 

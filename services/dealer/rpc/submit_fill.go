@@ -27,11 +27,13 @@ func (sfr *submitFillResponse) MarshalJSON() ([]byte, error) {
 func (svc *Service) SubmitFill(quoteId string, salt string, signature string, signer string, data string, gasPrice string, expirationTimeSeconds int64) (*submitFillResponse, error) {
 	order, err := svc.dealer.GetOrder(quoteId)
 	if err != nil {
+		svc.log.Errorf("failed to fetch order from DB: %v", err)
 		return nil, err
 	}
 
 	validateReq := &grpc.ValidateOrderRequest{Order: grpc.SignedOrderToProto(order)}
 	if err := svc.dealer.ValidateOrder(context.TODO(), validateReq); err != nil {
+		svc.log.Errorf("failed to validate order from HW: %v", err)
 		return nil, ErrFillValidationFailed
 	}
 
@@ -53,11 +55,13 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 
 	fillRes, err := svc.dealer.ExecuteZeroExTransaction(context.TODO(), fillReq)
 	if err != nil {
+		svc.log.Errorf("failed to execute 0x transaction with hot-wallet: %v", err)
 		return nil, err
 	}
 
 	// todo (@hrharder): do we need to do anything with the response value here?
 	if _, err := svc.dealer.WatchTransaction(context.TODO(), quoteId, fillRes.TransactionHash); err != nil {
+		svc.log.Errorf("failed to watch submitted transaction: %v", err)
 		return nil, err
 	}
 
