@@ -50,5 +50,5 @@ class test_server(unittest.TestCase):
         self.assertEqual(type(response_1.quote_id), str)
         self.assertEqual(response_2.status, 1)
         self.assertEqual(response_3.status, 200)
-        self.assertEqual(len(response_4.markets[0].taker_asset_addresses), 4)
+        self.assertEqual(len(response_4.markets[0].taker_asset_addresses), len(response_4.markets) - 1)
         self.tear_down()
