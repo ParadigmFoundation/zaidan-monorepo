@@ -64,6 +64,11 @@ func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, 
 	}, nil
 }
 
+func (d *Dealer) WithMakerClient(m types.MakerClient) *Dealer {
+	d.makerClient = m
+	return d
+}
+
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
 	now := time.Now()
 	res, err := d.makerClient.GetQuote(ctx, req)

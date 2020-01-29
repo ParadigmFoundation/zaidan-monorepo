@@ -1,33 +1,12 @@
 package core
 
 import (
-	"context"
 	"testing"
 
+	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc"
-
-	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 )
-
-type makerMock struct {
-	t          *testing.T
-	getMarkets func(*types.GetMarketsRequest) (*types.GetMarketsResponse, error)
-}
-
-func (m *makerMock) GetQuote(context.Context, *types.GetQuoteRequest, ...grpc.CallOption) (*types.GetQuoteResponse, error) {
-	panic("not implemented")
-}
-
-func (m *makerMock) CheckQuote(context.Context, *types.CheckQuoteRequest, ...grpc.CallOption) (*types.CheckQuoteResponse, error) {
-	panic("not implemented")
-}
-
-func (m *makerMock) GetMarkets(_ context.Context, in *types.GetMarketsRequest, _ ...grpc.CallOption) (*types.GetMarketsResponse, error) {
-	require.NotNil(m.t, m.getMarkets, "getMarkets not defined in mock")
-	return m.getMarkets(in)
-}
 
 func TestDealerGetMarkets(t *testing.T) {
 	mkts := []*types.Market{
@@ -41,9 +20,9 @@ func TestDealerGetMarkets(t *testing.T) {
 		&types.Market{MakerAssetAddress: "8"},
 		&types.Market{MakerAssetAddress: "9"},
 	}
-	mock := &makerMock{
-		t: t,
-		getMarkets: func(req *types.GetMarketsRequest) (*types.GetMarketsResponse, error) {
+	mock := &MakerMock{
+		T: t,
+		GetMarketsFn: func(req *types.GetMarketsRequest) (*types.GetMarketsResponse, error) {
 			return &types.GetMarketsResponse{Markets: mkts}, nil
 
 		},
