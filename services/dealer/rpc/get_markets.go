@@ -35,6 +35,6 @@ func (svc *Service) GetMarkets(mAddr, tAddr *string, page, perPage *int) (*getMa
 		record:  mkts,
 		total:   len(mkts),
 		page:    ptr.Int(page),
-		perPage: ptr.IntOr(page, DEFAULT_PER_PAGE),
+		perPage: ptr.IntOr(perPage, DEFAULT_PER_PAGE),
 	}, nil
 }
