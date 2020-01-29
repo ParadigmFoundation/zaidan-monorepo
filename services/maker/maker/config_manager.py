@@ -23,7 +23,7 @@ class ConfigManager():
                     markets_entry['maker_asset_address'] = asset['address']
                     pair_assets = []
                     for pair_asset in config_f['assets']:
-                        if not asset['address'] == pair_asset['address']:
+                        if not asset['address'] == pair_asset['address'] and not pair_asset['symbol'] == 'ETH':
                             pair_assets.append(pair_asset['address'])
                     markets_entry['taker_asset_addresses'] = pair_assets
                     markets_entry['min_size'] = asset['min_size']
