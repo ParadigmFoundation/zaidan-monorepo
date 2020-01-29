@@ -4,6 +4,8 @@
       "symbol": "ZRX",
       "address": "0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c",
       "decimals": 18,
+      "min_size": 0,
+      "max_size": 1000,
       "pricing_data" : {
         "exchange_books": [
           {
@@ -25,6 +27,8 @@
       "symbol": "WETH",
       "address": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082",
       "decimals": 18,
+      "min_size": 0,
+      "max_size": 1000,
       "pricing_data" : {
         "exchange_books": [
           {
@@ -46,6 +50,8 @@
       "symbol": "DAI",
       "address": "0x34d402f14d58e001d8efbe6585051bf9706aa064",
       "decimals": 18,
+      "min_size": 0,
+      "max_size": 1000,
       "pricing_data" : {
         "exchange_books": [
           {
@@ -64,6 +70,8 @@
       "symbol": "ETH",
       "address": "0x0000000000000000000000000000000000000000",
       "decimals": 18,
+      "min_size": 0,
+      "max_size": 1000,
       "pricing_data" : {
         "exchange_books": [
           {
@@ -85,6 +93,8 @@
       "symbol": "LINK",
       "address": "0xbe0037eaf2d64fe5529bca93c18c9702d3930376",
       "decimals": 18,
+      "min_size": 0,
+      "max_size": 1000,
       "pricing_data" : {
         "exchange_books": [
           {
