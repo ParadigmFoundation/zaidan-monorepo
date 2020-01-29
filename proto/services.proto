@@ -33,6 +33,7 @@ service HotWallet {
     rpc TransferToken(TransferRequest) returns (TransferResponse);
     rpc SendTransaction(SendTransactionRequest) returns (SendTransactionResponse);
     rpc ExecuteZeroExTransaction(ExecuteZeroExTransactionRequest) returns (ExecuteZeroExTransactionResponse);
+    rpc GetTradeInfo(google.protobuf.Empty) returns (TradeInfo);
 }
 
 service Watcher {
