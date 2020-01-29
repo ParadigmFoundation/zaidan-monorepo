@@ -7,6 +7,7 @@ import threading
 from zaidan import Logger
 from redis_interface import RedisInterface
 from orderbook_wrapper import OrderBookWrapper
+from inventory_manager import InventoryManager
 
 
 
