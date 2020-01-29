@@ -10,23 +10,27 @@ import os
 import collections
 
 try:
-    from test.TestDealerCache import TestDealerCache
     from test.TestInventoryManager import TestInventoryManager
+    from test.TestRedisInterface import TestRedisInterface
 except:
-    from TestDealerCache import TestDealerCache
     from TestInventoryManager import TestInventoryManager
+    from TestRedisInterface import TestRedisInterface
 
 try:
-    from src.Hedger import Hedger
+    sys.path.append('hedger')
+    from hedger import Hedger
 except:
-    sys.path.append('../')
-    from src.Hedger import Hedger
+    try:
+        sys.path.append('../hedger/hedger')
+        from hedger import Hedger
+    except:
+        raise Exception('failed imports')
 
 Order = collections.namedtuple('Order', 'id, symbol, side, price, quantity, timestamp, exchange')
-tdc = TestDealerCache()
 tim = TestInventoryManager()
+tri = TestRedisInterface()
 
-hedger = Hedger(im=tim, cache=tdc, test=True)
+hedger = Hedger(im=tim, cache=tri, test=True)
 
 def test_hedge_sell():
     """Test hedger sell."""
