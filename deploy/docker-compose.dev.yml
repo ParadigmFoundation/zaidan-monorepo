@@ -8,6 +8,10 @@ services:
       - hwd
     ports:
       - 8000:8000
+    restart: unless-stopped
+    environment:
+      - DEALER_DB=postgres
+      - DEALER_DSN="host=db user=postgres password=postgres sslmode=disable"
 
   hwd:
     restart: always
@@ -16,7 +20,13 @@ services:
       - eth
 
   obm:
-    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC", "--bind", "0.0.0.0:8000"]
+    command: ["--exchange", "coinbase:ETH/USD,DAI/USDC,ZRX/USD", "--exchange", "binance:ETH/USDT,ZRX/ETH,ZRX/USDT", "--bind", "0.0.0.0:8000"]
+
+  watcher:
+    restart: always
+    command: ["--eth", "ws://eth:8545", "-m", "maker:8000", "-p", "8000"]
+    depends_on: 
+      - eth
 
   maker:
     restart: always
@@ -40,8 +50,5 @@ services:
 
   db:
     image: postgres
-    environment:
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_USER=dealer
     ports:
       - 5432:5432

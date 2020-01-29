@@ -172,7 +172,7 @@ func (s *Store) CreatePolicy(t string) error {
 func (s *Store) HasPolicy(t string) (bool, error) {
 	var count int
 
-	stmt := `SELECT COUNT(*) FROM policies WHERE entry = ?`
+	stmt := `SELECT COUNT(*) FROM policies WHERE entry = $1`
 	if err := s.db.QueryRow(stmt, t).Scan(&count); err != nil {
 		return false, err
 	}

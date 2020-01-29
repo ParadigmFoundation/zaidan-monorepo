@@ -1,7 +1,16 @@
 all:
 	$(MAKE) build
 
-SERVICES = ./services/*
+GO_SERVICES = ./services/dealer \
+			  ./services/exchange-manager \
+			  ./services/hot-wallet \
+			  ./services/order-book-manager \
+			  ./services/watcher
+
+PY_SERVICES = ./services/hedger \
+			  ./services/maker
+
+SERVICES = $(GO_SERVICES) $(PY_SERVICES)
 LIBS     = ./lib/go
 TARGETS = $(SERVICES) $(LIBS)
 
@@ -31,6 +40,9 @@ stop: ## Stop will will the zaidan stack locally in development mode
 		-f ./deploy/docker-compose.yml \
 		-f ./deploy/docker-compose.dev.yml \
 		down -v
+
+goget:
+	$(foreach var,$(wildcard $(GO_SERVICES)), $(MAKE) -C $(var) $@ &&) true
 
 %:
 	$(foreach var,$(wildcard $(TARGETS)), $(MAKE) -C $(var) $@ &&) true
