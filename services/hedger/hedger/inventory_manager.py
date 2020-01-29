@@ -47,28 +47,14 @@ class InventoryManager():
 
         order = ExchangeOrder(price=price, symbol=symbol, amount=size, side=side_enum)
 
-        req = ExchangeCreateOrderRequest(exchange=exchange, order=ExchangeOrder)
+        req = ExchangeCreateOrderRequest(exchange=exchange, order=order)
 
         response = self.em_stub.CreateOrder(req)
         return response
 
 
     def get_order_status(self, exchange: str, order_id: str, symbol: str) -> dict:
-        '''
-        Get the status of a current order, by its exchange, ID, and market symbol.
-
-        :param exchange: The name of the exchange the order was posted to.
-        :param order_id: The UUID of the exchange order.
-        :param symbol: The market symbol the order is for.
-        '''
-
-        tickers = symbol.split('/')
-        if len(tickers) != 2:
-            raise ValueError(
-                'invalid market symbol (must be BASE/QUOTE format)')
-
-
-        return self._get('order/{}/{}/{}/{}'.format(exchange, order_id, base_asset, quote_asset))
+        pass
 
     def cancel_order(self, exchange: str, order_id: str) -> bool:
         '''
@@ -78,7 +64,9 @@ class InventoryManager():
         :param order_id: The UUID of the posted exchange order.
         '''
 
-        return self._post('order/{}/{}/cancel'.format(exchange, order_id))
+        req = ExchangeOrderRequest(exchange=exchange, id=order_id)
+        response = self.em_stub.CancelOrder(req)
+        return {'cancelled':True}
 
     def get_open_orders(self, exchange: str, symbol: str) -> list:
         '''
@@ -88,14 +76,23 @@ class InventoryManager():
         :param symbol: The market symbol to get open orders for (BASE/QUOTE).
         '''
 
-        tickers = symbol.split('/')
-        if len(tickers) != 2:
-            raise ValueError(
-                'invalid market symbol (must be BASE/QUOTE format)')
+        req = exchange
+        response = self.em_stub.GetOpenOrders(req)
+        orders_list = []
+        for order in response:
+            if order.order.symbol == symbol:
+                order_dict = {}
+                if order.order.side == 0:
+                    order_dict['side'] = 'buy'
+                else:
+                    order_dict['side'] = 'sell'
+                order_dict['symbol'] = symbol
+                order_dict['price'] = order.order.price
+                order_dict['id'] = order.order.id
+                order_dict['timestamp'] = order.status.timestamp
+                order_dict['remaining'] = float(order.order.size) - float(order.status.filled)
+                orders_list.append(order_dict)
 
-        base_asset = tickers[0]
-        quote_asset = tickers[1]
-
-        return self._get('order/{}/{}/{}'.format(exchange, base_asset, quote_asset))
+        return orders_list
 
 
