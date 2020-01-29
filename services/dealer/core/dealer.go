@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/empty"
+
 	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc"
@@ -193,6 +195,16 @@ func (d *Dealer) GetMarkets(mAddr, tAddr string, page, perPage int) ([]*types.Ma
 	if err != nil {
 		return nil, err
 	}
+
+	tradeInfo, err := d.hwClient.GetTradeInfo(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, market := range resp.Markets {
+		market.TradeInfo = tradeInfo
+	}
+
 	mkts := paginatedMakets(resp.Markets).Paginate(page, perPage)
 	return mkts, nil
 }
