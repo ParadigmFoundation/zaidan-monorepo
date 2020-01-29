@@ -34,5 +34,12 @@ class TestPricingUtils(unittest.TestCase):
         self.assertEqual(pricing_utils.calculate_quote('LINK', 'ZRX', None, 50, True), {'maker_size': 7.170776314578263, 'taker_size': 50})
         self.assertEqual(pricing_utils.calculate_quote('ZRX', 'LINK', 50, None, True), {'maker_size': 50, 'taker_size': 7.7889447236180915})
 
+    def test_standard_price(self) -> None:
+        pricing_utils = PricingUtils()
+        self.assertEqual(pricing_utils.calculate_quote('ZRX', 'WETH', 50, None, True), {'maker_size': 50.0, 'taker_size': 0.5108928825})
+        self.assertEqual(pricing_utils.calculate_quote('WETH', 'ZRX', None, 50, True), {'maker_size': 0.4891428675, 'taker_size': 50.0})
+        self.assertEqual(pricing_utils.calculate_quote('ZRX', 'WETH', None, 1, True), {'maker_size': 97.86787350673261, 'taker_size': 1.0})
+        self.assertEqual(pricing_utils.calculate_quote('WETH', 'ZRX', 1, None, True),{'maker_size': 1.0, 'taker_size': 103.2734345605597})
+
 if __name__ == '__main__':
     unittest.main()
