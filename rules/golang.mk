@@ -23,3 +23,6 @@ ci: ## Run the CI
 
 lint:
 	golangci-lint run --new --fast --timeout=5m
+
+goget:
+	go get ./...
