@@ -66,8 +66,13 @@ func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, 
 	}, nil
 }
 
-func (d *Dealer) WithMakerClient(m types.MakerClient) *Dealer {
-	d.makerClient = m
+func (d *Dealer) WithMakerClient(c types.MakerClient) *Dealer {
+	d.makerClient = c
+	return d
+}
+
+func (d *Dealer) WithHWClient(c types.HotWalletClient) *Dealer {
+	d.hwClient = c
 	return d
 }
 

@@ -46,14 +46,21 @@ func TestRPC(t *testing.T) {
 	})
 
 	t.Run("GetMarkets", func(t *testing.T) {
+		// Create 99 fake/empty markets to be sent as the mocking response
 		mkts := make([]*types.Market, 99)
-		m := &core.MakerMock{
-			T: t,
+		for i := 0; i < len(mkts); i++ {
+			mkts[i] = &types.Market{}
+		}
+
+		mm := &core.MakerMock{
 			GetMarketsFn: func(req *types.GetMarketsRequest) (*types.GetMarketsResponse, error) {
 				return &types.GetMarketsResponse{Markets: mkts}, nil
 			},
 		}
-		service, err := NewService(dealer.WithMakerClient(m))
+		hm := &core.HWMock{}
+		service, err := NewService(
+			dealer.WithMakerClient(mm).WithHWClient(hm),
+		)
 		require.NoError(t, err)
 
 		t.Run("Defaults", func(t *testing.T) {

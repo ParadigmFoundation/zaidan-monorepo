@@ -20,15 +20,15 @@ func TestDealerGetMarkets(t *testing.T) {
 		&types.Market{MakerAssetAddress: "8"},
 		&types.Market{MakerAssetAddress: "9"},
 	}
-	mock := &MakerMock{
-		T: t,
+	mm := &MakerMock{
 		GetMarketsFn: func(req *types.GetMarketsRequest) (*types.GetMarketsResponse, error) {
 			return &types.GetMarketsResponse{Markets: mkts}, nil
 
 		},
 	}
+	hw := &HWMock{}
 
-	d := &Dealer{makerClient: mock}
+	d := &Dealer{makerClient: mm, hwClient: hw}
 	t.Run("GetAll", func(t *testing.T) {
 		resp, _ := d.GetMarkets("mAddr", "tAddr", 0, 0)
 		assert.Len(t, resp, len(mkts))

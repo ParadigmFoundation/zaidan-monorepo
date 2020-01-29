@@ -57,7 +57,6 @@ func (r *getMarketsResponse) MarshalJSON() ([]byte, error) {
 }
 
 func (svc *Service) GetMarkets(mAddr, tAddr *string, page, perPage *int) (*getMarketsResponse, error) {
-
 	mkts, err := svc.dealer.GetMarkets(
 		ptr.String(mAddr), ptr.String(tAddr), ptr.Int(page), ptr.IntOr(perPage, DEFAULT_PER_PAGE),
 	)
