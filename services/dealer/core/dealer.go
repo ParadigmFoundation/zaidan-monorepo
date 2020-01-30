@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -125,7 +126,7 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	return quote, nil
 }
 
-func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequest) error {
+func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequest, quoteId string) error {
 	res, err := d.hwClient.ValidateOrder(ctx, req)
 	if err != nil {
 		return nil
@@ -134,6 +135,17 @@ func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequ
 	if !res.Valid {
 		d.log.WithField("reason", res.Info).Error("fill failed validation")
 		return nil
+	}
+
+	makerRes, err := d.makerClient.CheckQuote(ctx, &types.CheckQuoteRequest{QuoteId: quoteId})
+	if err != nil {
+		d.log.WithError(err).Error("failed to validate quote with maker")
+		return err
+	}
+
+	if !makerRes.IsValid {
+		d.log.WithField("statusCode", makerRes.Status).Info("validation failed for quote")
+		return errors.New("maker rejected fill")
 	}
 	return nil
 }
@@ -145,8 +157,9 @@ func (d *Dealer) ExecuteZeroExTransaction(ctx context.Context, req *types.Execut
 
 func (d *Dealer) WatchTransaction(ctx context.Context, quoteId string, txHash string) (*types.WatchTransactionResponse, error) {
 	req := &types.WatchTransactionRequest{
-		QuoteId: quoteId,
-		TxHash:  txHash,
+		QuoteId:    quoteId,
+		TxHash:     txHash,
+		StatusUrls: []string{"maker:8000"},
 	}
 
 	return d.watcherClient.WatchTransaction(ctx, req)

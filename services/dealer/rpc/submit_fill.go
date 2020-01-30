@@ -32,7 +32,7 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 	}
 
 	validateReq := &grpc.ValidateOrderRequest{Order: grpc.SignedOrderToProto(order)}
-	if err := svc.dealer.ValidateOrder(context.TODO(), validateReq); err != nil {
+	if err := svc.dealer.ValidateOrder(context.TODO(), validateReq, quoteId); err != nil {
 		svc.log.WithError(err).Error("failed to validate order from hot-wallet")
 		return nil, ErrFillValidationFailed
 	}
