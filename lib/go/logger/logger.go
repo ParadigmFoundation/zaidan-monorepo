@@ -44,3 +44,4 @@ func New(module string, opts ...LogOpt) *Logger {
 
 type Logger = logrus.Logger
 type Entry = logrus.Entry
+type Fields = logrus.Fields
