@@ -80,6 +80,25 @@ func (s *server) getAllowance(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func (s *server) setAllowance(w http.ResponseWriter, req *http.Request) {
+	var alReq types.SetAllowanceRequest
+	if err := jsonpb.Unmarshal(req.Body, &alReq); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	alRes, err := s.client.SetAllowance(context.Background(), &alReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := new(jsonpb.Marshaler).Marshal(w, alRes); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (s *server) transfer(w http.ResponseWriter, req *http.Request) {
 	var transferReq types.TransferRequest
 	if err := jsonpb.Unmarshal(req.Body, &transferReq); err != nil {
@@ -103,6 +122,7 @@ func main() {
 	var cfg config
 	pflag.StringVar(&cfg.hwUrl, "server", "0.0.0.0:42001", "host and port for the hot-wallet server")
 	pflag.StringVar(&cfg.bind, "bind", "0.0.0.0:7999", "host and port to bind HTTP server to")
+	pflag.Parse()
 
 	conn, err := grpc.Dial(cfg.hwUrl, grpc.WithInsecure())
 	if err != nil {
@@ -113,7 +133,8 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/balance/ether", svr.getEtherBalance)
 	mux.HandleFunc("/balance/token", svr.getTokenBalance)
-	mux.HandleFunc("/allowance", svr.getAllowance)
+	mux.HandleFunc("/allowance/get", svr.getAllowance)
+	mux.HandleFunc("/allowance/set", svr.setAllowance)
 	mux.HandleFunc("/transfer", svr.transfer)
 
 	log.Fatal(http.ListenAndServe(cfg.bind, mux))
