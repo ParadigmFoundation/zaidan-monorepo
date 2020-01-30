@@ -83,7 +83,7 @@ type ServerCfg struct {
 }
 
 // ParseServerCfg builds a new ServerCfg from user flags
-func ParseServerCfg(prefix string) *ServerCfg {
+func ParseServerCfg(prefix string) (*ServerCfg, error) {
 	cfg := ServerCfg{}
 
 	fs := flag.NewFlagSet("dealer", flag.ExitOnError)
@@ -97,17 +97,21 @@ func ParseServerCfg(prefix string) *ServerCfg {
 	fs.BoolVar(&cfg.PolicyBlack, "policy.blacklist", false, "Enable BlackList policy mode")
 	fs.BoolVar(&cfg.PolicyWhite, "policy.whitelist", false, "Enable WhiteList policy mode")
 
-	ff.Parse(fs, os.Args[1:],
-		ff.WithEnvVarPrefix(prefix),
-	)
+	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix(prefix)); err != nil {
+		return nil, err
+	}
 
 	cfg.DSN = unQuote(cfg.DSN)
 
-	return &cfg
+	return &cfg, nil
 }
 
 func StartServer() error {
-	cfg := ParseServerCfg("DEALER")
+	cfg, err := ParseServerCfg("DEALER")
+	if err != nil {
+		return err
+	}
+
 	log := logger.New("app")
 	log.WithFields(logger.Fields{"db": cfg.DB, "dsn": cfg.DSN}).Info("Initializing database")
 	store, err := sql.New(cfg.DB, cfg.DSN)
