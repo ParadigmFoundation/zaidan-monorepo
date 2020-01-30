@@ -7,6 +7,11 @@ from pricing_utils import PricingUtils
 from risk_utils import RiskUtils
 from redis_interface import RedisInterface
 from config_manager import ConfigManager
+import grpc
+import os
+import sys
+
+HEDGER_CHANNEL = os.environ.get('HEDGER_CHANNEL', '')
 
 class MakerServicer(services_pb2_grpc.MakerServicer):
 
@@ -17,6 +22,11 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
         self.risk_utils = RiskUtils()
         self.pricing_utils = PricingUtils()
         self.test = test
+        self.initialize_hedger_connection()
+
+    def initialize_hedger_connection(self) -> None:
+        self.hedger_channel = grpc.insecure_channel(HEDGER_CHANNEL)
+        self.hedger_stub = services_pb2_grpc.HedgerStub(self.hedger_channel)
 
     def GetQuote(self, request: object, context) -> object:
 
@@ -51,6 +61,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
 
     def CheckQuote(self, request:object, context) -> object:
+        print('callback received for quote ' + str(request.quote_id), file=sys.stderr)
         try:
             quote = self.redis_interface.get_quote(request.quote_id)
         except ValueError:
@@ -60,6 +71,10 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
             return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=False, status=2)
 
         self.redis_interface.fill_quote(request.quote_id)
+
+        if HEDGER_CHANNEL:
+            req = types_pb2.HedgeOrderRequest(id=request.quote_id)
+            self.hedger_stub.HedgeOrder(req)
 
         return types_pb2.CheckQuoteResponse(quote_id=request.quote_id, is_valid=True, status=200)
 

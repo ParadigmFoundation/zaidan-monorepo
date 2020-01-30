@@ -3,7 +3,7 @@ import json
 from typing import Optional
 
 CONFIG_FILE = os.environ.get('CONFIG_FILE', 'maker/config.json')
-CHAIN_ID = os.environ.get('CHAIN_ID', 1337)
+CHAIN_ID = int(os.environ.get('CHAIN_ID', 1337))
 
 class ConfigManager():
 
