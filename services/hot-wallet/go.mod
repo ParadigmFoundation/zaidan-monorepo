@@ -10,6 +10,7 @@ require (
 	github.com/caarlos0/env/v6 v6.1.0
 	github.com/ethereum/go-ethereum v1.9.9
 	github.com/gogo/protobuf v1.2.0
+	github.com/golang/protobuf v1.3.2
 	github.com/prometheus/tsdb v0.7.1 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0

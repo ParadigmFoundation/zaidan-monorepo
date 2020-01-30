@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/empty"
+
 	"github.com/sirupsen/logrus"
 
 	"google.golang.org/grpc"
@@ -62,6 +64,16 @@ func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, 
 		db:            db,
 		log:           logger.New("core"),
 	}, nil
+}
+
+func (d *Dealer) WithMakerClient(c types.MakerClient) *Dealer {
+	d.makerClient = c
+	return d
+}
+
+func (d *Dealer) WithHWClient(c types.HotWalletClient) *Dealer {
+	d.hwClient = c
+	return d
 }
 
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
@@ -156,4 +168,48 @@ func (d *Dealer) GetOrder(quoteId string) (*zeroex.SignedOrder, error) {
 	}
 
 	return order, nil
+}
+
+type paginatedMakets []*types.Market
+
+func (p paginatedMakets) Paginate(page, perPage int) []*types.Market {
+	if perPage == 0 {
+		return p
+	}
+
+	offset := page * perPage
+	end := offset + perPage
+	if end > len(p) {
+		end = len(p)
+	}
+
+	if offset > len(p) {
+		return nil
+	}
+
+	return p[offset:end]
+}
+
+func (d *Dealer) GetMarkets(mAddr, tAddr string, page, perPage int) ([]*types.Market, error) {
+	ctx := context.Background()
+	req := &types.GetMarketsRequest{
+		MakerAssetAddress: mAddr,
+		TakerAssetAddress: tAddr,
+	}
+	resp, err := d.makerClient.GetMarkets(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	tradeInfo, err := d.hwClient.GetTradeInfo(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	for _, market := range resp.Markets {
+		market.TradeInfo = tradeInfo
+	}
+
+	mkts := paginatedMakets(resp.Markets).Paginate(page, perPage)
+	return mkts, nil
 }

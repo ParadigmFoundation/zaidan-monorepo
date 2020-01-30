@@ -6,13 +6,13 @@ from concurrent import futures
 try:
     sys.path.append('../maker')
     import services_pb2_grpc
-    from types_pb2 import GetQuoteRequest, CheckQuoteRequest
+    from types_pb2 import GetQuoteRequest, CheckQuoteRequest, GetMarketsRequest
     from maker_servicer import MakerServicer
 except:
     try:
         sys.path.append('../maker/maker')
         import services_pb2_grpc
-        from types_pb2 import GetQuoteRequest, CheckQuoteRequest
+        from types_pb2 import GetQuoteRequest, CheckQuoteRequest, GetMarketsRequest
         from maker_servicer import MakerServicer
     except Exception as error:
         raise Exception('failed to import server: {}'.format(error.args))
@@ -43,8 +43,12 @@ class test_server(unittest.TestCase):
             
             req_3 = CheckQuoteRequest(quote_id=response_1.quote_id)
             response_3 = stub.CheckQuote(req_3)
+
+            req_4 = GetMarketsRequest()
+            response_4 = stub.GetMarkets(req_4)
         
         self.assertEqual(type(response_1.quote_id), str)
         self.assertEqual(response_2.status, 1)
         self.assertEqual(response_3.status, 200)
+        self.assertEqual(len(response_4.markets[0].taker_asset_addresses), len(response_4.markets) - 1)
         self.tear_down()

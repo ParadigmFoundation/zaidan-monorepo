@@ -46,4 +46,5 @@ func TestHotWallet(t *testing.T) {
 	t.Run("test get/set allowance", func(t *testing.T) { testGetSetAllowance(hw, t) })
 	t.Run("test execute 0x transaction", func(t *testing.T) { testExecuteZrxTransaction(hw, t) })
 	t.Run("test validate 0x order", func(t *testing.T) { testValidateOrder(hw, t) })
+	t.Run("test get trade info", func(t *testing.T) { testGetTradeInfo(hw, t) })
 }
