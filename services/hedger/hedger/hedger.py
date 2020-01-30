@@ -93,7 +93,7 @@ class Hedger():
         if im:
             self.im = im
         else:
-            self.im = InventoryManager(INVENTORY_MANAGER_URL)
+            self.im = InventoryManager()
         self.logger.info("hedger created", {'ok': True})
 
         self.order_book_wrapper = OrderBookWrapper(unit_test=test)

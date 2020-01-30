@@ -17,7 +17,7 @@ class InventoryManager():
     def __init__(self):
         self.initialize_exchangemanager_connection()
 
-    def initialize_obm_connection(self) -> None:
+    def initialize_exchangemanager_connection(self) -> None:
         self.em_channel = grpc.insecure_channel(EXCHANGEMANAGER_CHANNEL)
         self.em_stub = ExchangeManagerStub(self.em_channel)
 
