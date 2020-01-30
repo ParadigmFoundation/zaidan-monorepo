@@ -2,6 +2,16 @@
   "assets": [
     {
       "symbol": "ZRX",
+      "deployments": [
+          {
+              "address": "0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c",
+              "chain_id": 1337
+          },
+          {
+              "address": "0xe41d2489571d322189246dafa5ebde1f4699f498",
+              "chain_id": 1
+          }
+      ],
       "address": "0x871dd7c2b4b25e1aa18728e9d5f2af4c4e431f5c",
       "decimals": 18,
       "min_size": 0,
@@ -25,7 +35,16 @@
     },
     {
       "symbol": "WETH",
-      "address": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082",
+      "deployments": [
+          {
+              "address": "0x0b1ba0af832d7c05fd64161e0db78e85978e8082",
+              "chain_id": 1337
+          },
+          {
+              "address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+              "chain_id": 1
+          }
+      ],
       "decimals": 18,
       "min_size": 0,
       "max_size": 1000,
@@ -48,7 +67,16 @@
     },
     {
       "symbol": "DAI",
-      "address": "0x34d402f14d58e001d8efbe6585051bf9706aa064",
+      "deployments": [
+          {
+              "address": "0x34d402f14d58e001d8efbe6585051bf9706aa064",
+              "chain_id": 1337
+          },
+          {
+              "address": "0x6b175474e89094c44da98b954eedeac495271d0f",
+              "chain_id": 1
+          }
+      ],
       "decimals": 18,
       "min_size": 0,
       "max_size": 1000,
@@ -68,7 +96,16 @@
     },
     {
       "symbol": "ETH",
-      "address": "0x0000000000000000000000000000000000000000",
+      "deployments": [
+          {
+              "address": "0x0000000000000000000000000000000000000000",
+              "chain_id": 1337
+          },
+          {
+              "address": "0x0000000000000000000000000000000000000000",
+              "chain_id": 1
+          }
+      ],
       "decimals": 18,
       "min_size": 0,
       "max_size": 1000,
@@ -92,6 +129,16 @@
     {
       "symbol": "LINK",
       "address": "0xbe0037eaf2d64fe5529bca93c18c9702d3930376",
+      "deployments": [
+          {
+              "address": "0xbe0037eaf2d64fe5529bca93c18c9702d3930376",
+              "chain_id": 1337
+          },
+          {
+              "address": "0x514910771af9ca656af840dff83e8264ecf986ca",
+              "chain_id": 1
+          }
+      ],
       "decimals": 18,
       "min_size": 0,
       "max_size": 1000,
