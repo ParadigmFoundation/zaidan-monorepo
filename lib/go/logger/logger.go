@@ -25,3 +25,4 @@ func New(module string, opts ...LogOpt) *Entry {
 }
 
 type Entry = logrus.Entry
+type Fields = logrus.Fields
