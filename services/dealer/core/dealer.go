@@ -129,7 +129,8 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequest, quoteId string) error {
 	res, err := d.hwClient.ValidateOrder(ctx, req)
 	if err != nil {
-		return nil
+		d.log.WithError(err).Error("failed to call validate order")
+		return err
 	}
 
 	if !res.Valid {
