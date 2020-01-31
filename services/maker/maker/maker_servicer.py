@@ -47,7 +47,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
             if not request.price_only:
                 self.redis_interface.add_quote(quote_id, {'expiration':expiry_timestamp,
-                                           'taker_asset':request.taker_asset, 'maker_asset':request.maker_asset,
+                                           'taker_asset':taker_asset, 'maker_asset':maker_asset,
                                            'taker_size':quote_info['taker_size'], 'maker_size':quote_info['maker_size']})
 
             quote_info = PricingUtils.format_quote(taker_asset, maker_asset, quote_info)
