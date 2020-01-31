@@ -1,14 +1,20 @@
 import types_pb2
 import services_pb2_grpc
 from hedger import Hedger
+import logging
 
 class HedgerServicer(services_pb2_grpc.HedgerServicer):
 
     def __init__(self) -> None:
         services_pb2_grpc.HedgerServicer.__init__(self)
         self.hedger = Hedger()
+        self.logger = logging.Logger()
+
     
     def HedgeOrder(self, request: object, context) -> object:
+
+
+        self.logger('received request to hedge ordger: ' + str(request.id))
 
         order_id = request.id
 
