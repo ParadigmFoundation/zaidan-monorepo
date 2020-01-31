@@ -2,6 +2,7 @@ import grpc
 import os
 from services_pb2_grpc import ExchangeManagerStub
 from types_pb2 import ExchangeCreateOrderRequest, ExchangeOrderRequest, ExchangeOrderRequest, ExchangeOrder
+from google.protobuf import wrappers_pb2 as wrappers
 
 
 class InventoryManagerError(Exception):
@@ -77,7 +78,7 @@ class InventoryManager():
         '''
 
         req = exchange
-        response = self.em_stub.GetOpenOrders(req)
+        response = self.em_stub.GetOpenOrders(wrappers.StringValue(req))
         orders_list = []
         for order in response:
             if order.order.symbol == symbol:
