@@ -31,7 +31,8 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 		return nil, ErrUnknownQuoteID
 	}
 
-	validateReq := &grpc.ValidateOrderRequest{Order: grpc.SignedOrderToProto(order)}
+	protoOrder := grpc.SignedOrderToProto(order)
+	validateReq := &grpc.ValidateOrderRequest{Order: protoOrder, TakerAssetAmount: protoOrder.TakerAssetAmount}
 	if err := svc.dealer.ValidateOrder(context.TODO(), validateReq, quoteId); err != nil {
 		svc.log.WithError(err).Error("failed to validate order from hot-wallet")
 		return nil, ErrFillValidationFailed
