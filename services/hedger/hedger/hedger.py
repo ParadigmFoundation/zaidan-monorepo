@@ -116,32 +116,29 @@ class Hedger():
                 order['pair'] == 'ZRX/DAI'
 
 
-        try:
-            if order['pair'] == 'ZRX/WETH' and ENVIRONMENT != 'TEST':
-                order['pair'] = 'ZRX/DAI'
+        if order['pair'] == 'ZRX/WETH' and ENVIRONMENT != 'TEST':
+            order['pair'] = 'ZRX/DAI'
 
-            trade = {}
-            if order['maker_asset'] == order['pair'].split('/')[0]:
-                trade['size'] = float(order['maker_size'])
-                trade['side'] = 'S'
-                trade['price'] = float(order['taker_size']) / float(order['maker_size'])
-            else:
-                trade['size'] = float(order['taker_size'])
-                trade['side'] = 'B'
-                trade['price'] = float(order['maker_size'])/float(order['taker_size'])
+        trade = {}
+        if order['maker_asset'] == order['pair'].split('/')[0]:
+            trade['size'] = float(order['maker_size'])
+            trade['side'] = 'S'
+            trade['price'] = float(order['taker_size']) / float(order['maker_size'])
+        else:
+            trade['size'] = float(order['taker_size'])
+            trade['side'] = 'B'
+            trade['price'] = float(order['maker_size'])/float(order['taker_size'])
 
 
-            order_book = self.update_order_book(order['pair'])
-            trade['pair'] = order['pair']
-            new_orders, cancels = self.find_orders_to_place(trade, order_book)
+        order_book = self.update_order_book(order['pair'])
+        trade['pair'] = order['pair']
+        new_orders, cancels = self.find_orders_to_place(trade, order_book)
 
-            for new_order in new_orders:
-                self.execute_order(new_order)
+        for new_order in new_orders:
+            self.execute_order(new_order)
 
-            for cancel in cancels:
-                self.execute_cancel(cancel)
-        except Exception as e:
-            self.logger.info("Unknown exception in handling order", {'exception': str(e)})
+        for cancel in cancels:
+            self.execute_cancel(cancel)
 
         self.open_orders_lock.release()
 
