@@ -107,19 +107,28 @@ class Hedger():
         self.logger.info('received order', order)
         self.open_orders_lock.acquire()
 
+        if order['taker_asset'] == 'WETH' or order['maker_asset'] == 'WETH':
+            order['pair'] = 'WETH/DAI'
+        elif order['taker_asset'] == 'ZRX' or order['maker_asset'] == 'ZRX':
+            if order['taker_asset'] == 'WETH' or order['maker_asset'] == 'WETH':
+                order['pair'] == 'ZRX/WETH'
+            else:
+                order['pair'] == 'ZRX/DAI'
+
+
         try:
             if order['pair'] == 'ZRX/WETH' and ENVIRONMENT != 'TEST':
                 order['pair'] = 'ZRX/DAI'
 
             trade = {}
-            trade['size'] = order['maker_size']
-            trade['price'] = order['maker_price']
-            trade['pair'] = order['pair']
-
-            if order['side'] in ['S', 'ask']:
+            if order['maker_asset'] == order['pair'].split('/')[0]:
+                trade['size'] = float(order['maker_size'])
                 trade['side'] = 'S'
             else:
+                trade['size'] = float(order['taker_size'])
                 trade['side'] = 'B'
+            trade['price'] = float(order['price'])
+
 
             order_book = self.update_order_book(trade['pair'])
             new_orders, cancels = self.find_orders_to_place(trade, order_book)

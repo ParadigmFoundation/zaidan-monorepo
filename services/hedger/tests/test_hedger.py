@@ -109,10 +109,10 @@ def test_find_orders_to_place():
 
 def test_events_callback():
     order = {}
-    order['maker_size'] = 50
-    order['side'] = 'S'
-    order['pair'] = 'WETH/DAI'
-    order['maker_price'] = 100
+    order['maker_size'] = '50'
+    order['taker_asset'] = 'DAI'
+    order['maker_asset'] = 'WETH'
+    order['price'] = '100'
     hedger.events_callback(1, order)
 
 
