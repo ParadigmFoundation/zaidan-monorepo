@@ -1,6 +1,7 @@
 import os
 import json
 from typing import Optional
+import sys
 
 CONFIG_FILE = os.environ.get('CONFIG_FILE', 'maker/config.json')
 CHAIN_ID = int(os.environ.get('CHAIN_ID', 1337))

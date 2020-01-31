@@ -10,6 +10,7 @@ from config_manager import ConfigManager
 import grpc
 import os
 import sys
+import logging
 
 HEDGER_CHANNEL = os.environ.get('HEDGER_CHANNEL', '')
 
@@ -23,6 +24,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
         self.pricing_utils = PricingUtils()
         self.test = test
         self.initialize_hedger_connection()
+        self.logger = logging.Logger('maker-logger')
 
     def initialize_hedger_connection(self) -> None:
         self.hedger_channel = grpc.insecure_channel(HEDGER_CHANNEL)
@@ -30,6 +32,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
     def GetQuote(self, request: object, context) -> object:
 
+        self.logger.info('get quote request')
         maker_asset = self.config_manager.get_ticker_with_address(request.maker_asset)
         taker_asset = self.config_manager.get_ticker_with_address(request.taker_asset)
 
@@ -61,7 +64,7 @@ class MakerServicer(services_pb2_grpc.MakerServicer):
 
 
     def CheckQuote(self, request:object, context) -> object:
-        print('callback received for quote ' + str(request.quote_id), file=sys.stderr)
+        self.logger.info('callback received for quote ' + str(request.quote_id))
         try:
             quote = self.redis_interface.get_quote(request.quote_id)
         except ValueError:
