@@ -219,6 +219,7 @@ class Hedger():
         position = 0
         if ENVIRONMENT == 'PRODUCTION':
             for exchange in ['COINBASE']:
+                self.logger('calling out to exchange manager in hedger')
                 open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
                 for order in open_orders:
                     if order['side'] == 'buy':
