@@ -216,10 +216,11 @@ class Hedger():
 
     def get_current_position(self, pair):
         ''' Get current position on exchanges. '''
+        self.logger.info('beginning of get current position function')
         position = 0
         if ENVIRONMENT == 'PRODUCTION':
             for exchange in ['COINBASE']:
-                self.logger('calling out to exchange manager in hedger')
+                self.logger.info('calling out to exchange manager in hedger')
                 open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
                 for order in open_orders:
                     if order['side'] == 'buy':
