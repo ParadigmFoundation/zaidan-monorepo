@@ -124,13 +124,15 @@ class Hedger():
             if order['maker_asset'] == order['pair'].split('/')[0]:
                 trade['size'] = float(order['maker_size'])
                 trade['side'] = 'S'
+                trade['price'] = float(order['taker_size']) / float(order['maker_size'])
             else:
                 trade['size'] = float(order['taker_size'])
                 trade['side'] = 'B'
-            trade['price'] = float(order['price'])
+                trade['price'] = float(order['maker_size'])/float(order['taker_size'])
 
 
-            order_book = self.update_order_book(trade['pair'])
+            order_book = self.update_order_book(order['pair'])
+            trade['pair'] = order['pair']
             new_orders, cancels = self.find_orders_to_place(trade, order_book)
 
             for new_order in new_orders:
