@@ -151,6 +151,8 @@ class Hedger():
         size = round(trade['size'], PRECISION)
         price = trade['price']
         self.logger.info("Received trade", trade)
+        unhedged_positions_update = 0
+        position = self.get_current_position(pair)
 
         # checking if the order is large enough to constitute an acceptable exchange order
         self.logger.info("conditional info")
