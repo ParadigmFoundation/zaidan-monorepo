@@ -78,7 +78,9 @@ class InventoryManager():
         '''
 
         req = exchange
+        print('received open orders request')
         response = self.em_stub.GetOpenOrders(wrappers.StringValue(req))
+        print('successfully got open orders')
         orders_list = []
         for order in response:
             if order.order.symbol == symbol:
