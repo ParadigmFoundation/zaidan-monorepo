@@ -45,7 +45,7 @@ class InventoryManager():
         else:
             side_enum = ExchangeOrder.Side.Sell
 
-        order = ExchangeOrder(price=price, symbol=symbol, amount=size, side=side_enum)
+        order = ExchangeOrder(price=str(price), symbol=symbol, amount=str(size), side=side_enum)
 
         req = ExchangeCreateOrderRequest(exchange=exchange, order=order)
 
@@ -87,7 +87,7 @@ class InventoryManager():
                 else:
                     order_dict['side'] = 'sell'
                 order_dict['symbol'] = symbol
-                order_dict['price'] = order.order.price
+                order_dict['price'] = float(order.order.price)
                 order_dict['id'] = order.order.id
                 order_dict['timestamp'] = order.status.timestamp
                 order_dict['remaining'] = float(order.order.size) - float(order.status.filled)
