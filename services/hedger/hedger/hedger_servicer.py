@@ -8,11 +8,10 @@ class HedgerServicer(services_pb2_grpc.HedgerServicer):
     def __init__(self) -> None:
         services_pb2_grpc.HedgerServicer.__init__(self)
         self.hedger = Hedger()
-        self.logger = logging.Logger('hedger-logger')
 
     
     def HedgeOrder(self, request: object, context) -> object:
-        self.logger.info('received request to hedge order: ' + str(request.id))
+        logging.info('received request to hedge order: ' + str(request.id))
 
         order_id = request.id
 
