@@ -84,7 +84,7 @@ class InventoryManager():
         response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=req))
         logging.info('successfully got open orders', file=sys.stderr)
         orders_list = []
-        for order in response:
+        for order in response.array:
             if order.order.symbol == symbol:
                 order_dict = {}
                 if order.order.side == 0:

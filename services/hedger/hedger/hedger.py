@@ -503,7 +503,7 @@ class Hedger():
         response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=exchange.lower()))
         self.logger.info('successfully got open orders')
         orders_list = []
-        for order in response:
+        for order in response.array:
             if order.order.symbol == symbol:
                 order_dict = {}
                 if order.order.side == 0:
