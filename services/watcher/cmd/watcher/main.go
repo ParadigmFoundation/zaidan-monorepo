@@ -17,7 +17,6 @@ var (
 	ethAddress string
 	makerUrl   string
 	port       int
-	bugsnagKey string
 
 	cmd = &cobra.Command{
 		Use:   "watcher",
@@ -41,7 +40,7 @@ func configureFlags() {
 }
 
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
-	log := logger.New("app")
+	log := logger.New("Watcher")
 	log.Info("Starting")
 
 	if err := eth.Configure(ethAddress); err != nil {
