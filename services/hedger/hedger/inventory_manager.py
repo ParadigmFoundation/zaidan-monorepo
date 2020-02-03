@@ -1,7 +1,7 @@
 import grpc
 import os
 from services_pb2_grpc import ExchangeManagerStub
-from types_pb2 import ExchangeCreateOrderRequest, ExchangeOrderRequest, ExchangeOrderRequest, ExchangeOrder
+from types_pb2 import ExchangeCreateOrderRequest, ExchangeOrderRequest, ExchangeOrderRequest, ExchangeOrder, GetOpenOrdersRequest
 from google.protobuf import wrappers_pb2 as wrappers
 import sys
 import logging
@@ -13,7 +13,7 @@ class InventoryManagerError(Exception):
     '''
 
 
-EXCHANGEMANAGER_CHANNEL = os.environ.get('EXCHANGEMANAGER_CHANNEL', 'localhost:8000')
+EXCHANGEMANAGER_CHANNEL = os.environ.get('EXCHANGEMANAGER_CHANNEL', 'em:8000')
 
 class InventoryManager():
 
@@ -81,7 +81,7 @@ class InventoryManager():
 
         req = exchange
         logging.info('received open orders request', file=sys.stderr)
-        response = self.em_stub.GetOpenOrders(wrappers.StringValue(req))
+        response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=req))
         logging.info('successfully got open orders', file=sys.stderr)
         orders_list = []
         for order in response:
