@@ -222,6 +222,7 @@ class Hedger():
             for exchange in ['COINBASE']:
                 self.logger.info('calling out to exchange manager in hedger')
                 open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
+                self.logger.info('received response from hedger')
                 for order in open_orders:
                     if order['side'] == 'buy':
                         position = position - order['remaining']
