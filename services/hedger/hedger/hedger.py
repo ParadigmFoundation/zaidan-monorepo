@@ -500,13 +500,7 @@ class Hedger():
             print(order)
 
     def get_open_orders_debug(self, exchange, symbol):
-        self.logger.info('received open orders request')
-        try:
-            response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=exchange.lower()))
-            self.logger.info('passed grpc call')
-        except Exception as e:
-            self.logger.info('inside except handler')
-            self.logger.error("caught an error", {'error': e.args})
+        response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=exchange.lower()))
         self.logger.info('successfully got open orders')
         orders_list = []
         for order in response:
