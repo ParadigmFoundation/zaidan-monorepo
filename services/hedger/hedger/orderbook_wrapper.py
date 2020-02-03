@@ -103,15 +103,14 @@ class OrderBookWrapper():
         if symbol == 'DAI/USD':
             symbol = 'DAI/USDC'
 
-            # Build the request
-            req = OrderBookRequest(exchange=exchange.lower(), symbol=symbol)
+        # Build the request
+        req = OrderBookRequest(exchange=exchange.lower(), symbol=symbol)
 
-            # Call the server
-            response = self.obm_stub.OrderBook(req)
-            if side == 'bids':
-
-                return [[x.price, x.quantity] for x in response.bids]
-            else:
-                return [[x.price, x.quantity] for x in response.asks]
+        # Call the server
+        response = self.obm_stub.OrderBook(req)
+        if side == 'bids':
+            return [[x.price, x.quantity] for x in response.bids]
+        else:
+            return [[x.price, x.quantity] for x in response.asks]
 
 
