@@ -141,6 +141,7 @@ class Hedger():
 
         order_book = self.update_order_book(order['pair'])
         trade['pair'] = order['pair']
+        self.logger.info(str(order_book))
         new_orders, cancels = self.find_orders_to_place(trade, order_book)
 
         for new_order in new_orders:
