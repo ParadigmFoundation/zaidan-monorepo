@@ -306,6 +306,10 @@ message ExchangeOrderRequest {
   string id = 2;
 }
 
+message GetOpenOrdersRequest {
+  string exchange = 1;
+}
+
 message ExchangeOrderResponse {
   ExchangeOrder order = 1;
   ExchangeOrderStatus status = 2;
