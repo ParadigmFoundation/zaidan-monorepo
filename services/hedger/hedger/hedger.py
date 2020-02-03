@@ -227,7 +227,7 @@ class Hedger():
         ''' Get current position on exchanges. '''
         self.logger.info('beginning of get current position function')
         position = 0
-        if ENVIRONMENT == 'PRODUCTION':
+        if ENVIRONMENT == 'PRODUCTION' or ENVIRONMENT == 'DEBUG':
             for exchange in ['COINBASE']:
                 self.logger.info('calling out to exchange manager in hedger')
                 if ENVIRONMENT == 'DEBUG':
