@@ -2669,6 +2669,45 @@ func (m *ExchangeOrderRequest) GetId() string {
 	return ""
 }
 
+type GetOpenOrdersRequest struct {
+	Exchange             string   `protobuf:"bytes,1,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetOpenOrdersRequest) Reset()         { *m = GetOpenOrdersRequest{} }
+func (m *GetOpenOrdersRequest) String() string { return proto.CompactTextString(m) }
+func (*GetOpenOrdersRequest) ProtoMessage()    {}
+func (*GetOpenOrdersRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_d938547f84707355, []int{42}
+}
+
+func (m *GetOpenOrdersRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetOpenOrdersRequest.Unmarshal(m, b)
+}
+func (m *GetOpenOrdersRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetOpenOrdersRequest.Marshal(b, m, deterministic)
+}
+func (m *GetOpenOrdersRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetOpenOrdersRequest.Merge(m, src)
+}
+func (m *GetOpenOrdersRequest) XXX_Size() int {
+	return xxx_messageInfo_GetOpenOrdersRequest.Size(m)
+}
+func (m *GetOpenOrdersRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetOpenOrdersRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetOpenOrdersRequest proto.InternalMessageInfo
+
+func (m *GetOpenOrdersRequest) GetExchange() string {
+	if m != nil {
+		return m.Exchange
+	}
+	return ""
+}
+
 type ExchangeOrderResponse struct {
 	Order                *ExchangeOrder       `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
 	Status               *ExchangeOrderStatus `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"`
@@ -2681,7 +2720,7 @@ func (m *ExchangeOrderResponse) Reset()         { *m = ExchangeOrderResponse{} }
 func (m *ExchangeOrderResponse) String() string { return proto.CompactTextString(m) }
 func (*ExchangeOrderResponse) ProtoMessage()    {}
 func (*ExchangeOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{42}
+	return fileDescriptor_d938547f84707355, []int{43}
 }
 
 func (m *ExchangeOrderResponse) XXX_Unmarshal(b []byte) error {
@@ -2727,7 +2766,7 @@ func (m *ExchangeOrderArrayResponse) Reset()         { *m = ExchangeOrderArrayRe
 func (m *ExchangeOrderArrayResponse) String() string { return proto.CompactTextString(m) }
 func (*ExchangeOrderArrayResponse) ProtoMessage()    {}
 func (*ExchangeOrderArrayResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{43}
+	return fileDescriptor_d938547f84707355, []int{44}
 }
 
 func (m *ExchangeOrderArrayResponse) XXX_Unmarshal(b []byte) error {
@@ -2766,7 +2805,7 @@ func (m *HedgeOrderRequest) Reset()         { *m = HedgeOrderRequest{} }
 func (m *HedgeOrderRequest) String() string { return proto.CompactTextString(m) }
 func (*HedgeOrderRequest) ProtoMessage()    {}
 func (*HedgeOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{44}
+	return fileDescriptor_d938547f84707355, []int{45}
 }
 
 func (m *HedgeOrderRequest) XXX_Unmarshal(b []byte) error {
@@ -2805,7 +2844,7 @@ func (m *HedgeOrderResponse) Reset()         { *m = HedgeOrderResponse{} }
 func (m *HedgeOrderResponse) String() string { return proto.CompactTextString(m) }
 func (*HedgeOrderResponse) ProtoMessage()    {}
 func (*HedgeOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_d938547f84707355, []int{45}
+	return fileDescriptor_d938547f84707355, []int{46}
 }
 
 func (m *HedgeOrderResponse) XXX_Unmarshal(b []byte) error {
@@ -2878,6 +2917,7 @@ func init() {
 	proto.RegisterType((*ExchangeOrderStatus)(nil), "ExchangeOrderStatus")
 	proto.RegisterType((*ExchangeCreateOrderRequest)(nil), "ExchangeCreateOrderRequest")
 	proto.RegisterType((*ExchangeOrderRequest)(nil), "ExchangeOrderRequest")
+	proto.RegisterType((*GetOpenOrdersRequest)(nil), "GetOpenOrdersRequest")
 	proto.RegisterType((*ExchangeOrderResponse)(nil), "ExchangeOrderResponse")
 	proto.RegisterType((*ExchangeOrderArrayResponse)(nil), "ExchangeOrderArrayResponse")
 	proto.RegisterType((*HedgeOrderRequest)(nil), "HedgeOrderRequest")
@@ -2887,7 +2927,7 @@ func init() {
 func init() { proto.RegisterFile("types.proto", fileDescriptor_d938547f84707355) }
 
 var fileDescriptor_d938547f84707355 = []byte{
-	// 1969 bytes of a gzipped FileDescriptorProto
+	// 1982 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x19, 0xcb, 0x72, 0xe3, 0xc6,
 	0x31, 0xe0, 0x1b, 0x4d, 0x51, 0x22, 0x41, 0x3d, 0xe0, 0xf5, 0x63, 0x65, 0xc8, 0xa9, 0xc8, 0xc9,
 	0x16, 0x53, 0x51, 0x52, 0x71, 0x1e, 0x27, 0xc9, 0x91, 0xd7, 0x9b, 0x5a, 0xd7, 0x3a, 0xe0, 0x6e,
@@ -3005,11 +3045,11 @@ var fileDescriptor_d938547f84707355 = []byte{
 	0x5d, 0x06, 0xd3, 0x29, 0x4d, 0xc7, 0xae, 0x6a, 0x95, 0xdd, 0xaa, 0xba, 0xac, 0x3b, 0x78, 0xab,
 	0xfe, 0x08, 0x77, 0x52, 0x01, 0x15, 0x8f, 0xc3, 0x4d, 0x7f, 0x71, 0xde, 0x2b, 0xd6, 0x80, 0xed,
 	0xa2, 0x7d, 0x69, 0x15, 0x38, 0x83, 0xdd, 0x22, 0xfc, 0x25, 0x38, 0xcb, 0x70, 0xd4, 0xd2, 0x70,
-	0x38, 0x37, 0xb0, 0x57, 0xe2, 0xa1, 0x92, 0xc7, 0x7b, 0xc5, 0x3c, 0x55, 0xad, 0x82, 0x75, 0x2f,
-	0x9b, 0x18, 0x4b, 0x4d, 0x77, 0x47, 0x15, 0x2e, 0xcd, 0xe6, 0xc8, 0xbf, 0xce, 0x1d, 0x82, 0xe8,
-	0xd3, 0x24, 0x21, 0xcb, 0x4c, 0xe2, 0x3d, 0x68, 0x12, 0x01, 0x50, 0x33, 0xca, 0xfd, 0x51, 0xa5,
-	0x62, 0xae, 0x24, 0x72, 0x8e, 0x60, 0xf0, 0x31, 0xf5, 0x4b, 0x96, 0x97, 0x0e, 0x9b, 0xf3, 0x7d,
-	0xb0, 0x74, 0xa2, 0x4d, 0x79, 0xf1, 0xac, 0xf5, 0x79, 0xe3, 0x2a, 0x99, 0x4d, 0x2e, 0x5a, 0xf8,
-	0xf3, 0xee, 0xc7, 0xff, 0x0b, 0x00, 0x00, 0xff, 0xff, 0xc8, 0xf8, 0x3a, 0xcd, 0xcb, 0x1b, 0x00,
-	0x00,
+	0x38, 0x27, 0xd8, 0x5a, 0x3e, 0x9a, 0xd1, 0x08, 0x59, 0xb0, 0x97, 0xe0, 0xe1, 0xdc, 0xc0, 0x5e,
+	0x49, 0xae, 0x4a, 0x38, 0xef, 0x15, 0x73, 0x5b, 0xb5, 0xda, 0xd6, 0xbd, 0x6c, 0xca, 0x2c, 0xad,
+	0xdb, 0x1d, 0x55, 0x84, 0x21, 0x9b, 0x3d, 0xff, 0x3a, 0x77, 0x22, 0xa2, 0x4f, 0x93, 0x84, 0x2c,
+	0x33, 0x89, 0xf7, 0xa0, 0x49, 0x04, 0x40, 0xcd, 0x35, 0xf7, 0x47, 0x95, 0x8a, 0xb9, 0x92, 0xc8,
+	0x39, 0x82, 0xc1, 0xc7, 0xd4, 0x2f, 0x79, 0xab, 0x74, 0x40, 0x9d, 0xef, 0x83, 0xa5, 0x13, 0x6d,
+	0xca, 0xa5, 0x67, 0xad, 0xcf, 0x1b, 0x57, 0xc9, 0x6c, 0x72, 0xd1, 0xc2, 0x1f, 0x7e, 0x3f, 0xfe,
+	0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x1e, 0xc0, 0x13, 0x34, 0xff, 0x1b, 0x00, 0x00,
 }
