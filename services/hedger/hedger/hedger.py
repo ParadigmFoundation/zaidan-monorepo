@@ -104,8 +104,8 @@ class Hedger():
         self.initialize_exchangemanager_connection()
 
     def initialize_exchangemanager_connection(self) -> None:
-        self.em_channel = grpc.insecure_channel(EXCHANGEMANAGER_CHANNEL)
-        self.em_stub = ExchangeManagerStub(self.em_channel)
+        chan = grpc.insecure_channel(EXCHANGEMANAGER_CHANNEL)
+        self.em_stub = ExchangeManagerStub(chan)
 
     def events_callback(self, quote_id, order=None):
         """ Get called by."""
@@ -500,9 +500,12 @@ class Hedger():
             print(order)
 
     def get_open_orders_debug(self, exchange, symbol):
-        req = exchange
         self.logger.info('received open orders request')
-        response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=req))
+        try:
+            response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=exchange.lower()))
+            self.logger.info('passed grpc call')
+        except Exception as e:
+            self.logger.error("caught an error", {'error': e.args})
         self.logger.info('successfully got open orders')
         orders_list = []
         for order in response:
