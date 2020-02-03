@@ -8,7 +8,11 @@ from zaidan import Logger
 from redis_interface import RedisInterface
 from orderbook_wrapper import OrderBookWrapper
 from inventory_manager import InventoryManager
+from services_pb2_grpc import ExchangeManagerStub
+from types_pb2 import GetOpenOrdersRequest
+import grpc
 
+EXCHANGEMANAGER_CHANNEL = getenv('EXCHANGEMANAGER_CHANNEL', default='em:8000')
 
 
 Order = collections.namedtuple('Order', 'id, symbol, side, price, quantity, timestamp, exchange')
@@ -97,6 +101,11 @@ class Hedger():
         self.logger.info("hedger created", {'ok': True})
 
         self.order_book_wrapper = OrderBookWrapper(unit_test=test)
+        self.initialize_exchangemanager_connection()
+
+    def initialize_exchangemanager_connection(self) -> None:
+        self.em_channel = grpc.insecure_channel(EXCHANGEMANAGER_CHANNEL)
+        self.em_stub = ExchangeManagerStub(self.em_channel)
 
     def events_callback(self, quote_id, order=None):
         """ Get called by."""
@@ -221,7 +230,10 @@ class Hedger():
         if ENVIRONMENT == 'PRODUCTION':
             for exchange in ['COINBASE']:
                 self.logger.info('calling out to exchange manager in hedger')
-                open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
+                if ENVIRONMENT == 'DEBUG':
+                    open_orders = self.get_open_orders_debug(exchange, PRICE_PAIRS[pair][exchange])
+                else:
+                    open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
                 self.logger.info('received response from hedger')
                 for order in open_orders:
                     if order['side'] == 'buy':
@@ -231,7 +243,10 @@ class Hedger():
 
         else:
             for exchange in PRICE_PAIRS[pair]:
-                open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
+                if ENVIRONMENT == 'DEBUG':
+                    open_orders = self.get_open_orders_debug(exchange, PRICE_PAIRS[pair][exchange])
+                else:
+                    open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
                 for order in open_orders:
                     if order['side'] == 'buy':
                         position = position - order['remaining']
@@ -243,7 +258,10 @@ class Hedger():
         ''' Get open orders for a given trading pair. '''
         open_orders = []
         for exchange in ['COINBASE']:
-            e_open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
+            if ENVIRONMENT == 'DEBUG':
+                e_open_orders = self.get_open_orders_debug(exchange, PRICE_PAIRS[pair][exchange])
+            else:
+                e_open_orders = self.im.get_open_orders(exchange, PRICE_PAIRS[pair][exchange])
             for order in open_orders:
                 order['exchange'] = exchange
             open_orders.extend(e_open_orders)
@@ -481,6 +499,28 @@ class Hedger():
             print('Cancel to be sent to exchange:')
             print(order)
 
+    def get_open_orders_debug(self, exchange, symbol):
+        req = exchange
+        self.logger.info('received open orders request')
+        response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=req))
+        self.logger.info('successfully got open orders')
+        orders_list = []
+        for order in response:
+            if order.order.symbol == symbol:
+                order_dict = {}
+                if order.order.side == 0:
+                    order_dict['side'] = 'buy'
+                else:
+                    order_dict['side'] = 'sell'
+                order_dict['symbol'] = symbol
+                order_dict['price'] = float(order.order.price)
+                order_dict['id'] = order.order.id
+                order_dict['timestamp'] = order.status.timestamp
+                order_dict['remaining'] = float(order.order.size) - float(order.status.filled)
+                orders_list.append(order_dict)
+
+        return orders_list
+
 
 def min_size_from_dealer_pair(pair):
     ''' Get the minimum trade size from a dealer pair. '''
@@ -495,3 +535,5 @@ def order_to_dict(order):
     ''' Convert order NamedTuple to dict. '''
     return dict(id=order.id, symbol=order.symbol, side=order.side, price=order.price, quantity=order.quantity,
                 timestamp=order.timestamp, exchange=order.exchange)
+
+
