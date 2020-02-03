@@ -59,7 +59,7 @@ func (*BugsnagHook) Levels() []logrus.Level {
 
 var bsOnce sync.Once
 
-func ConfigureBugsnag(log *logrus.Logger, key string) {
+func ConfigureBugsnag(log *logrus.Logger, key string, module string) {
 	wd, _ := os.Getwd()
 	wd = strings.SplitAfter(wd, "zaidan-monorepo")[0]
 	bugsnag.Configure(bugsnag.Configuration{
@@ -67,10 +67,10 @@ func ConfigureBugsnag(log *logrus.Logger, key string) {
 		SourceRoot:      wd,
 		Synchronous:     false,
 		ProjectPackages: []string{"github.com/ParadigmFoundation/zaidan-monorepo/**"},
+		AppType: module,
 		// Logger is disabled cause logrus will take care of it
 		Logger: &noop{},
 	})
-	bugsnag.Config.APIKey = key
 
 	log.AddHook(&BugsnagHook{})
 }

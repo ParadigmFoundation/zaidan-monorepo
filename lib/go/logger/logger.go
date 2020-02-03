@@ -25,7 +25,7 @@ type LogOpt func(*Logger)
 func New(module string, opts ...LogOpt) *Logger {
 	logger := logrus.New()
 	if key := os.Getenv("BUGSNAG_APIKEY"); key != "" {
-		ConfigureBugsnag(logger, key)
+		ConfigureBugsnag(logger, key, module)
 	}
 
 	for _, opt := range opts {
