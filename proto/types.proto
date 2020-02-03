@@ -69,6 +69,23 @@ message TransactionStatusUpdateResponse {
     uint32 status = 1;
 }
 
+message Market {
+    string maker_asset_address = 1;
+    repeated string taker_asset_addresses = 2;
+    TradeInfo trade_info = 3;
+    QuoteInfo quote_info = 4;
+    map<string, string> metadata = 5;
+}
+
+message GetMarketsRequest {
+    string maker_asset_address = 1;
+    string taker_asset_address = 2;
+}
+
+message GetMarketsResponse {
+    repeated Market markets = 1;
+}
+
 // Hot wallet
 message Order {
     uint64 chain_id = 1;
@@ -259,14 +276,6 @@ message QuoteInfo {
   string min_size = 1; // The minimum supported trade size, in base units of a market's maker asset
   string max_size = 2; // The maximum supported trade size, in base units of a market's maker asset
 }
-
-message Market {
-  string maker_asset_address = 1; // The Ethereum address of the markets maker asset (provided by the dealer).
-  repeated string taker_asset_addresses = 2; // An array of asset Ethereum addresses for which quotes are supported.
-  TradeInfo trade_info = 3; // Information about trade settlement and execution for this market (gas price, etc.)
-  QuoteInfo quote_info = 4; // Information about quotes provided on this market (max/min size, etc.)
-  map<string, string> metadata = 5; //
-} 
 
 // Exchange Manager
 message ExchangeOrder {

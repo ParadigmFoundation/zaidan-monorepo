@@ -85,6 +85,11 @@ class MakerStub(object):
         request_serializer=types__pb2.CheckQuoteRequest.SerializeToString,
         response_deserializer=types__pb2.CheckQuoteResponse.FromString,
         )
+    self.GetMarkets = channel.unary_unary(
+        '/Maker/GetMarkets',
+        request_serializer=types__pb2.GetMarketsRequest.SerializeToString,
+        response_deserializer=types__pb2.GetMarketsResponse.FromString,
+        )
 
 
 class MakerServicer(object):
@@ -105,6 +110,13 @@ class MakerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetMarkets(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_MakerServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -117,6 +129,11 @@ def add_MakerServicer_to_server(servicer, server):
           servicer.CheckQuote,
           request_deserializer=types__pb2.CheckQuoteRequest.FromString,
           response_serializer=types__pb2.CheckQuoteResponse.SerializeToString,
+      ),
+      'GetMarkets': grpc.unary_unary_rpc_method_handler(
+          servicer.GetMarkets,
+          request_deserializer=types__pb2.GetMarketsRequest.FromString,
+          response_serializer=types__pb2.GetMarketsResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

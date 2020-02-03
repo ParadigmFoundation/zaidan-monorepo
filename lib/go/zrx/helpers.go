@@ -28,7 +28,7 @@ var PROTOCOL_FEE_MULTIPLIER = big.NewInt(150000)
 
 // EXECUTE_FILL_TX_GAS_LIMIT is the maximum gas cost (with buffer) of executing a single fill transaction
 // This value accounts for a scenario in which a 0x staking epoch has ended and must be settled
-var EXECUTE_FILL_TX_GAS_LIMIT = uint64(400000)
+var EXECUTE_FILL_TX_GAS_LIMIT = uint64(330000)
 
 type contracts struct {
 	Exchange    *wrappers.Exchange
