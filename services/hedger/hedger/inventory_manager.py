@@ -44,9 +44,9 @@ class InventoryManager():
             raise ValueError('invalid side (must be "buy" or "sell")')
 
         if side == 'buy':
-            side_enum = ExchangeOrder.Side.Buy
+            side_enum = ExchangeOrder.Side.BUY
         else:
-            side_enum = ExchangeOrder.Side.Sell
+            side_enum = ExchangeOrder.Side.SELL
 
         order = ExchangeOrder(price=str(price), symbol=symbol, amount=str(size), side=side_enum)
 
