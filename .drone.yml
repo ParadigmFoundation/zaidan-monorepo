@@ -12,6 +12,19 @@ steps:
     path: /go/pkg/mod
   - name: gocache
     path: /root/.cache/go-build
+  environment:
+    # EM_ are used by ExchangeManager test suite
+    EM_COINBASE_TEST_KEY:
+      from_secret: EM_COINBASE_TEST_KEY
+    EM_COINBASE_TEST_PASSPHRASE:
+      from_secret: EM_COINBASE_TEST_PASSPHRASE
+    EM_COINBASE_TEST_SECRET:
+      from_secret: EM_COINBASE_TEST_SECRET
+    EM_GEMINI_TEST_KEY:
+      from_secret: EM_GEMINI_TEST_KEY
+    EM_GEMINI_TEST_SECRET:
+      from_secret: EM_GEMINI_TEST_SECRET
+
   commands:
     - make ci
 

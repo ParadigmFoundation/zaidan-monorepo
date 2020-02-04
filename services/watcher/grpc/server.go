@@ -24,10 +24,12 @@ type WatcherServer struct {
 }
 
 func NewServer(txWatching *watching.TxWatching) *WatcherServer {
+	log := logger.New("grpc")
+	opt := grpc.UnaryInterceptor(logger.UnaryServerInterceptor(log))
 	watcherServer := &WatcherServer{
 		TxWatching: txWatching,
-		grpc:       grpc.NewServer(),
-		log:        logger.New("grpc"),
+		grpc:       grpc.NewServer(opt),
+		log:        log,
 	}
 
 	pb.RegisterWatcherServer(watcherServer.grpc, watcherServer)
@@ -83,11 +85,11 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 			}
 
 			if _, err := pb.NewTransactionStatusClient(conn).TransactionStatusUpdate(ctx, &pb.TransactionStatusUpdateRequest{
-				TxHash: in.TxHash,
+				TxHash:  in.TxHash,
 				QuoteId: in.QuoteId,
 				Status:  status,
 			}); err != nil {
-					s.log.Errorf("error connecting to %v: %v", url, err)
+				s.log.Errorf("error connecting to %v: %v", url, err)
 			}
 		}
 	}
