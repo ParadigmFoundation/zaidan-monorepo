@@ -216,7 +216,6 @@ class Hedger():
 
     def get_current_position(self, pair):
         ''' Get current position on exchanges. '''
-        self.logger.info('beginning of get current position function')
         position = 0
         if ENVIRONMENT == 'PRODUCTION':
             for exchange in ['COINBASE']:
