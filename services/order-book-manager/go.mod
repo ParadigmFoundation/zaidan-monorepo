@@ -7,8 +7,6 @@ require (
 	github.com/ParadigmFoundation/zaidan-monorepo/services/dealer v0.0.0-00010101000000-000000000000 // indirect
 	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0
 	github.com/bitbandi/go-hitbtc v0.0.0-20190201230334-2adae5a2f724
-	github.com/bitly/go-simplejson v0.5.0 // indirect
-	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/emirpasic/gods v1.12.0
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.1

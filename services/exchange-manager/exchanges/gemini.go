@@ -171,7 +171,7 @@ func (g *Gemini) CancelOrder(ctx context.Context, id string) (*empty.Empty, erro
 		return nil, err
 	}
 
-	return nil, nil
+	return &empty.Empty{}, nil
 }
 
 func (g *Gemini) GetBalances(ctx context.Context) ([]*GeminiBalance, error) {

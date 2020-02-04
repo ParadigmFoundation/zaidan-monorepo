@@ -1,11 +1,10 @@
 package main
 
 import (
-	"log"
-
 	"github.com/spf13/pflag"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/grpc"
 )
@@ -30,6 +29,9 @@ func main() {
 	pflag.Uint32VarP(&cfg.senderIndex, "sender-index", "S", 1, "set the index of the maker account for 0x orders")
 	pflag.Parse()
 
+	log := logger.New("app")
+
+	log.WithFields(logger.Fields{"ethurl": cfg.ethurl, "mnemonic": cfg.mnemonic}).Info("Initializing Ethereum Driver")
 	deriver := eth.NewBaseDeriver()
 	provider, err := eth.NewProvider(cfg.ethurl, cfg.mnemonic, deriver.Base())
 	if err != nil {
@@ -47,9 +49,10 @@ func main() {
 
 	makerAcct, _ := provider.AccountAt(makerPath)
 	senderAcct, _ := provider.AccountAt(senderPath)
-	log.Println("maker address:", makerAcct.Address.Hex())
-	log.Println("sender address:", senderAcct.Address.Hex())
-
+	log.WithFields(logger.Fields{
+		"maker":  makerAcct.Address.Hex(),
+		"sender": senderAcct.Address.Hex(),
+	}).Info("HotWalletConfig")
 	hwcfg := core.HotWalletConfig{
 		OrderValidatorMaxReqLength: cfg.maxReqLen,
 		MakerAddress:               makerAcct.Address,
@@ -67,6 +70,6 @@ func main() {
 		errChan <- svr.Listen(cfg.bind)
 	}()
 
-	log.Println("hot wallet started on", cfg.bind)
+	log.WithField("bind", cfg.bind).Info("hot wallet started")
 	log.Fatal(<-errChan)
 }
