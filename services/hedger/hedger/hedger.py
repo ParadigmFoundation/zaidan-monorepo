@@ -457,7 +457,7 @@ class Hedger():
         """ Perform the execution of an order as well as adding it to the open_orders list."""
 
         if ENVIRONMENT == 'PRODUCTION':
-            order.price = round(order.price, TOKEN_GRANULARITY)
+            order = order._replace(price=round(order.price, TOKEN_GRANULARITY))
             self.logger.info('executing order', order_to_dict(order))
             try:
                 if order.side == 'B':
