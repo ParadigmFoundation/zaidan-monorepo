@@ -73,7 +73,7 @@ func (cb *Coinbase) GetOpenOrders(ctx context.Context) (*types.ExchangeOrderArra
 }
 
 func (cb *Coinbase) CancelOrder(ctx context.Context, id string) (*empty.Empty, error) {
-	return nil, cb.client.CancelOrder(id)
+	return &empty.Empty{}, cb.client.CancelOrder(id)
 }
 
 // NewOrderResponse converts a coinbase Order type into our type

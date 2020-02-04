@@ -69,8 +69,9 @@ func (suite *ExchangesSuite) TestCRUD() {
 
 	// DELETE
 	suite.Block("CancelOrder", func(t *testing.T) {
-		_, err := suite.exchange.CancelOrder(ctx, order.Id)
+		resp, err := suite.exchange.CancelOrder(ctx, order.Id)
 		require.NoError(t, err)
+		require.NotNil(t, resp)
 	})
 	suite.Block("GetOrder", func(t *testing.T) {
 		_, err := suite.exchange.GetOrder(ctx, order.Id)
