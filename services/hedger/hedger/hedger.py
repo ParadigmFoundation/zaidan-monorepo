@@ -8,6 +8,7 @@ from zaidan import Logger
 from redis_interface import RedisInterface
 from orderbook_wrapper import OrderBookWrapper
 from inventory_manager import InventoryManager
+import traceback
 
 
 
@@ -106,39 +107,42 @@ class Hedger():
 
         self.logger.info('received order', order)
         self.open_orders_lock.acquire()
-
-        if order['taker_asset'] == 'WETH' or order['maker_asset'] == 'WETH':
-            order['pair'] = 'WETH/DAI'
-        elif order['taker_asset'] == 'ZRX' or order['maker_asset'] == 'ZRX':
+        try:
             if order['taker_asset'] == 'WETH' or order['maker_asset'] == 'WETH':
-                order['pair'] == 'ZRX/WETH'
+                order['pair'] = 'WETH/DAI'
+            elif order['taker_asset'] == 'ZRX' or order['maker_asset'] == 'ZRX':
+                if order['taker_asset'] == 'WETH' or order['maker_asset'] == 'WETH':
+                    order['pair'] == 'ZRX/WETH'
+                else:
+                    order['pair'] == 'ZRX/DAI'
+
+
+            if order['pair'] == 'ZRX/WETH' and ENVIRONMENT != 'TEST':
+                order['pair'] = 'ZRX/DAI'
+
+            trade = {}
+            if order['maker_asset'] == order['pair'].split('/')[0]:
+                trade['size'] = float(order['maker_size'])
+                trade['side'] = 'S'
+                trade['price'] = float(order['taker_size']) / float(order['maker_size'])
             else:
-                order['pair'] == 'ZRX/DAI'
+                trade['size'] = float(order['taker_size'])
+                trade['side'] = 'B'
+                trade['price'] = float(order['maker_size'])/float(order['taker_size'])
 
 
-        if order['pair'] == 'ZRX/WETH' and ENVIRONMENT != 'TEST':
-            order['pair'] = 'ZRX/DAI'
+            order_book = self.update_order_book(order['pair'])
+            trade['pair'] = order['pair']
+            new_orders, cancels = self.find_orders_to_place(trade, order_book)
 
-        trade = {}
-        if order['maker_asset'] == order['pair'].split('/')[0]:
-            trade['size'] = float(order['maker_size'])
-            trade['side'] = 'S'
-            trade['price'] = float(order['taker_size']) / float(order['maker_size'])
-        else:
-            trade['size'] = float(order['taker_size'])
-            trade['side'] = 'B'
-            trade['price'] = float(order['maker_size'])/float(order['taker_size'])
+            for new_order in new_orders:
+                self.execute_order(new_order)
 
-
-        order_book = self.update_order_book(order['pair'])
-        trade['pair'] = order['pair']
-        new_orders, cancels = self.find_orders_to_place(trade, order_book)
-
-        for new_order in new_orders:
-            self.execute_order(new_order)
-
-        for cancel in cancels:
-            self.execute_cancel(cancel)
+            for cancel in cancels:
+                self.execute_cancel(cancel)
+        except Exception as e:
+            self.logger.error("Unknown exception when hedging trade", {'error': str(e)})
+            traceback.print_exc()
 
         self.open_orders_lock.release()
 

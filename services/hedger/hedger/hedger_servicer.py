@@ -25,7 +25,7 @@ class HedgerServicer(services_pb2_grpc.HedgerServicer):
                self.hedger.events_callback(order_id)
         except Exception as e:
             print('failed to hedge trade')
-            traceback.print_exc()
+            print(str(e))
 
         response = types_pb2.HedgeOrderResponse(valid=order_id_received)
 
