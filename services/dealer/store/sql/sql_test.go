@@ -24,8 +24,17 @@ func (suite *SQLSuite) TearDownTest() {
 	db := suite.Suite.Store.(*Store).db
 	defer db.Close()
 
-	// wipe
-	for _, t := range []string{"migrations", "transaction_infos", "quotes", "markets", "policies"} {
+	// Wipe the database tables
+	// As some tables reference others (Foreign keys) the order of this slice IS IMPORTANT
+	wipe := []string{
+		"trades",
+		"markets",
+		"migrations",
+		"policies",
+		"transaction_infos",
+		"quotes",
+	}
+	for _, t := range wipe {
 		_, err := db.Exec("DROP TABLE IF EXISTS " + t)
 		suite.Require().NoError(err)
 	}

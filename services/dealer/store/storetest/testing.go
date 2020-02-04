@@ -16,8 +16,8 @@ type Suite struct {
 	Store store.Store
 }
 
-func (suite *Suite) TestQuotes() {
-	obj := &types.Quote{
+func buildQuote() *types.Quote {
+	return &types.Quote{
 		QuoteId:               uuid.New().String(),
 		MakerAssetAddress:     "maker-asset-address",
 		TakerAssetAddress:     "taker-asset-address",
@@ -38,6 +38,10 @@ func (suite *Suite) TestQuotes() {
 			},
 		},
 	}
+}
+
+func (suite *Suite) TestQuotes() {
+	obj := buildQuote()
 
 	suite.Require().NoError(
 		suite.Store.CreateQuote(obj),
@@ -111,5 +115,54 @@ func (suite *Suite) TestPolicies() {
 		p := "foo"
 		suite.Require().NoError(suite.Store.CreatePolicy(p))
 		suite.Require().NoError(suite.Store.CreatePolicy(p))
+	})
+}
+
+func buildTrade() *types.Trade {
+	return &types.Trade{
+		Quote:       &types.Quote{},
+		TxTimestamp: time.Now().UnixNano(),
+	}
+}
+
+func (suite *Suite) TestTrades() {
+	quote := buildQuote()
+	suite.Require().NoError(
+		suite.Store.CreateQuote(quote),
+	)
+
+	// Create the Trade
+	trade := buildTrade()
+	trade.Quote = quote
+	suite.Require().NoError(
+		suite.Store.CreateTrade(trade),
+	)
+
+	// Get the trade
+	found, err := suite.Store.GetTrade(quote.QuoteId)
+	suite.Require().NoError(err)
+	suite.Assert().True(
+		proto.Equal(trade, found),
+	)
+
+	suite.Run("StatusUpdate", func() {
+		suite.Require().NoError(
+			suite.Store.UpdateTradeStatus(quote.QuoteId, types.Trade_ERROR),
+		)
+		found, err := suite.Store.GetTrade(quote.QuoteId)
+		suite.Require().NoError(err)
+		suite.Assert().Equal(types.Trade_ERROR, found.Status)
+
+		err2 := suite.Store.UpdateTradeStatus("this-id-does-not-exist", types.Trade_ERROR)
+		suite.Require().Error(err2)
+		suite.Assert().Equal(store.ErrQuoteDoesNotExist, err2)
+	})
+
+	suite.Run("NonExistent Quote", func() {
+		t := buildTrade()
+		t.Quote.QuoteId = "this-id-does-not-exist"
+		err := suite.Store.CreateTrade(t)
+		suite.Require().Error(err)
+		suite.Assert().Equal(store.ErrQuoteDoesNotExist, err)
 	})
 }
