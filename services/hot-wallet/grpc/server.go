@@ -4,6 +4,7 @@ import (
 	"net"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"google.golang.org/grpc"
 )
 
@@ -14,8 +15,10 @@ type Server struct {
 
 // NewServer creates a new gRPC hot-wallet server provided a service
 func NewServer(service types.HotWalletServer) *Server {
+	log := logger.New("grpc")
+	opt := grpc.UnaryInterceptor(logger.UnaryServerInterceptor(log))
 	srv := &Server{
-		grpc: grpc.NewServer(),
+		grpc: grpc.NewServer(opt),
 	}
 	types.RegisterHotWalletServer(srv.grpc, service)
 	return srv

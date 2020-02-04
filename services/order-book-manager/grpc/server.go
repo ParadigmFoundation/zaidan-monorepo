@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
+	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
 	_ "github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"
@@ -22,9 +23,11 @@ type Server struct {
 }
 
 func NewServer(store store.Store) *Server {
+	log := logger.New("grpc")
+	opt := grpc.UnaryInterceptor(logger.UnaryServerInterceptor(log))
 	srv := &Server{
 		store: store,
-		grpc:  grpc.NewServer(),
+		grpc:  grpc.NewServer(opt),
 	}
 	types.RegisterOrderBookManagerServer(srv.grpc, srv)
 	return srv
