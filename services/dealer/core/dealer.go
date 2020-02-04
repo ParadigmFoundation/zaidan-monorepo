@@ -213,3 +213,7 @@ func (d *Dealer) GetMarkets(mAddr, tAddr string, page, perPage int) ([]*types.Ma
 	mkts := paginatedMakets(resp.Markets).Paginate(page, perPage)
 	return mkts, nil
 }
+
+func (d *Dealer) CreateTrade(t *types.Trade) error {
+	return d.db.CreateTrade(t)
+}

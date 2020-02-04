@@ -243,6 +243,11 @@ class HotWalletStub(object):
         request_serializer=types__pb2.ExecuteZeroExTransactionRequest.SerializeToString,
         response_deserializer=types__pb2.ExecuteZeroExTransactionResponse.FromString,
         )
+    self.GetTradeInfo = channel.unary_unary(
+        '/HotWallet/GetTradeInfo',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=types__pb2.TradeInfo.FromString,
+        )
 
 
 class HotWalletServicer(object):
@@ -319,6 +324,13 @@ class HotWalletServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetTradeInfo(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_HotWalletServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -371,6 +383,11 @@ def add_HotWalletServicer_to_server(servicer, server):
           servicer.ExecuteZeroExTransaction,
           request_deserializer=types__pb2.ExecuteZeroExTransactionRequest.FromString,
           response_serializer=types__pb2.ExecuteZeroExTransactionResponse.SerializeToString,
+      ),
+      'GetTradeInfo': grpc.unary_unary_rpc_method_handler(
+          servicer.GetTradeInfo,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=types__pb2.TradeInfo.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
