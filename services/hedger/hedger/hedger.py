@@ -458,7 +458,7 @@ class Hedger():
 
         if ENVIRONMENT == 'PRODUCTION':
             order = order._replace(price=round(order.price, TOKEN_GRANULARITY))
-            self.logger.info('executing order', order_to_dict(order))
+            self.logger.info('executing order', {'order': order_to_dict(order)})
             try:
                 if order.side == 'B':
                     response = self.im.post_order(order.exchange, order.symbol, 'buy', order.price, order.quantity)
