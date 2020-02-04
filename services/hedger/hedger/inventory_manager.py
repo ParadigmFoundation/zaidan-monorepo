@@ -79,10 +79,7 @@ class InventoryManager():
         :param symbol: The market symbol to get open orders for (BASE/QUOTE).
         '''
 
-        req = exchange
-        logging.info('received open orders request', file=sys.stderr)
-        response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=req))
-        logging.info('successfully got open orders', file=sys.stderr)
+        response = self.em_stub.GetOpenOrders(GetOpenOrdersRequest(exchange=exchange.lower()))
         orders_list = []
         for order in response.array:
             if order.order.symbol == symbol:
