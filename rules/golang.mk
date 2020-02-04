@@ -13,7 +13,7 @@ endif
 test: $(GO_BEFORE_TEST) run-tests $(GO_AFTER_TEST) ## Run the tests
 
 run-tests:
-	CGO_ENABLED=1 go test ./... -race
+	CGO_ENABLED=1 $(GO_TEST)
 
 gen: ## Generate required files
 	go generate ./...
