@@ -50,7 +50,7 @@ class InventoryManager():
 
         order = ExchangeOrder(price=str(price), symbol=symbol, amount=str(size), side=side_enum)
 
-        req = ExchangeCreateOrderRequest(exchange=exchange, order=order)
+        req = ExchangeCreateOrderRequest(exchange=exchange.lower(), order=order)
 
         response = self.em_stub.CreateOrder(req)
         return response
@@ -67,7 +67,7 @@ class InventoryManager():
         :param order_id: The UUID of the posted exchange order.
         '''
 
-        req = ExchangeOrderRequest(exchange=exchange, id=order_id)
+        req = ExchangeOrderRequest(exchange=exchange.lower(), id=order_id)
         response = self.em_stub.CancelOrder(req)
         return {'cancelled':True}
 
