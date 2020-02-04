@@ -85,10 +85,10 @@ class MakerStub(object):
         request_serializer=types__pb2.CheckQuoteRequest.SerializeToString,
         response_deserializer=types__pb2.CheckQuoteResponse.FromString,
         )
-    self.OrderStatusUpdate = channel.unary_unary(
-        '/Maker/OrderStatusUpdate',
-        request_serializer=types__pb2.OrderStatusUpdateRequest.SerializeToString,
-        response_deserializer=types__pb2.OrderStatusUpdateResponse.FromString,
+    self.GetMarkets = channel.unary_unary(
+        '/Maker/GetMarkets',
+        request_serializer=types__pb2.GetMarketsRequest.SerializeToString,
+        response_deserializer=types__pb2.GetMarketsResponse.FromString,
         )
 
 
@@ -110,7 +110,7 @@ class MakerServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
-  def OrderStatusUpdate(self, request, context):
+  def GetMarkets(self, request, context):
     # missing associated documentation comment in .proto file
     pass
     context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -130,14 +130,56 @@ def add_MakerServicer_to_server(servicer, server):
           request_deserializer=types__pb2.CheckQuoteRequest.FromString,
           response_serializer=types__pb2.CheckQuoteResponse.SerializeToString,
       ),
-      'OrderStatusUpdate': grpc.unary_unary_rpc_method_handler(
-          servicer.OrderStatusUpdate,
-          request_deserializer=types__pb2.OrderStatusUpdateRequest.FromString,
-          response_serializer=types__pb2.OrderStatusUpdateResponse.SerializeToString,
+      'GetMarkets': grpc.unary_unary_rpc_method_handler(
+          servicer.GetMarkets,
+          request_deserializer=types__pb2.GetMarketsRequest.FromString,
+          response_serializer=types__pb2.GetMarketsResponse.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
       'Maker', rpc_method_handlers)
+  server.add_generic_rpc_handlers((generic_handler,))
+
+
+class TransactionStatusStub(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def __init__(self, channel):
+    """Constructor.
+
+    Args:
+      channel: A grpc.Channel.
+    """
+    self.TransactionStatusUpdate = channel.unary_unary(
+        '/TransactionStatus/TransactionStatusUpdate',
+        request_serializer=types__pb2.TransactionStatusUpdateRequest.SerializeToString,
+        response_deserializer=types__pb2.TransactionStatusUpdateResponse.FromString,
+        )
+
+
+class TransactionStatusServicer(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def TransactionStatusUpdate(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+
+def add_TransactionStatusServicer_to_server(servicer, server):
+  rpc_method_handlers = {
+      'TransactionStatusUpdate': grpc.unary_unary_rpc_method_handler(
+          servicer.TransactionStatusUpdate,
+          request_deserializer=types__pb2.TransactionStatusUpdateRequest.FromString,
+          response_serializer=types__pb2.TransactionStatusUpdateResponse.SerializeToString,
+      ),
+  }
+  generic_handler = grpc.method_handlers_generic_handler(
+      'TransactionStatus', rpc_method_handlers)
   server.add_generic_rpc_handlers((generic_handler,))
 
 
@@ -200,6 +242,11 @@ class HotWalletStub(object):
         '/HotWallet/ExecuteZeroExTransaction',
         request_serializer=types__pb2.ExecuteZeroExTransactionRequest.SerializeToString,
         response_deserializer=types__pb2.ExecuteZeroExTransactionResponse.FromString,
+        )
+    self.GetTradeInfo = channel.unary_unary(
+        '/HotWallet/GetTradeInfo',
+        request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+        response_deserializer=types__pb2.TradeInfo.FromString,
         )
 
 
@@ -277,6 +324,13 @@ class HotWalletServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetTradeInfo(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_HotWalletServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -329,6 +383,11 @@ def add_HotWalletServicer_to_server(servicer, server):
           servicer.ExecuteZeroExTransaction,
           request_deserializer=types__pb2.ExecuteZeroExTransactionRequest.FromString,
           response_serializer=types__pb2.ExecuteZeroExTransactionResponse.SerializeToString,
+      ),
+      'GetTradeInfo': grpc.unary_unary_rpc_method_handler(
+          servicer.GetTradeInfo,
+          request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+          response_serializer=types__pb2.TradeInfo.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(
