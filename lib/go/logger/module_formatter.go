@@ -383,10 +383,6 @@ func (f *ModuleFormatter) isColored() bool {
 func (f *ModuleFormatter) init(entry *Entry) {
 	if entry.Logger != nil {
 		f.isTerminal = checkIfTerminal(entry.Logger.Out)
-
-		if f.isTerminal {
-			//initTerminal(entry.Logger.Out)
-		}
 	}
 }
 
