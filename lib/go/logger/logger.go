@@ -20,12 +20,7 @@ func New(module string, opts ...LogOpt) *Logger {
 	}
 
 	logger.SetFormatter(&ModuleFormatter{
-		TextFormatter: logrus.TextFormatter{
-			ForceColors:   true,
-			FullTimestamp: true,
-		},
 		module: module,
-
 	})
 
 	return logger
