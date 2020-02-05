@@ -1,23 +1,10 @@
 package logger
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
 )
-
-type ModuleFormatter struct {
-	module string
-	baseFormatter *logrus.TextFormatter
-}
-
-func (f *ModuleFormatter) Format(entry *Entry) ([]byte, error) {
-	arr, err := f.baseFormatter.Format(entry)
-
-	headerBytes := []byte(fmt.Sprintf("%v|", f.module))
-	return append(headerBytes, arr...), err
-}
 
 type LogOpt func(*Logger)
 
@@ -33,11 +20,13 @@ func New(module string, opts ...LogOpt) *Logger {
 	}
 
 	logger.SetFormatter(&ModuleFormatter{
-		module,
-		&logrus.TextFormatter{
-		ForceColors:   true,
-		FullTimestamp: true,
-	}})
+		TextFormatter: logrus.TextFormatter{
+			ForceColors:   true,
+			FullTimestamp: true,
+		},
+		module: module,
+
+	})
 
 	return logger
 }
