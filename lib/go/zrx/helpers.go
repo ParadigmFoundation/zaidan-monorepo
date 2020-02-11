@@ -134,7 +134,7 @@ func (zh *ZeroExHelper) ValidateFill(ctx context.Context, order *zeroex.SignedOr
 }
 
 // ExecuteTransaction prepares ZEIP-18 transaction ztx with signature sig and executes it against the Exchange contract
-func (zh *ZeroExHelper) ExecuteTransaction(ctx context.Context, opts *bind.TransactOpts, ztx *Transaction, sig []byte) (*types.Transaction, error) {
+func (zh *ZeroExHelper) ExecuteTransaction(opts *bind.TransactOpts, ztx *Transaction, sig []byte) (*types.Transaction, error) {
 	transaction := wrappers.Struct3{
 		Salt:                  ztx.Salt,
 		ExpirationTimeSeconds: ztx.ExpirationTimeSeconds,
