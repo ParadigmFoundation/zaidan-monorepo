@@ -24,16 +24,14 @@ type SafeWatchedTransactions struct {
 }
 
 type TxWatching struct {
-	MakerUrl           string
 	safeWatchedTransactions SafeWatchedTransactions
 	log                     *logger.Logger
 }
 
 var bg = context.Background()
 
-func New(makerUrl string) *TxWatching {
+func New() *TxWatching {
 	watching := TxWatching{
-		MakerUrl: 				 makerUrl,
 		safeWatchedTransactions: SafeWatchedTransactions{ watchedTransactions: make(map[common.Hash]WatchedTransaction) },
 		log:                     logger.New("watching"),
 	}
@@ -79,7 +77,6 @@ func (txW *TxWatching) RequestRemoval(txHash common.Hash) {
 
 func (txW *TxWatching) startWatchingBlocks() {
 	for {
-
 		select {
 		case err := <-eth.BlockHeadersSubscription.Err():
 			{
