@@ -14,7 +14,7 @@ import (
 
 func TestWatchTransaction(t *testing.T) {
 	if err := eth.Configure("wss://ropsten.infura.io/ws"); err != nil {
-		assert.Error(t, err, "Test connection failed.")
+		assert.NoError(t, err, "Test connection failed.")
 	}
 	ws := WatcherServer{
 		TxWatching: watching.New(),
