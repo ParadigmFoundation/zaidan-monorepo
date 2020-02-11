@@ -134,13 +134,21 @@ func (zh *ZeroExHelper) ValidateFill(ctx context.Context, order *zeroex.SignedOr
 }
 
 // ExecuteTransaction prepares ZEIP-18 transaction ztx with signature sig and executes it against the Exchange contract
-func (zh *ZeroExHelper) ExecuteTransaction(opts *bind.TransactOpts, ztx *Transaction, sig []byte) (*types.Transaction, error) {
+func (zh *ZeroExHelper) ExecuteTransaction(ctx context.Context, opts *bind.TransactOpts, ztx *Transaction, sig []byte) (*types.Transaction, error) {
 	transaction := wrappers.Struct3{
 		Salt:                  ztx.Salt,
 		ExpirationTimeSeconds: ztx.ExpirationTimeSeconds,
 		GasPrice:              ztx.GasPrice,
 		SignerAddress:         ztx.SignerAddress,
 		Data:                  ztx.Data,
+	}
+
+	// hack (hrharder): a higher than normal gas limit is needed for the snapshot network
+	if zh.ChainID.Uint64() == ZeroExTestChainID {
+		opts.GasLimit = EXECUTE_FILL_TX_GAS_LIMIT
+	} else {
+		// setting gas limit to 0 forces contract.Transact to run gas price estimation
+		opts.GasLimit = 0
 	}
 
 	return zh.Contracts.Exchange.ExecuteTransaction(opts, transaction, sig)

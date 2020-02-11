@@ -29,7 +29,6 @@ func (hw *HotWallet) ExecuteZeroExTransaction(ctx context.Context, req *grpc.Exe
 		Nonce:    new(big.Int).SetUint64(nonce),
 		Value:    new(big.Int).Mul(zrx.PROTOCOL_FEE_MULTIPLIER, ztx.GasPrice),
 		GasPrice: new(big.Int).Set(ztx.GasPrice),
-		GasLimit: zrx.EXECUTE_FILL_TX_GAS_LIMIT,
 		Context:  ctx,
 	}
 
