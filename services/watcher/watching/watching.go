@@ -77,7 +77,6 @@ func (txW *TxWatching) RequestRemoval(txHash common.Hash) {
 
 func (txW *TxWatching) startWatchingBlocks() {
 	for {
-
 		select {
 		case err := <-eth.BlockHeadersSubscription.Err():
 			{
