@@ -7,8 +7,9 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/jmoiron/sqlx/reflectx"
-	_ "github.com/lib/pq"
-	_ "github.com/mattn/go-sqlite3"
+
+	"github.com/lib/pq"
+	"github.com/mattn/go-sqlite3"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/utils"
@@ -26,6 +27,12 @@ func New(driver, dsn string) (*Store, error) {
 	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		return nil, err
+	}
+
+	if driver == "sqlite3" {
+		if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := migrate(db); err != nil {
@@ -178,6 +185,73 @@ func (s *Store) HasPolicy(t string) (bool, error) {
 	}
 
 	return count > 0, nil
+}
+
+func (s *Store) CreateTrade(t *types.Trade) error {
+	_, err := s.db.Exec(
+		"INSERT INTO trades VALUES($1, $2, $3, $4)",
+		t.Quote.QuoteId,
+		t.TxTimestamp,
+		t.TxHash,
+		types.Trade_NOT_SET,
+	)
+
+	return WrapError(err)
+}
+
+func (s *Store) GetTrade(id string) (*types.Trade, error) {
+	quote, err := s.GetQuote(id)
+	if err != nil {
+		return nil, WrapError(err)
+	}
+
+	var trade = &types.Trade{
+		Quote: quote,
+	}
+	stmt := `SELECT tx_timestamp, tx_hash, status FROM trades WHERE quote_id = $1 LIMIT 1`
+	if err := s.db.QueryRow(stmt, id).Scan(
+		&trade.TxTimestamp,
+		&trade.TxHash,
+		&trade.Status,
+	); err != nil {
+		return nil, WrapError(err)
+	}
+	return trade, nil
+}
+
+func (s *Store) UpdateTradeStatus(id string, status types.Trade_Status) error {
+	res, err := s.db.Exec("UPDATE trades SET status = $1 WHERE quote_id = $2", status, id)
+	if err != nil {
+		return err
+	}
+
+	n, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if n == 0 {
+		return store.ErrQuoteDoesNotExist
+	}
+
+	return nil
+}
+
+// WrapError converts a DB specific error into a local error
+// if the error can't be handled, the original error is returned
+func WrapError(err error) error {
+	switch t := err.(type) {
+	case sqlite3.Error:
+		if t.Code == sqlite3.ErrConstraint {
+			return store.ErrQuoteDoesNotExist
+		}
+	case *pq.Error:
+		if t.Code.Name() == "foreign_key_violation" {
+			return store.ErrQuoteDoesNotExist
+		}
+	}
+
+	return err
 }
 
 type StringSlice []string

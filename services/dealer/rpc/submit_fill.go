@@ -61,6 +61,18 @@ func (svc *Service) SubmitFill(quoteId string, salt string, signature string, si
 		return nil, ErrInternal
 	}
 
+	// Create the trade on the store via dealer
+	if err := svc.dealer.CreateTrade(&grpc.Trade{
+		Quote: &grpc.Quote{
+			QuoteId: quoteId,
+		},
+		TxTimestamp: fillRes.SubmittedAt,
+		TxHash:      fillRes.TransactionHash,
+	}); err != nil {
+		svc.log.WithError(err).Error("failed to create the Trade")
+		return nil, ErrInternal
+	}
+
 	// todo (@hrharder): do we need to do anything with the response value here?
 	if _, err := svc.dealer.WatchTransaction(context.TODO(), quoteId, fillRes.TransactionHash); err != nil {
 		svc.log.WithError(err).Error("failed to watch submitted fill transaction")
