@@ -13,7 +13,7 @@ import (
 )
 
 func TestWatchTransaction(t *testing.T) {
-	if err := eth.Configure("wss://ropsten.infura.io/ws"); err != nil {
+	if err := eth.Configure("wss://eth-ropsten.ws.alchemyapi.io/ws/AAv0PpPC5GE3nqbj99bLqVhIsQKg7C-7"); err != nil {
 		assert.NoError(t, err, "Test connection failed.")
 		t.Fatal()
 	}
