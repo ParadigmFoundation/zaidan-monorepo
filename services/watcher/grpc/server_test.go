@@ -13,11 +13,12 @@ import (
 )
 
 func TestWatchTransaction(t *testing.T) {
-	if err := eth.Configure("wss://ropsten.infura.io/ws"); err != nil {
-		assert.Error(t, err, "Test connection failed.")
+	if err := eth.Configure("wss://eth-ropsten.ws.alchemyapi.io/ws/AAv0PpPC5GE3nqbj99bLqVhIsQKg7C-7"); err != nil {
+		assert.NoError(t, err, "Test connection failed.")
+		t.Fatal()
 	}
 	ws := WatcherServer{
-		TxWatching: watching.New(""),
+		TxWatching: watching.New(),
 		log: logger.New("test"),
 	}
 	transaction, err := ws.WatchTransaction(context.Background(), &pb.WatchTransactionRequest{ TxHash: "0x71b044c65962a23ed50a6081177b2ec2711b32d9fb1c9b2c7a4b6d711bf98210", QuoteId: "test"})
