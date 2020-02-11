@@ -17,7 +17,7 @@ func TestWatchTransaction(t *testing.T) {
 		assert.Error(t, err, "Test connection failed.")
 	}
 	ws := WatcherServer{
-		TxWatching: watching.New(""),
+		TxWatching: watching.New(),
 		log: logger.New("test"),
 	}
 	transaction, err := ws.WatchTransaction(context.Background(), &pb.WatchTransactionRequest{ TxHash: "0x71b044c65962a23ed50a6081177b2ec2711b32d9fb1c9b2c7a4b6d711bf98210", QuoteId: "test"})

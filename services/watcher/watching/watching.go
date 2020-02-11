@@ -24,16 +24,14 @@ type SafeWatchedTransactions struct {
 }
 
 type TxWatching struct {
-	MakerUrl           string
 	safeWatchedTransactions SafeWatchedTransactions
 	log                     *logger.Entry
 }
 
 var bg = context.Background()
 
-func New(makerUrl string) *TxWatching {
+func New() *TxWatching {
 	watching := TxWatching{
-		MakerUrl: 				 makerUrl,
 		safeWatchedTransactions: SafeWatchedTransactions{ watchedTransactions: make(map[common.Hash]WatchedTransaction) },
 		log:                     logger.New("watching"),
 	}
