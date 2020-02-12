@@ -6,23 +6,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type LogOpt func(*logrus.Entry)
+type LogOpt func(*Logger)
 
 // New returns an initialized logrus.Entry
-func New(module string, opts ...LogOpt) *Entry {
-	log := logrus.New()
+func New(module string, opts ...LogOpt) *Logger {
+	logger := logrus.New()
 	if key := os.Getenv("BUGSNAG_APIKEY"); key != "" {
-		ConfigureBugsnag(log, key)
+		ConfigureBugsnag(logger, key, module)
 	}
-
-	entry := log.WithField("module", module)
 
 	for _, opt := range opts {
-		opt(entry)
+		opt(logger)
 	}
 
-	return entry
+	logger.SetFormatter(&ModuleFormatter{
+		module: module,
+	})
+
+	return logger
 }
 
+type Logger = logrus.Logger
 type Entry = logrus.Entry
 type Fields = logrus.Fields

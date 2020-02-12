@@ -25,7 +25,7 @@ type SafeWatchedTransactions struct {
 
 type TxWatching struct {
 	safeWatchedTransactions SafeWatchedTransactions
-	log                     *logger.Entry
+	log                     *logger.Logger
 }
 
 var bg = context.Background()
