@@ -65,11 +65,28 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 		return nil, grpcStatus.Error(grpcCodes.Internal, fmt.Sprintf("transaction lookup failure: %s", err.Error()))
 	}
 
-	_, isWatched := s.TxWatching.IsWatched(txHash)
-	if isPending && !isWatched {
-		s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
-		s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
-		isWatched = true
+	watchedTx, isWatched := s.TxWatching.IsWatched(txHash)
+	if isPending {
+		if isWatched {
+			for _, newUrl := range in.StatusUrls {
+				appendUrl := true
+				for _, savedUrl := range watchedTx.UpdateUrls {
+					if newUrl == savedUrl {
+						appendUrl = false
+						break
+					}
+				}
+				if appendUrl {
+					watchedTx.UpdateUrls = append(watchedTx.UpdateUrls, newUrl)
+				}
+
+			}
+			watchedTx.UpdateUrls = watchedTx.UpdateUrls
+		} else {
+			s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
+			s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
+			isWatched = true
+		}
 	} else if !isPending {
 		if isWatched {
 			s.log.Info("No longer watching previously mined transaction ", txHash.String())
