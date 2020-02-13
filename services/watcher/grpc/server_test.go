@@ -13,10 +13,8 @@ import (
 )
 
 func TestWatchTransaction(t *testing.T) {
-	if err := eth.Configure("wss://eth-ropsten.ws.alchemyapi.io/ws/AAv0PpPC5GE3nqbj99bLqVhIsQKg7C-7"); err != nil {
-		assert.NoError(t, err, "Test connection failed.")
-		t.Fatal()
-	}
+	eth.Mock()
+
 	ws := WatcherServer{
 		TxWatching: watching.New(),
 		log: logger.New("test"),
