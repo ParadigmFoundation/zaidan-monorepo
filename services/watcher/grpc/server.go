@@ -20,7 +20,7 @@ import (
 type WatcherServer struct {
 	TxWatching *watching.TxWatching
 	grpc       *grpc.Server
-	log        *logger.Entry
+	log        *logger.Logger
 }
 
 func NewServer(txWatching *watching.TxWatching) *WatcherServer {

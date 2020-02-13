@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var log = logger.New("app")
+var log = logger.New("TransactionStatusService")
 
 type TransactionStatusServer struct {
 }

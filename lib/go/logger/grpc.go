@@ -11,13 +11,13 @@ import (
 )
 
 // UnaryServerInterceptor is a gRPC UnaryServerInterceptor that logs requests
-func UnaryServerInterceptor(entry *logrus.Entry) grpc.UnaryServerInterceptor {
+func UnaryServerInterceptor(logger *logrus.Logger) grpc.UnaryServerInterceptor {
 	fn := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		now := time.Now()
 
 		resp, err := handler(ctx, req)
 
-		entry = entry.WithFields(Fields{
+		entry := logrus.NewEntry(logger).WithFields(Fields{
 			"grpc.method": path.Base(info.FullMethod),
 			"grpc.status": status.Code(err),
 			"took":        time.Since(now),
