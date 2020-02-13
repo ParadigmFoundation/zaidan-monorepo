@@ -59,7 +59,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 
 	s.log.Info(fmt.Sprintf("Received: %v", in.TxHash))
 	s.TxWatching.Lock()
-	isPending, status, err := getTransactionInfo(ctx, s, txHash)
+	isPending, status, err := getTransactionInfo(ctx, txHash)
 	if err != nil {
 		s.log.Error(fmt.Errorf("transaction lookup failure: %s", err.Error()))
 		return nil, grpcStatus.Error(grpcCodes.Internal, fmt.Sprintf("transaction lookup failure: %s", err.Error()))
@@ -98,7 +98,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	return &pb.WatchTransactionResponse{IsWatched: isWatched, IsPending: isPending, TxStatus: status, TxHash: txHash.String(), QuoteId: in.QuoteId}, nil
 }
 
-func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
+func getTransactionInfo(c context.Context, txHash common.Hash) (bool, uint32, error) {
 	_, isPending, err := eth.Client.TransactionByHash(c, txHash)
 	if err != nil {
 		return false, 0, err
