@@ -45,11 +45,15 @@ func (s Sub) Err() <- chan error {
 }
 
 func Mock() {
-	channel := make(chan *types.Header)
-	sub := Sub{}
-	client := &MockClient{}
+	once.Do(
+		func () {
+			channel := make(chan *types.Header)
+			sub := Sub{}
+			client := &MockClient{}
 
-	Client = client
-	BlockHeaders = channel
-	BlockHeadersSubscription = sub
+			Client = client
+			BlockHeaders = channel
+			BlockHeadersSubscription = sub
+		},
+	)
 }
