@@ -3,6 +3,8 @@ package eth
 import (
 	"context"
 	"fmt"
+	"github.com/ethereum/go-ethereum/common"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -10,9 +12,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type EthClient interface {
+	TransactionByHash(context.Context, common.Hash) (*types.Transaction, bool, error)
+	TransactionReceipt(context.Context, common.Hash) (*types.Receipt, error)
+	BlockByNumber(context.Context, *big.Int) (*types.Block, error)
+}
+
 var (
 	ethUrl                   string
-	Client                   *ethclient.Client
+	Client                   EthClient
 	BlockHeaders             chan *types.Header
 	BlockHeadersSubscription ethereum.Subscription
 )
