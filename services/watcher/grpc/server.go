@@ -79,9 +79,8 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 				if appendUrl {
 					watchedTx.UpdateUrls = append(watchedTx.UpdateUrls, newUrl)
 				}
-
 			}
-			watchedTx.UpdateUrls = watchedTx.UpdateUrls
+			s.TxWatching.Watch(watchedTx.TxHash, watchedTx.QuoteId, watchedTx.UpdateUrls)
 		} else {
 			s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
 			s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
