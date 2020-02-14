@@ -59,17 +59,33 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 
 	s.log.Info(fmt.Sprintf("Received: %v", in.TxHash))
 	s.TxWatching.Lock()
-	isPending, status, err := getTransactionInfo(ctx, s, txHash)
+	isPending, status, err := getTransactionInfo(ctx, txHash)
 	if err != nil {
 		s.log.Error(fmt.Errorf("transaction lookup failure: %s", err.Error()))
 		return nil, grpcStatus.Error(grpcCodes.Internal, fmt.Sprintf("transaction lookup failure: %s", err.Error()))
 	}
 
-	_, isWatched := s.TxWatching.IsWatched(txHash)
-	if isPending && !isWatched {
-		s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
-		s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
-		isWatched = true
+	watchedTx, isWatched := s.TxWatching.IsWatched(txHash)
+	if isPending {
+		if isWatched {
+			for _, newUrl := range in.StatusUrls {
+				appendUrl := true
+				for _, savedUrl := range watchedTx.UpdateUrls {
+					if newUrl == savedUrl {
+						appendUrl = false
+						break
+					}
+				}
+				if appendUrl {
+					watchedTx.UpdateUrls = append(watchedTx.UpdateUrls, newUrl)
+				}
+			}
+			s.TxWatching.Watch(watchedTx.TxHash, watchedTx.QuoteId, watchedTx.UpdateUrls)
+		} else {
+			s.log.Info(fmt.Sprintf("Now watching: %v", in.TxHash))
+			s.TxWatching.Watch(txHash, in.QuoteId, updateUrls)
+			isWatched = true
+		}
 	} else if !isPending {
 		if isWatched {
 			s.log.Info("No longer watching previously mined transaction ", txHash.String())
@@ -98,7 +114,7 @@ func (s *WatcherServer) WatchTransaction(ctx context.Context, in *pb.WatchTransa
 	return &pb.WatchTransactionResponse{IsWatched: isWatched, IsPending: isPending, TxStatus: status, TxHash: txHash.String(), QuoteId: in.QuoteId}, nil
 }
 
-func getTransactionInfo(c context.Context, s *WatcherServer, txHash common.Hash) (bool, uint32, error) {
+func getTransactionInfo(c context.Context, txHash common.Hash) (bool, uint32, error) {
 	_, isPending, err := eth.Client.TransactionByHash(c, txHash)
 	if err != nil {
 		return false, 0, err
