@@ -16,7 +16,7 @@ type Service struct {
 func NewService() (*Service, error) {
 	srv := &Service{
 		rpc: rpc.NewServer(),
-		log: logger.New("rpc", logger.HandleEthLog()),
+		log: logger.New("admin", logger.HandleEthLog()),
 	}
 
 	if err := srv.rpc.RegisterName("admin", srv); err != nil {

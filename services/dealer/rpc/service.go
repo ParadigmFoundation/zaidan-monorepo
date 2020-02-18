@@ -13,6 +13,7 @@ import (
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/admin"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
@@ -80,6 +81,8 @@ type ServerCfg struct {
 	OrderDuration int64
 	PolicyBlack   bool
 	PolicyWhite   bool
+	Admin         bool
+	AdminBind     string
 }
 
 // ParseServerCfg builds a new ServerCfg from user flags
@@ -96,6 +99,8 @@ func ParseServerCfg(prefix string) (*ServerCfg, error) {
 	fs.Int64Var(&cfg.OrderDuration, "order-duration", 600, "The duration in seconds that signed order should be valid for")
 	fs.BoolVar(&cfg.PolicyBlack, "policy.blacklist", false, "Enable BlackList policy mode")
 	fs.BoolVar(&cfg.PolicyWhite, "policy.whitelist", false, "Enable WhiteList policy mode")
+	fs.BoolVar(&cfg.Admin, "admin", false, "Enable the admin api")
+	fs.StringVar(&cfg.AdminBind, "admin.bind", ":8001", "Admin API binding address")
 
 	if err := ff.Parse(fs, os.Args[1:], ff.WithEnvVarPrefix(prefix)); err != nil {
 		return nil, err
@@ -154,11 +159,33 @@ func StartServer() error {
 		service.WithPolicy(mode, store)
 	}
 
+	errCh := make(chan error)
+	defer close(errCh)
+
+	// Dealer
 	ln, err := net.Listen("tcp", cfg.Bind)
 	if err != nil {
 		return err
 	}
 	log.WithField("bind", cfg.Bind).Info("Server started")
 	server := &http.Server{Handler: service}
-	return server.Serve(ln)
+	go func() { errCh <- server.Serve(ln) }()
+
+	// Admin API
+	if cfg.Admin {
+		ln, err := net.Listen("tcp", cfg.AdminBind)
+		if err != nil {
+			return err
+		}
+		log.WithField("bind", cfg.AdminBind).Info("Admin API started")
+		srv, err := admin.NewService()
+		if err != nil {
+			return err
+		}
+
+		server := &http.Server{Handler: srv}
+		go func() { errCh <- server.Serve(ln) }()
+	}
+
+	return <-errCh
 }
