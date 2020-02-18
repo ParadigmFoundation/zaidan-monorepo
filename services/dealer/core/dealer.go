@@ -23,6 +23,7 @@ type DealerConfig struct {
 	MakerBindAddress     string
 	HotWalletBindAddress string
 	WatcherBindAddress   string
+	DealerGrpcBindAddress string
 
 	OrderDuration     int64 // the number of seconds order should be valid for after initial quote is provided
 	DealerBindAddress string
@@ -163,7 +164,7 @@ func (d *Dealer) WatchTransaction(ctx context.Context, quoteId string, txHash st
 	req := &types.WatchTransactionRequest{
 		QuoteId: quoteId,
 		TxHash:  txHash,
-		StatusUrls: []string{ d.cfg.DealerBindAddress, d.cfg.MakerBindAddress },
+		StatusUrls: []string{ d.cfg.DealerGrpcBindAddress, d.cfg.MakerBindAddress },
 	}
 
 	return d.watcherClient.WatchTransaction(ctx, req)
