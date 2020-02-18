@@ -13,6 +13,7 @@ import (
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
@@ -74,6 +75,7 @@ type ServerCfg struct {
 	DB            string
 	DSN           string
 	Bind          string
+	Grpc		  string
 	MakerAddr     string
 	HwAddr        string
 	WatcherAddr   string
@@ -90,6 +92,7 @@ func ParseServerCfg(prefix string) (*ServerCfg, error) {
 	fs.StringVar(&cfg.DB, "db", "sqlite3", "Database driver [sqlite3|postgres]")
 	fs.StringVar(&cfg.DSN, "dsn", ":memory:", "Database's Data Source Name (see driver's doc for details)")
 	fs.StringVar(&cfg.Bind, "bind", ":8000", "Server binding address")
+	fs.StringVar(&cfg.Grpc, "grpc", "localhost:44001", "Grpc binding port")
 	fs.StringVar(&cfg.MakerAddr, "maker", "localhost:50051", "The address to connect to a maker server over gRPC on")
 	fs.StringVar(&cfg.HwAddr, "hw", "localhost:42001", "The address to connect to a hot-wallet server over gRPC on")
 	fs.StringVar(&cfg.WatcherAddr, "watcher", "localhost:43001", "The address to connect to a watcher server over gRPC on")
@@ -121,6 +124,7 @@ func StartServer() error {
 
 	dealerCfg := core.DealerConfig{
 		MakerBindAddress:     cfg.MakerAddr,
+		DealerBindAddress:    cfg.Bind,
 		HotWalletBindAddress: cfg.HwAddr,
 		WatcherBindAddress:   cfg.WatcherAddr,
 		OrderDuration:        cfg.OrderDuration,
@@ -160,5 +164,6 @@ func StartServer() error {
 	}
 	log.WithField("bind", cfg.Bind).Info("Server started")
 	server := &http.Server{Handler: service}
+	go grpc.CreateAndListen(store, cfg.Grpc)
 	return server.Serve(ln)
 }
