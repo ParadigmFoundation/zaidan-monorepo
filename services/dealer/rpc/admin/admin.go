@@ -6,17 +6,20 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 )
 
 type Service struct {
-	rpc *rpc.Server
-	log *logger.Logger
+	rpc    *rpc.Server
+	log    *logger.Logger
+	dealer *core.Dealer
 }
 
-func NewService() (*Service, error) {
+func NewService(dealer *core.Dealer) (*Service, error) {
 	srv := &Service{
-		rpc: rpc.NewServer(),
-		log: logger.New("admin", logger.HandleEthLog()),
+		rpc:    rpc.NewServer(),
+		log:    logger.New("admin", logger.HandleEthLog()),
+		dealer: dealer,
 	}
 
 	if err := srv.rpc.RegisterName("admin", srv); err != nil {
@@ -36,18 +39,6 @@ func (srv *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		srv.rpc.ServeHTTP(w, r)
 	}
 }
-
-// GetEtherBalance fetches on-chain Ether balance for the hot-wallet
-func (srv *Service) GetEtherBalance() error { panic("not implemented") }
-
-// GetTokenBalance fetches on-chain balance for an ERC-20 token by address
-func (srv *Service) GetTokenBalance() error { panic("not implemented") }
-
-// GetAllowance fetches 0x ERC-20 asset proxy allowances for a token by address
-func (srv *Service) GetAllowance() error { panic("not implemented") }
-
-// SetAllowance set max/specific allowance for ERC-20 asset proxy contract by address.
-func (srv *Service) SetAllowance() error { panic("not implemented") }
 
 // GetExchangeBalances fetches all balances from all currently supported centralized exchanges.
 func (srv *Service) GetExchangeBalances() error { panic("not implemented") }

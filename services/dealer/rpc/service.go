@@ -178,7 +178,7 @@ func StartServer() error {
 			return err
 		}
 		log.WithField("bind", cfg.AdminBind).Info("Admin API started")
-		srv, err := admin.NewService()
+		srv, err := admin.NewService(dealer)
 		if err != nil {
 			return err
 		}
