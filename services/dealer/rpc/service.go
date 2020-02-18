@@ -13,6 +13,7 @@ import (
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
@@ -160,5 +161,6 @@ func StartServer() error {
 	}
 	log.WithField("bind", cfg.Bind).Info("Server started")
 	server := &http.Server{Handler: service}
+	go grpc.CreateAndListen(store, ln)
 	return server.Serve(ln)
 }
