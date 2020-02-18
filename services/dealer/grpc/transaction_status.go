@@ -23,15 +23,20 @@ func (oss *TransactionStatusServer) TransactionStatusUpdate(c context.Context, r
 	return &grpc.TransactionStatusUpdateResponse{ Status: 1 }, nil
 }
 
-func CreateAndListen(store *sql.Store, n net.Listener) {
-	ggrpcServer := ggrpc.NewServer()
+func CreateAndListen(store *sql.Store, binding string) {
 	log := logger.New("transaction_status_grpc")
+
+	ln, err := net.Listen("tcp", binding)
+	if err != nil {
+		log.Fatal("failed to listen: ", err)
+	}
+	ggrpcServer := ggrpc.NewServer()
 
 	grpc.RegisterTransactionStatusServer(ggrpcServer, &TransactionStatusServer{
 		log: log,
 		store: store,
 	})
-	if err := ggrpcServer.Serve(n); err != nil {
+	if err := ggrpcServer.Serve(ln); err != nil {
 		log.WithError(err).Fatal("failed to serve TransactionStatus:")
 	}
 }
