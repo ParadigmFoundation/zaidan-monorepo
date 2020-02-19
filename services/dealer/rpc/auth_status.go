@@ -1,10 +1,14 @@
 package rpc
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/policy"
+)
 
 type authStatusResponse struct {
 	Authorized bool
-	Reason     string
+	Reason     policy.Reason
 }
 
 func (status *authStatusResponse) MarshalJSON() ([]byte, error) {
@@ -15,27 +19,16 @@ func (status *authStatusResponse) MarshalJSON() ([]byte, error) {
 
 func (svc *Service) AuthStatus(addr string) (*authStatusResponse, error) {
 	if svc.policy == nil {
-		return &authStatusResponse{Authorized: true, Reason: "WHITELISTED"}, nil
+		return &authStatusResponse{Authorized: true, Reason: policy.WhiteListed}, nil
 	}
 
-	found, err := svc.policy.HasPolicy(addr)
+	r, ok, err := svc.policy.AuthStatus(addr)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &authStatusResponse{}
-	switch svc.policyMode {
-	case PolicyBlackList:
-		resp.Authorized = !found
-	case PolicyWhiteList:
-		resp.Authorized = found
-	}
-
-	if resp.Authorized {
-		resp.Reason = "WHITELISTED"
-	} else {
-		resp.Reason = "BLACKLISTED"
-	}
-
-	return resp, nil
+	return &authStatusResponse{
+		Authorized: ok,
+		Reason:     r,
+	}, nil
 }

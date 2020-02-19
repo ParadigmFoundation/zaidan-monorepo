@@ -10,6 +10,7 @@ import (
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/utils/ptr"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/policy"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
 
@@ -26,22 +27,22 @@ func TestRPC(t *testing.T) {
 
 		require.NoError(t, store.CreatePolicy("xxx"))
 
-		defer service.WithPolicy(0, nil)
+		defer service.WithPolicy(nil)
 
 		t.Run("Blacklist", func(t *testing.T) {
-			service.WithPolicy(PolicyBlackList, store)
+			service.WithPolicy(policy.New(store, policy.BlackListMode))
 			resp, err := service.AuthStatus("xxx")
 			require.NoError(t, err)
 			assert.False(t, resp.Authorized)
-			assert.Equal(t, "BLACKLISTED", resp.Reason)
+			assert.EqualValues(t, policy.BlackListed, resp.Reason)
 		})
 
 		t.Run("Whitelist", func(t *testing.T) {
-			service.WithPolicy(PolicyWhiteList, store)
+			service.WithPolicy(policy.New(store, policy.WhiteListMode))
 			resp, err := service.AuthStatus("xxx")
 			require.NoError(t, err)
 			assert.True(t, resp.Authorized)
-			assert.Equal(t, "WHITELISTED", resp.Reason)
+			assert.EqualValues(t, policy.WhiteListed, resp.Reason)
 		})
 	})
 

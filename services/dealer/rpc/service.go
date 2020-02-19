@@ -14,16 +14,15 @@ import (
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/admin"
-	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/policy"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 )
 
 type Service struct {
-	dealer     *core.Dealer
-	server     *rpc.Server
-	policyMode PolicyMode
-	policy     store.Policy
-	log        *logger.Logger
+	dealer *core.Dealer
+	server *rpc.Server
+	policy *policy.Policy
+	log    *logger.Logger
 }
 
 // NewService creates a new Dealer JSONRPC service
@@ -53,9 +52,8 @@ func (srv *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (srv *Service) WithPolicy(mode PolicyMode, policy store.Policy) *Service {
-	srv.policyMode = mode
-	srv.policy = policy
+func (srv *Service) WithPolicy(p *policy.Policy) *Service {
+	srv.policy = p
 	return srv
 }
 
@@ -145,18 +143,19 @@ func StartServer() error {
 		return errors.New("can't use both -policy.blacklist and -policy.whitelist")
 	}
 
+	var pol *policy.Policy
 	if cfg.PolicyBlack || cfg.PolicyWhite {
-		var mode PolicyMode
+		var mode policy.Mode
 		if cfg.PolicyBlack {
 			log.Print("Using Blacklist mode")
-			mode = PolicyBlackList
+			mode = policy.BlackListMode
 		}
 		if cfg.PolicyWhite {
 			log.Print("Using Whitelist mode")
-			mode = PolicyWhiteList
+			mode = policy.WhiteListMode
 		}
-
-		service.WithPolicy(mode, store)
+		pol = policy.New(store, mode)
+		service.WithPolicy(pol)
 	}
 
 	errCh := make(chan error)
@@ -178,7 +177,7 @@ func StartServer() error {
 			return err
 		}
 		log.WithField("bind", cfg.AdminBind).Info("Admin API started")
-		srv, err := admin.NewService(dealer)
+		srv, err := admin.NewService(dealer, pol)
 		if err != nil {
 			return err
 		}

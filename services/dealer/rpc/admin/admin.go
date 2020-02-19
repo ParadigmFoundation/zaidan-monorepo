@@ -7,19 +7,22 @@ import (
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
+	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/policy"
 )
 
 type Service struct {
 	rpc    *rpc.Server
 	log    *logger.Logger
 	dealer *core.Dealer
+	policy *policy.Policy
 }
 
-func NewService(dealer *core.Dealer) (*Service, error) {
+func NewService(dealer *core.Dealer, policy *policy.Policy) (*Service, error) {
 	srv := &Service{
 		rpc:    rpc.NewServer(),
 		log:    logger.New("admin", logger.HandleEthLog()),
 		dealer: dealer,
+		policy: policy,
 	}
 
 	if err := srv.rpc.RegisterName("admin", srv); err != nil {
@@ -75,15 +78,3 @@ func (srv *Service) GetUnconfirmedOrders() error { panic("not implemented") }
 
 // GetOutstandingQuotes: Fetch a table of quotes that have been sent out that are not expired
 func (srv *Service) GetOutstandingQuotes() error { panic("not implemented") }
-
-// AddTaker adds a taker to the registry to whitelist/blacklist them (depending on mode)
-func (srv *Service) AddTaker() error { panic("not implemented") }
-
-// RemoveTaker removes a taker from the registry (see _addTaker)
-func (srv *Service) RemoveTaker() error { panic("not implemented") }
-
-// GetTakers fetches a table of all takers in the registry
-func (srv *Service) GetTakers() error { panic("not implemented") }
-
-// GetTakerAuthorization fetches authorization status for a taker by their address
-func (srv *Service) GetTakerAuthorization() error { panic("not implemented") }
