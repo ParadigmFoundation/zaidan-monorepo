@@ -26,6 +26,10 @@ func (srv *Service) RemoveTaker(addr string) error {
 
 // GetTakers fetches a table of all takers in the registry
 func (srv *Service) GetTakers() ([]string, error) {
+	if srv.policy == nil {
+		return nil, errors.New("policy not enabled")
+	}
+
 	return srv.policy.Store().ListPolicies()
 }
 
