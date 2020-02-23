@@ -176,6 +176,29 @@ func (s *Store) CreatePolicy(t string) error {
 	return err
 }
 
+func (s *Store) RemovePolicy(t string) error {
+	_, err := s.db.Exec("DELETE FROM policies WHERE entry = $1", t)
+	return err
+}
+
+func (s *Store) ListPolicies() ([]string, error) {
+	rows, err := s.db.Query("SELECT * FROM policies")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var rs []string
+	for rows.Next() {
+		var s string
+		if err := rows.Scan(&s); err != nil {
+			return nil, err
+		}
+		rs = append(rs, s)
+	}
+	return rs, nil
+}
+
 func (s *Store) HasPolicy(t string) (bool, error) {
 	var count int
 

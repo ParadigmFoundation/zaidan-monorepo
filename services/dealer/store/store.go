@@ -12,6 +12,8 @@ var (
 
 type Policy interface {
 	CreatePolicy(string) error
+	RemovePolicy(string) error
+	ListPolicies() ([]string, error)
 	HasPolicy(string) (bool, error)
 }
 
