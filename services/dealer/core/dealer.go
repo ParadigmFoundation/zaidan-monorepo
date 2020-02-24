@@ -81,6 +81,8 @@ func (d *Dealer) WithHWClient(c types.HotWalletClient) *Dealer {
 	return d
 }
 
+func (d *Dealer) HWClient() types.HotWalletClient { return d.hwClient }
+
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
 	now := time.Now()
 	res, err := d.makerClient.GetQuote(ctx, req)
