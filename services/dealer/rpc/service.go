@@ -131,6 +131,7 @@ func StartServer() error {
 		HotWalletBindAddress: cfg.HwAddr,
 		WatcherBindAddress:   cfg.WatcherAddr,
 		OrderDuration:        cfg.OrderDuration,
+		DealerGrpcBindAddress:cfg.Grpc,
 	}
 	log.WithField("cfg", dealerCfg).Info("Dealer")
 	dealer, err := core.NewDealer(context.Background(), store, dealerCfg)

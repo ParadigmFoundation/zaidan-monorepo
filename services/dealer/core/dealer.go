@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
@@ -22,6 +23,7 @@ type DealerConfig struct {
 	MakerBindAddress     string
 	HotWalletBindAddress string
 	WatcherBindAddress   string
+	DealerGrpcBindAddress string
 
 	OrderDuration     int64 // the number of seconds order should be valid for after initial quote is provided
 	DealerBindAddress string
@@ -130,15 +132,27 @@ func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*t
 	return quote, nil
 }
 
-func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequest) error {
+func (d *Dealer) ValidateOrder(ctx context.Context, req *types.ValidateOrderRequest, quoteId string) error {
 	res, err := d.hwClient.ValidateOrder(ctx, req)
 	if err != nil {
-		return nil
+		d.log.WithError(err).Error("failed to call validate order")
+		return err
 	}
 
 	if !res.Valid {
 		d.log.WithField("reason", res.Info).Error("fill failed validation")
 		return nil
+	}
+
+	makerRes, err := d.makerClient.CheckQuote(ctx, &types.CheckQuoteRequest{QuoteId: quoteId})
+	if err != nil {
+		d.log.WithError(err).Error("failed to validate quote with maker")
+		return err
+	}
+
+	if !makerRes.IsValid {
+		d.log.WithField("statusCode", makerRes.Status).Info("validation failed for quote")
+		return errors.New("maker rejected fill")
 	}
 	return nil
 }
@@ -152,7 +166,7 @@ func (d *Dealer) WatchTransaction(ctx context.Context, quoteId string, txHash st
 	req := &types.WatchTransactionRequest{
 		QuoteId: quoteId,
 		TxHash:  txHash,
-		StatusUrls: []string{ d.cfg.DealerBindAddress, d.cfg.MakerBindAddress },
+		StatusUrls: []string{ d.cfg.DealerGrpcBindAddress, d.cfg.MakerBindAddress },
 	}
 
 	return d.watcherClient.WatchTransaction(ctx, req)

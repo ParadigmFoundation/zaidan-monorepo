@@ -1,8 +1,10 @@
 import os
 import json
 from typing import Optional
+import sys
 
 CONFIG_FILE = os.environ.get('CONFIG_FILE', 'maker/config.json')
+CHAIN_ID = int(os.environ.get('CHAIN_ID', 1337))
 
 class ConfigManager():
 
@@ -14,6 +16,10 @@ class ConfigManager():
         with open(CONFIG_FILE) as f:
             config_f = json.load(f)
             all_markets = []
+            for asset in config_f['assets']:
+                for chain in asset['deployments']:
+                    if chain['chain_id'] == CHAIN_ID:
+                        asset['address'] = chain['address']
             for asset in config_f['assets']:
                 self.address_to_ticker[asset['address']] = asset['symbol']
                 self.ticker_to_pricing_data[asset['symbol']] = asset['pricing_data']

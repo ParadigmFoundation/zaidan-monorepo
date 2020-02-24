@@ -70,7 +70,7 @@ func (*SQLMigration) Schema() []Migration {
 			Stmt: `CREATE TABLE trades (
 					  "quote_id" VARCHAR(100) REFERENCES quotes ON DELETE CASCADE
 					, "tx_timestamp" NUMERIC
-					, "tx_hash" VARCHAR(64)
+					, "tx_hash" VARCHAR(66)
 					, "status" SMALLINT
 				)
 			`,

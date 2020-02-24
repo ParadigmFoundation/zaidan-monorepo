@@ -3,7 +3,7 @@ syntax = "proto3";
 option go_package = "grpc";
 
 import "google/protobuf/empty.proto";
-import "google/protobuf/wrappers.proto";
+// import "google/protobuf/wrappers.proto";
 
 import "types.proto";
 
@@ -43,7 +43,7 @@ service Watcher {
 service ExchangeManager {
   rpc CreateOrder(ExchangeCreateOrderRequest) returns (ExchangeOrderResponse);
   rpc GetOrder(ExchangeOrderRequest) returns (ExchangeOrderResponse);
-  rpc GetOpenOrders(google.protobuf.StringValue) returns (ExchangeOrderArrayResponse);
+  rpc GetOpenOrders(GetOpenOrdersRequest) returns (ExchangeOrderArrayResponse);
   rpc CancelOrder(ExchangeOrderRequest) returns (google.protobuf.Empty);
 }
 

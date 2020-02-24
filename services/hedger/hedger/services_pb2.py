@@ -14,7 +14,6 @@ _sym_db = _symbol_database.Default()
 
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 import types_pb2 as types__pb2
 
 
@@ -23,9 +22,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='',
   syntax='proto3',
   serialized_options=_b('Z\004grpc'),
-  serialized_pb=_b('\n\x0eservices.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x0btypes.proto2\x81\x01\n\x10OrderBookManager\x12\x32\n\tOrderBook\x12\x11.OrderBookRequest\x1a\x12.OrderBookResponse\x12\x39\n\x07Updates\x12\x18.OrderBookUpdatesRequest\x1a\x12.OrderBookResponse0\x01\x32\xa6\x01\n\x05Maker\x12/\n\x08GetQuote\x12\x10.GetQuoteRequest\x1a\x11.GetQuoteResponse\x12\x35\n\nCheckQuote\x12\x12.CheckQuoteRequest\x1a\x13.CheckQuoteResponse\x12\x35\n\nGetMarkets\x12\x12.GetMarketsRequest\x1a\x13.GetMarketsResponse2q\n\x11TransactionStatus\x12\\\n\x17TransactionStatusUpdate\x12\x1f.TransactionStatusUpdateRequest\x1a .TransactionStatusUpdateResponse2\xbe\x05\n\tHotWallet\x12\x38\n\x0b\x43reateOrder\x12\x13.CreateOrderRequest\x1a\x14.CreateOrderResponse\x12>\n\rValidateOrder\x12\x15.ValidateOrderRequest\x1a\x16.ValidateOrderResponse\x12;\n\x0cGetAllowance\x12\x14.GetAllowanceRequest\x1a\x15.GetAllowanceResponse\x12;\n\x0cSetAllowance\x12\x14.SetAllowanceRequest\x1a\x15.SetAllowanceResponse\x12:\n\x0fGetTokenBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12:\n\x0fGetEtherBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12\x34\n\rTransferEther\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x34\n\rTransferToken\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x44\n\x0fSendTransaction\x12\x17.SendTransactionRequest\x1a\x18.SendTransactionResponse\x12_\n\x18\x45xecuteZeroExTransaction\x12 .ExecuteZeroExTransactionRequest\x1a!.ExecuteZeroExTransactionResponse\x12\x32\n\x0cGetTradeInfo\x12\x16.google.protobuf.Empty\x1a\n.TradeInfo2R\n\x07Watcher\x12G\n\x10WatchTransaction\x12\x18.WatchTransactionRequest\x1a\x19.WatchTransactionResponse2\x9a\x02\n\x0f\x45xchangeManager\x12\x42\n\x0b\x43reateOrder\x12\x1b.ExchangeCreateOrderRequest\x1a\x16.ExchangeOrderResponse\x12\x39\n\x08GetOrder\x12\x15.ExchangeOrderRequest\x1a\x16.ExchangeOrderResponse\x12J\n\rGetOpenOrders\x12\x1c.google.protobuf.StringValue\x1a\x1b.ExchangeOrderArrayResponse\x12<\n\x0b\x43\x61ncelOrder\x12\x15.ExchangeOrderRequest\x1a\x16.google.protobuf.Empty2?\n\x06Hedger\x12\x35\n\nHedgeOrder\x12\x12.HedgeOrderRequest\x1a\x13.HedgeOrderResponseB\x06Z\x04grpcb\x06proto3')
+  serialized_pb=_b('\n\x0eservices.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x0btypes.proto2\x81\x01\n\x10OrderBookManager\x12\x32\n\tOrderBook\x12\x11.OrderBookRequest\x1a\x12.OrderBookResponse\x12\x39\n\x07Updates\x12\x18.OrderBookUpdatesRequest\x1a\x12.OrderBookResponse0\x01\x32\xa6\x01\n\x05Maker\x12/\n\x08GetQuote\x12\x10.GetQuoteRequest\x1a\x11.GetQuoteResponse\x12\x35\n\nCheckQuote\x12\x12.CheckQuoteRequest\x1a\x13.CheckQuoteResponse\x12\x35\n\nGetMarkets\x12\x12.GetMarketsRequest\x1a\x13.GetMarketsResponse2q\n\x11TransactionStatus\x12\\\n\x17TransactionStatusUpdate\x12\x1f.TransactionStatusUpdateRequest\x1a .TransactionStatusUpdateResponse2\xbe\x05\n\tHotWallet\x12\x38\n\x0b\x43reateOrder\x12\x13.CreateOrderRequest\x1a\x14.CreateOrderResponse\x12>\n\rValidateOrder\x12\x15.ValidateOrderRequest\x1a\x16.ValidateOrderResponse\x12;\n\x0cGetAllowance\x12\x14.GetAllowanceRequest\x1a\x15.GetAllowanceResponse\x12;\n\x0cSetAllowance\x12\x14.SetAllowanceRequest\x1a\x15.SetAllowanceResponse\x12:\n\x0fGetTokenBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12:\n\x0fGetEtherBalance\x12\x12.GetBalanceRequest\x1a\x13.GetBalanceResponse\x12\x34\n\rTransferEther\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x34\n\rTransferToken\x12\x10.TransferRequest\x1a\x11.TransferResponse\x12\x44\n\x0fSendTransaction\x12\x17.SendTransactionRequest\x1a\x18.SendTransactionResponse\x12_\n\x18\x45xecuteZeroExTransaction\x12 .ExecuteZeroExTransactionRequest\x1a!.ExecuteZeroExTransactionResponse\x12\x32\n\x0cGetTradeInfo\x12\x16.google.protobuf.Empty\x1a\n.TradeInfo2R\n\x07Watcher\x12G\n\x10WatchTransaction\x12\x18.WatchTransactionRequest\x1a\x19.WatchTransactionResponse2\x93\x02\n\x0f\x45xchangeManager\x12\x42\n\x0b\x43reateOrder\x12\x1b.ExchangeCreateOrderRequest\x1a\x16.ExchangeOrderResponse\x12\x39\n\x08GetOrder\x12\x15.ExchangeOrderRequest\x1a\x16.ExchangeOrderResponse\x12\x43\n\rGetOpenOrders\x12\x15.GetOpenOrdersRequest\x1a\x1b.ExchangeOrderArrayResponse\x12<\n\x0b\x43\x61ncelOrder\x12\x15.ExchangeOrderRequest\x1a\x16.google.protobuf.Empty2?\n\x06Hedger\x12\x35\n\nHedgeOrder\x12\x12.HedgeOrderRequest\x1a\x13.HedgeOrderResponseB\x06Z\x04grpcb\x06proto3')
   ,
-  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,google_dot_protobuf_dot_wrappers__pb2.DESCRIPTOR,types__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,types__pb2.DESCRIPTOR,])
 
 
 
@@ -40,8 +39,8 @@ _ORDERBOOKMANAGER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   serialized_options=None,
-  serialized_start=93,
-  serialized_end=222,
+  serialized_start=61,
+  serialized_end=190,
   methods=[
   _descriptor.MethodDescriptor(
     name='OrderBook',
@@ -73,8 +72,8 @@ _MAKER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   serialized_options=None,
-  serialized_start=225,
-  serialized_end=391,
+  serialized_start=193,
+  serialized_end=359,
   methods=[
   _descriptor.MethodDescriptor(
     name='GetQuote',
@@ -115,8 +114,8 @@ _TRANSACTIONSTATUS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=2,
   serialized_options=None,
-  serialized_start=393,
-  serialized_end=506,
+  serialized_start=361,
+  serialized_end=474,
   methods=[
   _descriptor.MethodDescriptor(
     name='TransactionStatusUpdate',
@@ -139,8 +138,8 @@ _HOTWALLET = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=3,
   serialized_options=None,
-  serialized_start=509,
-  serialized_end=1211,
+  serialized_start=477,
+  serialized_end=1179,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateOrder',
@@ -253,8 +252,8 @@ _WATCHER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=4,
   serialized_options=None,
-  serialized_start=1213,
-  serialized_end=1295,
+  serialized_start=1181,
+  serialized_end=1263,
   methods=[
   _descriptor.MethodDescriptor(
     name='WatchTransaction',
@@ -277,8 +276,8 @@ _EXCHANGEMANAGER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=5,
   serialized_options=None,
-  serialized_start=1298,
-  serialized_end=1580,
+  serialized_start=1266,
+  serialized_end=1541,
   methods=[
   _descriptor.MethodDescriptor(
     name='CreateOrder',
@@ -303,7 +302,7 @@ _EXCHANGEMANAGER = _descriptor.ServiceDescriptor(
     full_name='ExchangeManager.GetOpenOrders',
     index=2,
     containing_service=None,
-    input_type=google_dot_protobuf_dot_wrappers__pb2._STRINGVALUE,
+    input_type=types__pb2._GETOPENORDERSREQUEST,
     output_type=types__pb2._EXCHANGEORDERARRAYRESPONSE,
     serialized_options=None,
   ),
@@ -328,8 +327,8 @@ _HEDGER = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=6,
   serialized_options=None,
-  serialized_start=1582,
-  serialized_end=1645,
+  serialized_start=1543,
+  serialized_end=1606,
   methods=[
   _descriptor.MethodDescriptor(
     name='HedgeOrder',

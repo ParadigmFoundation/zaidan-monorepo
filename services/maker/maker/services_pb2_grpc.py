@@ -2,7 +2,6 @@
 import grpc
 
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
-from google.protobuf import wrappers_pb2 as google_dot_protobuf_dot_wrappers__pb2
 import types_pb2 as types__pb2
 
 
@@ -459,7 +458,7 @@ class ExchangeManagerStub(object):
         )
     self.GetOpenOrders = channel.unary_unary(
         '/ExchangeManager/GetOpenOrders',
-        request_serializer=google_dot_protobuf_dot_wrappers__pb2.StringValue.SerializeToString,
+        request_serializer=types__pb2.GetOpenOrdersRequest.SerializeToString,
         response_deserializer=types__pb2.ExchangeOrderArrayResponse.FromString,
         )
     self.CancelOrder = channel.unary_unary(
@@ -516,7 +515,7 @@ def add_ExchangeManagerServicer_to_server(servicer, server):
       ),
       'GetOpenOrders': grpc.unary_unary_rpc_method_handler(
           servicer.GetOpenOrders,
-          request_deserializer=google_dot_protobuf_dot_wrappers__pb2.StringValue.FromString,
+          request_deserializer=types__pb2.GetOpenOrdersRequest.FromString,
           response_serializer=types__pb2.ExchangeOrderArrayResponse.SerializeToString,
       ),
       'CancelOrder': grpc.unary_unary_rpc_method_handler(

@@ -27,12 +27,12 @@ func main() {
 	var (
 		bind = fs.String("bind", "localhost:8080", "Server listen address")
 
-		coinbase_sandbox    = fs.Bool("coinbase-sandbox", true, "Use Coinbase sandbox API")
+		coinbase_sandbox    = fs.Bool("coinbase-sandbox", false, "Use Coinbase sandbox API")
 		coinbase_key        = fs.String("coinbase-key", "", "Coinbase API key")
 		coinbase_passphrase = fs.String("coinbase-passphrase", "", "Coinbase Passphrase")
 		coinbase_secret     = fs.String("coinbase-secret", "", "Coinbase Secret")
 
-		gemini_sandbox = fs.Bool("gemini-sandbox", true, "Use Gemini sandbox API")
+		gemini_sandbox = fs.Bool("gemini-sandbox", false, "Use Gemini sandbox API")
 		gemini_key     = fs.String("gemini-key", "", "Gemini API key")
 		gemini_secret  = fs.String("gemini-secret", "", "Gemini Secret")
 	)

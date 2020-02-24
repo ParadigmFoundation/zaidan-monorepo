@@ -143,6 +143,14 @@ func (zh *ZeroExHelper) ExecuteTransaction(opts *bind.TransactOpts, ztx *Transac
 		Data:                  ztx.Data,
 	}
 
+	// hack (hrharder): a higher than normal gas limit is needed for the snapshot network
+	if zh.ChainID.Uint64() == ZeroExTestChainID {
+		opts.GasLimit = EXECUTE_FILL_TX_GAS_LIMIT
+	} else {
+		// setting gas limit to 0 forces contract.Transact to run gas price estimation
+		opts.GasLimit = 0
+	}
+
 	return zh.Contracts.Exchange.ExecuteTransaction(opts, transaction, sig)
 }
 
