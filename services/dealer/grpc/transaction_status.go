@@ -2,7 +2,7 @@ package grpc
 
 import (
 	"context"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store/sql"
 	"net"
 

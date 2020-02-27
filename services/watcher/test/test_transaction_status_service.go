@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"google.golang.org/grpc"
 )
 

@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	pb "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/watcher/eth"
 	"github.com/ethereum/go-ethereum/common"
 	"google.golang.org/grpc"

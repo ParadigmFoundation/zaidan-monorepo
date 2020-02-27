@@ -13,7 +13,7 @@ import (
 	"github.com/0xProject/0x-mesh/zeroex"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/store"
 )
 

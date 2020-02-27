@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/peterbourgon/ff"
 
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/grpc"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/dealer/rpc/admin"
