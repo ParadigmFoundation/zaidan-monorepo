@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/pflag"
 
 	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/eth"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/core"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/hot-wallet/grpc"
 )

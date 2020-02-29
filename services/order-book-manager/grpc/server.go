@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	types "github.com/ParadigmFoundation/zaidan-monorepo/lib/go/grpc"
-	"github.com/ParadigmFoundation/zaidan-monorepo/lib/go/logger"
+	"github.com/ParadigmFoundation/go-logrus-bugsnag/logger"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm"
 	"github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange"
 	_ "github.com/ParadigmFoundation/zaidan-monorepo/services/obm/exchange/binance"

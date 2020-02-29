@@ -3,6 +3,7 @@ module github.com/ParadigmFoundation/zaidan-monorepo/services/obm
 go 1.13
 
 require (
+	github.com/ParadigmFoundation/go-logrus-bugsnag v0.0.0-20200227164141-fdbc509dbe35
 	github.com/ParadigmFoundation/zaidan-monorepo/lib/go v0.0.0-00010101000000-000000000000
 	github.com/ParadigmFoundation/zaidan-monorepo/services/dealer v0.0.0-00010101000000-000000000000 // indirect
 	github.com/adshao/go-binance v0.0.0-20191107145944-a468f0b0c2f0
@@ -17,7 +18,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.4.0
 	golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413
-	google.golang.org/grpc v1.25.1
+	google.golang.org/grpc v1.27.1
 	gotest.tools v2.2.0+incompatible
 )
 

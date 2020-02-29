@@ -4,7 +4,10 @@ DOCKER_CONTEXT=../..
 include ../../rules/docker.mk	
 include ../../rules/rules.mk	
 
-ci:	
+build:
+	echo "No build in maker"
+
+ci:
 	echo "skipping non-go tests"	
 
 lint:	
