@@ -37,7 +37,11 @@ func TestHotWallet(t *testing.T) {
 	}
 
 	hw, err := NewHotWallet(provider, hwCfg)
-	assert.NoError(t, err)
+
+	if err != nil {
+		assert.NoError(t, err)
+		t.FailNow()
+	}
 
 	t.Run("test order creation", func(t *testing.T) { testCreateOrder(hw, t) })
 	t.Run("test ether transfer", func(t *testing.T) { testTransferEther(hw, t) })
