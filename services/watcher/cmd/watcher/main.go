@@ -15,9 +15,7 @@ import (
 
 var (
 	ethAddress string
-	makerUrl   string
 	port       int
-	bugsnagKey string
 
 	cmd = &cobra.Command{
 		Use:   "watcher",
@@ -35,13 +33,12 @@ func main() {
 
 func configureFlags() {
 	flags := cmd.PersistentFlags()
-	flags.StringVarP(&ethAddress, "eth", "e", "wss://ropsten.infura.io/ws", "Ethereum RPC url")
+	flags.StringVarP(&ethAddress, "eth", "e", "wss://eth-ropsten.ws.alchemyapi.io/ws/AAv0PpPC5GE3nqbj99bLqVhIsQKg7C-7", "Ethereum RPC url")
 	flags.IntVarP(&port, "port", "p", 5001, "gRPC listen port")
-	flags.StringVarP(&makerUrl, "maker", "m", "localhost:5002", "Maker gRPC url")
 }
 
 func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
-	log := logger.New("app")
+	log := logger.New("Watcher")
 	log.Info("Starting")
 
 	if err := eth.Configure(ethAddress); err != nil {
@@ -49,7 +46,7 @@ func startup(_ /*cmd*/ *cobra.Command, _ /*args*/ []string) {
 	}
 	log.Info("Connected to ethereum at ", ethAddress)
 
-	txWatching := watching.New(makerUrl)
+	txWatching := watching.New()
 
 	watcherServer := grpc.NewServer(
 		txWatching,

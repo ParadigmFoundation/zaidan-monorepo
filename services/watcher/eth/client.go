@@ -3,38 +3,54 @@ package eth
 import (
 	"context"
 	"fmt"
+	"math/big"
+	"sync"
 
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/sirupsen/logrus"
 )
 
+type EthClient interface {
+	TransactionByHash(context.Context, common.Hash) (*types.Transaction, bool, error)
+	TransactionReceipt(context.Context, common.Hash) (*types.Receipt, error)
+	BlockByNumber(context.Context, *big.Int) (*types.Block, error)
+}
+
 var (
 	ethUrl                   string
-	Client                   *ethclient.Client
+	Client                   EthClient
 	BlockHeaders             chan *types.Header
 	BlockHeadersSubscription ethereum.Subscription
+	once sync.Once
+
 )
 
-func Configure(ethreumUrl string) error {
-	client, err := ethclient.Dial(ethreumUrl)
-	if err != nil {
-		return fmt.Errorf("unable to connect to ethereum: %v", err.Error())
-	}
 
-	channel := make(chan *types.Header)
+func Configure(ethreumUrl string) (e error) {
+	once.Do(
+		func () {
+			client, err := ethclient.Dial(ethreumUrl)
+			if err != nil {
+				e = fmt.Errorf("unable to connect to ethereum: %v", err.Error())
+			}
 
-	sub, err := client.SubscribeNewHead(context.Background(), channel)
-	if err != nil {
-		return fmt.Errorf("failed to subscribe: %v", err.Error())
-	}
+			channel := make(chan *types.Header)
 
-	ethUrl = ethreumUrl
-	Client = client
-	BlockHeaders = channel
-	BlockHeadersSubscription = sub
-	return nil
+			sub, err := client.SubscribeNewHead(context.Background(), channel)
+			if err != nil {
+				e = fmt.Errorf("failed to subscribe: %v", err.Error())
+			}
+
+			ethUrl = ethreumUrl
+			Client = client
+			BlockHeaders = channel
+			BlockHeadersSubscription = sub
+		},
+	)
+	return e
 }
 
 func Reset() {

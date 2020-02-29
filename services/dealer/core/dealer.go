@@ -23,12 +23,13 @@ type DealerConfig struct {
 	HotWalletBindAddress string
 	WatcherBindAddress   string
 
-	OrderDuration int64 // the number of seconds order should be valid for after initial quote is provided
+	OrderDuration     int64 // the number of seconds order should be valid for after initial quote is provided
+	DealerBindAddress string
 }
 
 // Dealer is the core dealer service that interacts with other services
 type Dealer struct {
-	log *logger.Entry
+	log *logger.Logger
 
 	makerClient   types.MakerClient
 	hwClient      types.HotWalletClient
@@ -36,7 +37,8 @@ type Dealer struct {
 
 	orderDuration int64
 
-	db store.Store
+	db  store.Store
+	cfg DealerConfig
 }
 
 // NewDealer creates a new Dealer given ctx context and cfg configuration
@@ -61,6 +63,7 @@ func NewDealer(ctx context.Context, db store.Store, cfg DealerConfig) (*Dealer, 
 		hwClient:      types.NewHotWalletClient(hwConn),
 		watcherClient: types.NewWatcherClient(watcherConn),
 		orderDuration: cfg.OrderDuration,
+		cfg:           cfg,
 		db:            db,
 		log:           logger.New("core"),
 	}, nil
@@ -75,6 +78,8 @@ func (d *Dealer) WithHWClient(c types.HotWalletClient) *Dealer {
 	d.hwClient = c
 	return d
 }
+
+func (d *Dealer) HWClient() types.HotWalletClient { return d.hwClient }
 
 func (d *Dealer) FetchQuote(ctx context.Context, req *types.GetQuoteRequest) (*types.Quote, error) {
 	now := time.Now()
@@ -147,6 +152,7 @@ func (d *Dealer) WatchTransaction(ctx context.Context, quoteId string, txHash st
 	req := &types.WatchTransactionRequest{
 		QuoteId: quoteId,
 		TxHash:  txHash,
+		StatusUrls: []string{ d.cfg.DealerBindAddress, d.cfg.MakerBindAddress },
 	}
 
 	return d.watcherClient.WatchTransaction(ctx, req)
